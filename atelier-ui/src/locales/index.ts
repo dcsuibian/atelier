@@ -41,7 +41,7 @@ const storageKeyManager = new StorageKeyManager()
  */
 const messages = {
   [LanguageEnum.EN]: enMessages,
-  [LanguageEnum.ZH]: zhMessages
+  [LanguageEnum.ZH]: zhMessages,
 }
 
 /**
@@ -50,7 +50,7 @@ const messages = {
  */
 export const languageOptions = [
   { value: LanguageEnum.ZH, label: '简体中文' },
-  { value: LanguageEnum.EN, label: 'English' }
+  { value: LanguageEnum.EN, label: 'English' },
 ]
 
 /**
@@ -99,7 +99,7 @@ const i18nOptions: I18nOptions = {
   legacy: false,
   globalInjection: true,
   fallbackLocale: LanguageEnum.ZH,
-  messages
+  messages,
 }
 
 /**

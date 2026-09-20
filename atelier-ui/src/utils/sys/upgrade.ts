@@ -96,16 +96,12 @@ class VersionManager {
     // 查找旧的单一存储结构
     const oldSysKey =
       storageKeys.find(
-        (key) =>
-          StorageConfig.isVersionedKey(key) && key !== currentVersionPrefix && !key.includes('-')
+        key => StorageConfig.isVersionedKey(key) && key !== currentVersionPrefix && !key.includes('-'),
       ) || null
 
     // 查找旧版本的分离存储键
     const oldVersionKeys = storageKeys.filter(
-      (key) =>
-        StorageConfig.isVersionedKey(key) &&
-        !StorageConfig.isCurrentVersionKey(key) &&
-        key.includes('-')
+      key => StorageConfig.isVersionedKey(key) && !StorageConfig.isCurrentVersionKey(key) && key.includes('-'),
     )
 
     return { oldSysKey, oldVersionKeys }
@@ -118,11 +114,9 @@ class VersionManager {
     const normalizedCurrent = this.normalizeVersion(StorageConfig.CURRENT_VERSION)
     const normalizedStored = this.normalizeVersion(storedVersion)
 
-    return upgradeLogList.value.some((item) => {
+    return upgradeLogList.value.some(item => {
       const itemVersion = this.normalizeVersion(item.version)
-      return (
-        item.requireReLogin && itemVersion > normalizedStored && itemVersion <= normalizedCurrent
-      )
+      return item.requireReLogin && itemVersion > normalizedStored && itemVersion <= normalizedCurrent
     })
   }
 
@@ -136,13 +130,11 @@ class VersionManager {
       `<p style="color: var(--art-gray-800) !important; padding-bottom: 5px;">`,
       `系统已升级到 ${StorageConfig.CURRENT_VERSION} 版本，此次更新带来了以下改进：`,
       `</p>`,
-      content
+      content,
     ]
 
     if (requireReLogin) {
-      messageParts.push(
-        `<p style="color: var(--theme-color); padding-top: 5px;">升级完成，请重新登录后继续使用。</p>`
-      )
+      messageParts.push(`<p style="color: var(--theme-color); padding-top: 5px;">升级完成，请重新登录后继续使用。</p>`)
     }
 
     return messageParts.join('')
@@ -157,7 +149,7 @@ class VersionManager {
       message,
       duration: 0,
       type: 'success',
-      dangerouslyUseHTMLString: true
+      dangerouslyUseHTMLString: true,
     })
   }
 
@@ -172,7 +164,7 @@ class VersionManager {
     }
 
     // 清理旧版本的分离存储
-    oldVersionKeys.forEach((key) => {
+    oldVersionKeys.forEach(key => {
       localStorage.removeItem(key)
       console.info(`[Upgrade] 已清理旧存储: ${key}`)
     })
@@ -195,7 +187,7 @@ class VersionManager {
    */
   private async executeUpgrade(
     storedVersion: string,
-    legacyStorage: ReturnType<typeof this.findLegacyStorage>
+    legacyStorage: ReturnType<typeof this.findLegacyStorage>,
   ): Promise<void> {
     try {
       if (!upgradeLogList.value.length) {

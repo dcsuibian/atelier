@@ -7,7 +7,7 @@ export const systemRoutes: AppRouteRecord = {
   meta: {
     title: 'menus.system.title',
     icon: 'ri:user-3-line',
-    roles: ['R_SUPER', 'R_ADMIN']
+    roles: ['R_SUPER', 'R_ADMIN'],
   },
   children: [
     {
@@ -18,8 +18,8 @@ export const systemRoutes: AppRouteRecord = {
         title: 'menus.system.user',
         icon: 'ri:user-line',
         keepAlive: true,
-        roles: ['R_SUPER', 'R_ADMIN']
-      }
+        roles: ['R_SUPER', 'R_ADMIN'],
+      },
     },
     {
       path: 'role',
@@ -29,8 +29,8 @@ export const systemRoutes: AppRouteRecord = {
         title: 'menus.system.role',
         icon: 'ri:user-settings-line',
         keepAlive: true,
-        roles: ['R_SUPER']
-      }
+        roles: ['R_SUPER'],
+      },
     },
     {
       path: 'user-center',
@@ -41,8 +41,8 @@ export const systemRoutes: AppRouteRecord = {
         icon: 'ri:user-line',
         isHide: true,
         keepAlive: true,
-        isHideTab: true
-      }
+        isHideTab: true,
+      },
     },
     {
       path: 'menu',
@@ -56,9 +56,9 @@ export const systemRoutes: AppRouteRecord = {
         authList: [
           { title: '新增', authMark: 'add' },
           { title: '编辑', authMark: 'edit' },
-          { title: '删除', authMark: 'delete' }
-        ]
-      }
-    }
-  ]
+          { title: '删除', authMark: 'delete' },
+        ],
+      },
+    },
+  ],
 }

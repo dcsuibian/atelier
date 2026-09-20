@@ -68,7 +68,7 @@ export class HttpError extends Error {
       data?: unknown
       url?: string
       method?: string
-    }
+    },
   ) {
     super(message)
     this.name = 'HttpError'
@@ -87,7 +87,7 @@ export class HttpError extends Error {
       timestamp: this.timestamp,
       url: this.url,
       method: this.method,
-      stack: this.stack
+      stack: this.stack,
     }
   }
 }
@@ -107,7 +107,7 @@ const getErrorMessage = (status: number): string => {
     [ApiStatus.internalServerError]: 'httpMsg.internalServerError',
     [ApiStatus.badGateway]: 'httpMsg.badGateway',
     [ApiStatus.serviceUnavailable]: 'httpMsg.serviceUnavailable',
-    [ApiStatus.gatewayTimeout]: 'httpMsg.gatewayTimeout'
+    [ApiStatus.gatewayTimeout]: 'httpMsg.gatewayTimeout',
   }
 
   return $t(errorMap[status] || 'httpMsg.internalServerError')
@@ -133,18 +133,16 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
   if (!error.response) {
     throw new HttpError($t('httpMsg.networkError'), ApiStatus.error, {
       url: requestConfig?.url,
-      method: requestConfig?.method?.toUpperCase()
+      method: requestConfig?.method?.toUpperCase(),
     })
   }
 
   // 处理 HTTP 状态码错误
-  const message = statusCode
-    ? getErrorMessage(statusCode)
-    : errorMessage || $t('httpMsg.requestFailed')
+  const message = statusCode ? getErrorMessage(statusCode) : errorMessage || $t('httpMsg.requestFailed')
   throw new HttpError(message, statusCode || ApiStatus.error, {
     data: error.response.data,
     url: requestConfig?.url,
-    method: requestConfig?.method?.toUpperCase()
+    method: requestConfig?.method?.toUpperCase(),
   })
 }
 

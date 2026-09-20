@@ -46,7 +46,7 @@ const DEFAULT_LOADING_CONFIG = {
   },
   svg: fourDotsSpinnerSvg,
   svgViewBox: '0 0 40 40',
-  customClass: 'art-loading-fix'
+  customClass: 'art-loading-fix',
 } as const
 
 interface LoadingInstance {
@@ -65,7 +65,7 @@ export const loadingService = {
       // 每次显示时获取最新的配置，确保背景色与当前主题同步
       const config = {
         ...DEFAULT_LOADING_CONFIG,
-        background: getLoadingBackground()
+        background: getLoadingBackground(),
       }
       loadingInstance = ElLoading.service(config)
     }
@@ -80,5 +80,5 @@ export const loadingService = {
       loadingInstance.close()
       loadingInstance = null
     }
-  }
+  },
 }

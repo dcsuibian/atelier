@@ -28,7 +28,7 @@ export function useFastEnter() {
     if (!fastEnterConfig.value?.applications) return []
 
     return fastEnterConfig.value.applications
-      .filter((app) => app.enabled !== false)
+      .filter(app => app.enabled !== false)
       .sort((a, b) => (a.order || 0) - (b.order || 0))
   })
 
@@ -37,7 +37,7 @@ export function useFastEnter() {
     if (!fastEnterConfig.value?.quickLinks) return []
 
     return fastEnterConfig.value.quickLinks
-      .filter((link) => link.enabled !== false)
+      .filter(link => link.enabled !== false)
       .sort((a, b) => (a.order || 0) - (b.order || 0))
   })
 
@@ -50,6 +50,6 @@ export function useFastEnter() {
     fastEnterConfig,
     enabledApplications,
     enabledQuickLinks,
-    minWidth
+    minWidth,
   }
 }

@@ -47,10 +47,7 @@ export class RoutePermissionValidator {
    * @param pathSet 路径集合
    * @returns 路径集合
    */
-  static buildMenuPathSet(
-    menuList: AppRouteRecord[],
-    pathSet: Set<string> = new Set()
-  ): Set<string> {
+  static buildMenuPathSet(menuList: AppRouteRecord[], pathSet: Set<string> = new Set()): Set<string> {
     if (!Array.isArray(menuList) || menuList.length === 0) {
       return pathSet
     }
@@ -148,7 +145,7 @@ export class RoutePermissionValidator {
   static validatePath(
     targetPath: string,
     menuList: AppRouteRecord[],
-    homePath: string = '/'
+    homePath: string = '/',
   ): { path: string; hasPermission: boolean } {
     const hasPermission = this.hasPermission(targetPath, menuList)
 

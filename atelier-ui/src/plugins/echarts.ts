@@ -12,15 +12,7 @@
 import * as echarts from 'echarts/core'
 
 // 导入图表类型
-import {
-  BarChart,
-  LineChart,
-  PieChart,
-  ScatterChart,
-  RadarChart,
-  MapChart,
-  CandlestickChart
-} from 'echarts/charts'
+import { BarChart, LineChart, PieChart, ScatterChart, RadarChart, MapChart, CandlestickChart } from 'echarts/charts'
 
 // 导入组件
 import {
@@ -34,7 +26,7 @@ import {
   ToolboxComponent,
   BrushComponent,
   GeoComponent,
-  VisualMapComponent
+  VisualMapComponent,
 } from 'echarts/components'
 
 // 导入渲染器
@@ -65,7 +57,7 @@ echarts.use([
   VisualMapComponent,
 
   // 渲染器
-  CanvasRenderer
+  CanvasRenderer,
 ])
 
 // 导出 echarts 实例和类型

@@ -18,14 +18,14 @@
 </template>
 
 <script setup lang="ts">
-  import SectionTitle from './SectionTitle.vue'
-  import { useSettingStore } from '@/store/modules/setting'
-  import { useSettingsConfig } from '../composables/useSettingsConfig'
-  import { useSettingsState } from '../composables/useSettingsState'
+import SectionTitle from './SectionTitle.vue'
+import { useSettingStore } from '@/store/modules/setting'
+import { useSettingsConfig } from '../composables/useSettingsConfig'
+import { useSettingsState } from '../composables/useSettingsState'
 
-  const { width } = useWindowSize()
-  const settingStore = useSettingStore()
-  const { menuType } = storeToRefs(settingStore)
-  const { configOptions } = useSettingsConfig()
-  const { switchMenuLayouts } = useSettingsState()
+const { width } = useWindowSize()
+const settingStore = useSettingStore()
+const { menuType } = storeToRefs(settingStore)
+const { configOptions } = useSettingsConfig()
+const { switchMenuLayouts } = useSettingsState()
 </script>

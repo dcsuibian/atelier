@@ -6,16 +6,16 @@
 </template>
 
 <script setup lang="ts">
-  defineOptions({ name: 'ArtLogo' })
+defineOptions({ name: 'ArtLogo' })
 
-  interface Props {
-    /** logo 大小 */
-    size?: number | string
-  }
+interface Props {
+  /** logo 大小 */
+  size?: number | string
+}
 
-  const props = withDefaults(defineProps<Props>(), {
-    size: 36
-  })
+const props = withDefaults(defineProps<Props>(), {
+  size: 36,
+})
 
-  const logoStyle = computed(() => ({ width: `${props.size}px` }))
+const logoStyle = computed(() => ({ width: `${props.size}px` }))
 </script>

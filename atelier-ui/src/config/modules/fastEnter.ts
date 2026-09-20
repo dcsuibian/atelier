@@ -16,8 +16,8 @@ const fastEnterConfig: FastEnterConfig = {
       iconColor: '#377dff',
       enabled: true,
       order: 1,
-      routeName: 'Console'
-    }
+      routeName: 'Console',
+    },
   ],
   // 快速链接
   quickLinks: [
@@ -25,27 +25,27 @@ const fastEnterConfig: FastEnterConfig = {
       name: '登录',
       enabled: true,
       order: 1,
-      routeName: 'Login'
+      routeName: 'Login',
     },
     {
       name: '注册',
       enabled: true,
       order: 2,
-      routeName: 'Register'
+      routeName: 'Register',
     },
     {
       name: '忘记密码',
       enabled: true,
       order: 3,
-      routeName: 'ForgetPassword'
+      routeName: 'ForgetPassword',
     },
     {
       name: '个人中心',
       enabled: true,
       order: 4,
-      routeName: 'UserCenter'
-    }
-  ]
+      routeName: 'UserCenter',
+    },
+  ],
 }
 
 export default Object.freeze(fastEnterConfig)

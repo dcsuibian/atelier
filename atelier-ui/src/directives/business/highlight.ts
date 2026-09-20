@@ -126,7 +126,7 @@ function processBlock(block: HTMLElement) {
 // 查找并处理所有代码块
 function processAllCodeBlocks(el: HTMLElement) {
   const blocks = Array.from(el.querySelectorAll<HTMLElement>('pre code'))
-  const unprocessedBlocks = blocks.filter((block) => !isBlockProcessed(block))
+  const unprocessedBlocks = blocks.filter(block => !isBlockProcessed(block))
 
   if (unprocessedBlocks.length === 0) {
     return
@@ -134,7 +134,7 @@ function processAllCodeBlocks(el: HTMLElement) {
 
   if (unprocessedBlocks.length <= 10) {
     // 如果代码块数量少于等于10，直接处理所有代码块
-    unprocessedBlocks.forEach((block) => processBlock(block))
+    unprocessedBlocks.forEach(block => processBlock(block))
   } else {
     // 定义每次处理的代码块数
     const batchSize = 10
@@ -143,7 +143,7 @@ function processAllCodeBlocks(el: HTMLElement) {
     const processBatch = () => {
       const batch = unprocessedBlocks.slice(currentIndex, currentIndex + batchSize)
 
-      batch.forEach((block) => {
+      batch.forEach(block => {
         processBlock(block)
       })
 
@@ -169,7 +169,7 @@ function retryProcessing(el: HTMLElement, maxRetries: number = 3, delay: number 
 
     // 检查是否还有未处理的代码块
     const remainingBlocks = Array.from(el.querySelectorAll<HTMLElement>('pre code')).filter(
-      (block) => !isBlockProcessed(block)
+      block => !isBlockProcessed(block),
     )
 
     if (remainingBlocks.length > 0 && retryCount < maxRetries) {
@@ -193,12 +193,12 @@ const highlightDirective: HighlightDirective = {
     }, 100)
 
     // 使用 MutationObserver 监听 DOM 变化
-    const observer = new MutationObserver((mutations) => {
+    const observer = new MutationObserver(mutations => {
       let hasNewCodeBlocks = false
 
-      mutations.forEach((mutation) => {
+      mutations.forEach(mutation => {
         if (mutation.type === 'childList') {
-          mutation.addedNodes.forEach((node) => {
+          mutation.addedNodes.forEach(node => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const element = node as HTMLElement
               // 检查新添加的节点是否包含代码块
@@ -221,7 +221,7 @@ const highlightDirective: HighlightDirective = {
     // 开始观察
     observer.observe(el, {
       childList: true,
-      subtree: true
+      subtree: true,
     })
 
     // 将 observer 存储到元素上，以便在 unmounted 时清理
@@ -242,7 +242,7 @@ const highlightDirective: HighlightDirective = {
       observer.disconnect()
       delete (el as any)._highlightObserver
     }
-  }
+  },
 }
 
 export function setupHighlightDirective(app: App) {

@@ -48,7 +48,7 @@ export const setWorktab = (to: RouteLocationNormalized): void => {
           name: name as string,
           keepAlive: meta.keepAlive as boolean,
           params,
-          query
+          query,
         })
       }
     } else if (useSettingStore().showWorkTab || path === useCommon().homePath.value) {
@@ -60,7 +60,7 @@ export const setWorktab = (to: RouteLocationNormalized): void => {
         keepAlive: meta.keepAlive as boolean,
         params,
         query,
-        fixedTab: meta.fixedTab as boolean
+        fixedTab: meta.fixedTab as boolean,
       })
     }
   }

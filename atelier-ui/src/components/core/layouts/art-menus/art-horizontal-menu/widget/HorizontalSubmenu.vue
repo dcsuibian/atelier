@@ -21,11 +21,7 @@
     />
   </ElSubMenu>
 
-  <ElMenuItem
-    v-else-if="isNavigableRoute"
-    :index="item.path || item.meta.title"
-    @click="goPage(item)"
-  >
+  <ElMenuItem v-else-if="isNavigableRoute" :index="item.path || item.meta.title" @click="goPage(item)">
     <ArtSvgIcon
       :icon="item.meta.icon"
       :color="theme?.iconColor"
@@ -33,11 +29,7 @@
       :style="{ color: theme.iconColor }"
     />
     <span class="text-md">{{ formatMenuTitle(item.meta.title) }}</span>
-    <div
-      v-if="item.meta.showBadge"
-      class="art-badge"
-      :style="{ right: level === 0 ? '10px' : '20px' }"
-    />
+    <div v-if="item.meta.showBadge" class="art-badge" :style="{ right: level === 0 ? '10px' : '20px' }" />
     <div v-if="item.meta.showTextBadge && level !== 0" class="art-text-badge">
       {{ item.meta.showTextBadge }}
     </div>
@@ -45,62 +37,60 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, type PropType } from 'vue'
-  import type { AppRouteRecord } from '@/types/router'
-  import { handleMenuJump } from '@/utils/navigation'
-  import { formatMenuTitle } from '@/utils/router'
+import { computed, type PropType } from 'vue'
+import type { AppRouteRecord } from '@/types/router'
+import { handleMenuJump } from '@/utils/navigation'
+import { formatMenuTitle } from '@/utils/router'
 
-  const props = defineProps({
-    item: {
-      type: Object as PropType<AppRouteRecord>,
-      required: true
-    },
-    theme: {
-      type: Object,
-      default: () => ({})
-    },
-    isMobile: Boolean,
-    level: {
-      type: Number,
-      default: 0
-    }
-  })
+const props = defineProps({
+  item: {
+    type: Object as PropType<AppRouteRecord>,
+    required: true,
+  },
+  theme: {
+    type: Object,
+    default: () => ({}),
+  },
+  isMobile: Boolean,
+  level: {
+    type: Number,
+    default: 0,
+  },
+})
 
-  const emit = defineEmits(['close'])
+const emit = defineEmits(['close'])
 
-  // 过滤后的子菜单项（不包含隐藏的）
-  const filteredChildren = computed(() => {
-    return props.item.children?.filter((child) => !child.meta.isHide) || []
-  })
+// 过滤后的子菜单项（不包含隐藏的）
+const filteredChildren = computed(() => {
+  return props.item.children?.filter(child => !child.meta.isHide) || []
+})
 
-  // 父菜单如果本身就是页面，则即使没有可见子菜单也应该保留为菜单项。
-  const isNavigableRoute = computed(() => {
-    return !!(
-      !props.item.meta.isHide &&
-      ((props.item.path && props.item.path.trim()) ||
-        props.item.meta.link ||
-        props.item.meta.isIframe === true) &&
-      (props.item.component || props.item.meta.link || props.item.meta.isIframe === true)
-    )
-  })
+// 父菜单如果本身就是页面，则即使没有可见子菜单也应该保留为菜单项。
+const isNavigableRoute = computed(() => {
+  return !!(
+    !props.item.meta.isHide &&
+    ((props.item.path && props.item.path.trim()) || props.item.meta.link || props.item.meta.isIframe === true) &&
+    (props.item.component || props.item.meta.link || props.item.meta.isIframe === true)
+  )
+})
 
-  // 计算当前项是否有可见的子菜单
-  const hasChildren = computed(() => {
-    return filteredChildren.value.length > 0
-  })
+// 计算当前项是否有可见的子菜单
+const hasChildren = computed(() => {
+  return filteredChildren.value.length > 0
+})
 
-  const goPage = (item: AppRouteRecord) => {
-    closeMenu()
-    handleMenuJump(item)
-  }
+const goPage = (item: AppRouteRecord) => {
+  closeMenu()
+  handleMenuJump(item)
+}
 
-  const closeMenu = () => {
-    emit('close')
-  }
+const closeMenu = () => {
+  emit('close')
+}
 </script>
 
 <style scoped>
-  :deep(.el-sub-menu__title .el-sub-menu__icon-arrow) {
-    right: 10px !important;
-  }
+:deep(.el-sub-menu__title .el-sub-menu__icon-arrow) {
+  right: 10px !important;
+}
 </style>

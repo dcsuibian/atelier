@@ -46,7 +46,7 @@ export class RouteRegistry {
     // 转换并注册路由
     const removeRouteFns: (() => void)[] = []
 
-    menuList.forEach((route) => {
+    menuList.forEach(route => {
       if (route.name && !this.router.hasRoute(route.name)) {
         const routeConfig = this.transformer.transform(route)
         const removeRouteFn = this.router.addRoute(routeConfig as RouteRecordRaw)
@@ -62,7 +62,7 @@ export class RouteRegistry {
    * 移除所有动态路由
    */
   unregister(): void {
-    this.removeRouteFns.forEach((fn) => fn())
+    this.removeRouteFns.forEach(fn => fn())
     this.removeRouteFns = []
     this.registered = false
   }

@@ -36,7 +36,7 @@ export const configImages = {
     /** 暗色主题 */
     dark: darkTheme,
     /** 自动主题（跟随系统） */
-    system: systemTheme
+    system: systemTheme,
   },
   /** 菜单布局预览图 */
   menuLayouts: {
@@ -47,7 +47,7 @@ export const configImages = {
     /** 混合菜单 */
     mixed: mixedLayout,
     /** 双栏菜单 */
-    dualColumn: dualColumnLayout
+    dualColumn: dualColumnLayout,
   },
   /** 菜单风格预览图 */
   menuStyles: {
@@ -56,6 +56,6 @@ export const configImages = {
     /** 暗色风格 */
     dark: darkStyle,
     /** 亮色风格 */
-    light: lightStyle
-  }
+    light: lightStyle,
+  },
 }

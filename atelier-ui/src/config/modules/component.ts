@@ -24,51 +24,39 @@ export const globalComponentsConfig: GlobalComponentConfig[] = [
   {
     name: '设置面板',
     key: 'settings-panel',
-    component: defineAsyncComponent(
-      () => import('@/components/core/layouts/art-settings-panel/index.vue')
-    ),
-    enabled: true
+    component: defineAsyncComponent(() => import('@/components/core/layouts/art-settings-panel/index.vue')),
+    enabled: true,
   },
   {
     name: '全局搜索',
     key: 'global-search',
-    component: defineAsyncComponent(
-      () => import('@/components/core/layouts/art-global-search/index.vue')
-    ),
-    enabled: true
+    component: defineAsyncComponent(() => import('@/components/core/layouts/art-global-search/index.vue')),
+    enabled: true,
   },
   {
     name: '锁屏',
     key: 'screen-lock',
-    component: defineAsyncComponent(
-      () => import('@/components/core/layouts/art-screen-lock/index.vue')
-    ),
-    enabled: true
+    component: defineAsyncComponent(() => import('@/components/core/layouts/art-screen-lock/index.vue')),
+    enabled: true,
   },
   {
     name: '聊天窗口',
     key: 'chat-window',
-    component: defineAsyncComponent(
-      () => import('@/components/core/layouts/art-chat-window/index.vue')
-    ),
-    enabled: true
+    component: defineAsyncComponent(() => import('@/components/core/layouts/art-chat-window/index.vue')),
+    enabled: true,
   },
   {
     name: '礼花效果',
     key: 'fireworks-effect',
-    component: defineAsyncComponent(
-      () => import('@/components/core/layouts/art-fireworks-effect/index.vue')
-    ),
-    enabled: true
+    component: defineAsyncComponent(() => import('@/components/core/layouts/art-fireworks-effect/index.vue')),
+    enabled: true,
   },
   {
     name: '水印效果',
     key: 'watermark',
-    component: defineAsyncComponent(
-      () => import('@/components/core/others/art-watermark/index.vue')
-    ),
-    enabled: true
-  }
+    component: defineAsyncComponent(() => import('@/components/core/others/art-watermark/index.vue')),
+    enabled: true,
+  },
 ]
 
 /**
@@ -92,7 +80,7 @@ export interface GlobalComponentConfig {
  * @returns 已启用的组件配置列表
  */
 export const getEnabledGlobalComponents = () => {
-  return globalComponentsConfig.filter((config) => config.enabled !== false)
+  return globalComponentsConfig.filter(config => config.enabled !== false)
 }
 
 /**
@@ -101,5 +89,5 @@ export const getEnabledGlobalComponents = () => {
  * @returns 组件配置对象
  */
 export const getGlobalComponentByKey = (key: string) => {
-  return globalComponentsConfig.find((config) => config.key === key)
+  return globalComponentsConfig.find(config => config.key === key)
 }

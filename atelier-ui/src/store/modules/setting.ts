@@ -122,7 +122,7 @@ export const useSettingStore = defineStore(
      * 根据当前主题类型和暗色模式返回对应的主题配置
      */
     const getMenuTheme = computed((): MenuThemeType => {
-      const list = AppConfig.themeList.filter((item) => item.theme === menuThemeType.value)
+      const list = AppConfig.themeList.filter(item => item.theme === menuThemeType.value)
       if (isDark.value) {
         return AppConfig.darkMenuStyles[0]
       } else {
@@ -438,13 +438,13 @@ export const useSettingStore = defineStore(
       setholidayFireworksLoaded,
       setShowFestivalText,
       setFestivalDate,
-      setDualMenuShowText
+      setDualMenuShowText,
     }
   },
   {
     persist: {
       key: 'setting',
-      storage: localStorage
-    }
-  }
+      storage: localStorage,
+    },
+  },
 )

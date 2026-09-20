@@ -32,6 +32,6 @@ export function useSettingsState() {
   return {
     // 方法
     initColorWeak,
-    switchMenuLayouts
+    switchMenuLayouts,
   }
 }

@@ -84,7 +84,7 @@ export const SETTING_DEFAULT_CONFIG = {
   /** 容器宽度 */
   containerWidth: ContainerWidthEnum.FULL,
   /** 节日日期 */
-  festivalDate: ''
+  festivalDate: '',
 }
 
 /**
@@ -101,7 +101,7 @@ export function getSettingDefaults() {
  */
 export function resetToDefaults(currentSettings: Record<string, any>) {
   const defaults = getSettingDefaults()
-  Object.keys(defaults).forEach((key) => {
+  Object.keys(defaults).forEach(key => {
     if (key in currentSettings) {
       currentSettings[key] = defaults[key as keyof typeof defaults]
     }

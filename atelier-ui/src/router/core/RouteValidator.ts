@@ -39,24 +39,19 @@ export class RouteValidator {
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     }
   }
 
   /**
    * 检测重复路由
    */
-  private checkDuplicates(
-    routes: AppRouteRecord[],
-    errors: string[],
-    warnings: string[],
-    parentPath = ''
-  ): void {
+  private checkDuplicates(routes: AppRouteRecord[], errors: string[], warnings: string[], parentPath = ''): void {
     const routeNameMap = new Map<string, string>()
     const componentPathMap = new Map<string, string>()
 
     const checkRoutes = (routes: AppRouteRecord[], parentPath = '') => {
-      routes.forEach((route) => {
+      routes.forEach(route => {
         const currentPath = route.path || ''
         const fullPath = this.resolvePath(parentPath, currentPath)
 
@@ -96,13 +91,8 @@ export class RouteValidator {
   /**
    * 检测组件配置
    */
-  private checkComponents(
-    routes: AppRouteRecord[],
-    errors: string[],
-    warnings: string[],
-    parentPath = ''
-  ): void {
-    routes.forEach((route) => {
+  private checkComponents(routes: AppRouteRecord[], errors: string[], warnings: string[], parentPath = ''): void {
+    routes.forEach(route => {
       const hasExternalLink = !!route.meta?.link?.trim()
       const hasChildren = Array.isArray(route.children) && route.children.length > 0
       const routePath = route.path || '[未定义路径]'
@@ -142,7 +132,7 @@ export class RouteValidator {
    * 只有一级菜单才能使用 Layout，二级及以下菜单不能使用
    */
   private checkNestedIndexComponent(routes: AppRouteRecord[], level = 1): void {
-    routes.forEach((route) => {
+    routes.forEach(route => {
       // 检查二级及以下菜单是否错误使用了 Layout
       if (level > 1 && route.component === RoutesAlias.Layout) {
         this.logLayoutError(route, level)
@@ -174,7 +164,7 @@ export class RouteValidator {
         `  问题: ${level}级菜单不能使用 ${RoutesAlias.Layout} 作为 component\n` +
         `  说明: 只有一级菜单才能使用 ${RoutesAlias.Layout}，二级及以下菜单应该指向具体的组件路径\n` +
         `  当前配置: component: '${RoutesAlias.Layout}'\n` +
-        `  应该改为: component: '/your/component/path' 或留空 ''（如果是目录菜单）`
+        `  应该改为: component: '/your/component/path' 或留空 ''（如果是目录菜单）`,
     )
   }
 

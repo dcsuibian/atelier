@@ -67,7 +67,7 @@ export class MenuProcessor {
   private filterMenuByRoles(menu: AppRouteRecord[], roles: string[]): AppRouteRecord[] {
     return menu.reduce((acc: AppRouteRecord[], item) => {
       const itemRoles = item.meta?.roles
-      const hasPermission = !itemRoles || itemRoles.some((role) => roles?.includes(role))
+      const hasPermission = !itemRoles || itemRoles.some(role => roles?.includes(role))
 
       if (hasPermission) {
         const filteredItem = { ...item }
@@ -86,18 +86,18 @@ export class MenuProcessor {
    */
   private filterEmptyMenus(menuList: AppRouteRecord[]): AppRouteRecord[] {
     return menuList
-      .map((item) => {
+      .map(item => {
         // 如果有子菜单，先递归过滤子菜单
         if (item.children && item.children.length > 0) {
           const filteredChildren = this.filterEmptyMenus(item.children)
           return {
             ...item,
-            children: filteredChildren
+            children: filteredChildren,
           }
         }
         return item
       })
-      .filter((item) => {
+      .filter(item => {
         // 如果定义了 children 属性（即使是空数组），说明这是一个目录菜单，应该保留
         if ('children' in item) {
           return true
@@ -130,14 +130,12 @@ export class MenuProcessor {
    * 将相对路径转换为完整路径，确保菜单跳转正确
    */
   private normalizeMenuPaths(menuList: AppRouteRecord[], parentPath = ''): AppRouteRecord[] {
-    return menuList.map((item) => {
+    return menuList.map(item => {
       // 构建完整路径
       const fullPath = this.buildFullPath(item.path || '', parentPath)
 
       // 递归处理子菜单
-      const children = item.children?.length
-        ? this.normalizeMenuPaths(item.children, fullPath)
-        : item.children
+      const children = item.children?.length ? this.normalizeMenuPaths(item.children, fullPath) : item.children
 
       const redirect = item.redirect || this.resolveDefaultRedirect(children)
 
@@ -145,7 +143,7 @@ export class MenuProcessor {
         ...item,
         path: fullPath,
         redirect,
-        children
+        children,
       }
     })
   }
@@ -178,11 +176,11 @@ export class MenuProcessor {
   private isNavigableRoute(route: AppRouteRecord): boolean {
     return Boolean(
       route.path &&
-        route.path !== '/' &&
-        !route.meta?.link &&
-        route.meta?.isIframe !== true &&
-        route.component &&
-        route.component !== ''
+      route.path !== '/' &&
+      !route.meta?.link &&
+      route.meta?.isIframe !== true &&
+      route.component &&
+      route.component !== '',
     )
   }
 
@@ -195,12 +193,12 @@ export class MenuProcessor {
    * 检测非一级菜单是否错误使用了 / 开头的路径
    */
   private validateMenuPaths(menuList: AppRouteRecord[], level = 1): void {
-    menuList.forEach((route) => {
+    menuList.forEach(route => {
       if (!route.children?.length) return
 
       const parentName = String(route.name || route.path || '未知路由')
 
-      route.children.forEach((child) => {
+      route.children.forEach(child => {
         const childPath = child.path || ''
 
         // 跳过合法的绝对路径：外部链接和 iframe 路由
@@ -221,22 +219,13 @@ export class MenuProcessor {
    * 判断是否为合法的绝对路径
    */
   private isValidAbsolutePath(path: string): boolean {
-    return (
-      path.startsWith('http://') ||
-      path.startsWith('https://') ||
-      path.startsWith('/outside/iframe/')
-    )
+    return path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/outside/iframe/')
   }
 
   /**
    * 输出路径配置错误日志
    */
-  private logPathError(
-    route: AppRouteRecord,
-    path: string,
-    parentName: string,
-    level: number
-  ): void {
+  private logPathError(route: AppRouteRecord, path: string, parentName: string, level: number): void {
     const routeName = String(route.name || path || '未知路由')
     const menuTitle = route.meta?.title || routeName
     const suggestedPath = path.split('/').pop() || path.slice(1)
@@ -246,7 +235,7 @@ export class MenuProcessor {
         `  位置: ${parentName} > ${routeName}\n` +
         `  问题: ${level + 1}级菜单的 path 不能以 / 开头\n` +
         `  当前配置: path: '${path}'\n` +
-        `  应该改为: path: '${suggestedPath}'`
+        `  应该改为: path: '${suggestedPath}'`,
     )
   }
 

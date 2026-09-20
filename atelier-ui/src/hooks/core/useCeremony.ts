@@ -58,7 +58,7 @@ const FESTIVAL_CONFIG = {
   /** 文本显示延迟（毫秒） */
   TEXT_DELAY: 2000,
   /** 默认烟花播放次数 */
-  DEFAULT_FIREWORKS_COUNT: 3
+  DEFAULT_FIREWORKS_COUNT: 3,
 } as const
 
 /**
@@ -77,11 +77,7 @@ export function useCeremony() {
    * @param festivalDate 节日开始日期
    * @param festivalEndDate 节日结束日期（可选）
    */
-  const isDateInRange = (
-    currentDate: string,
-    festivalDate: string,
-    festivalEndDate?: string
-  ): boolean => {
+  const isDateInRange = (currentDate: string, festivalDate: string, festivalEndDate?: string): boolean => {
     if (!festivalEndDate) {
       // 单日节日
       return currentDate === festivalDate
@@ -100,7 +96,7 @@ export function useCeremony() {
    */
   const currentFestivalData = computed(() => {
     const currentDate = useDateFormat(new Date(), 'YYYY-MM-DD').value
-    return festivalConfigList.find((item) => isDateInRange(currentDate, item.date, item.endDate))
+    return festivalConfigList.find(item => isDateInRange(currentDate, item.date, item.endDate))
   })
 
   /**
@@ -179,6 +175,6 @@ export function useCeremony() {
     cleanup,
     holidayFireworksLoaded,
     currentFestivalData,
-    isShowFireworks
+    isShowFireworks,
   }
 }

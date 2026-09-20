@@ -105,21 +105,15 @@ export function setupBeforeEachGuard(router: Router): void {
   // 初始化路由注册器
   routeRegistry = new RouteRegistry(router)
 
-  router.beforeEach(
-    async (
-      to: RouteLocationNormalized,
-      from: RouteLocationNormalized,
-      next: NavigationGuardNext
-    ) => {
-      try {
-        await handleRouteGuard(to, from, next, router)
-      } catch (error) {
-        console.error('[RouteGuard] 路由守卫处理失败:', error)
-        closeLoading()
-        next({ name: 'Exception500' })
-      }
+  router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+    try {
+      await handleRouteGuard(to, from, next, router)
+    } catch (error) {
+      console.error('[RouteGuard] 路由守卫处理失败:', error)
+      closeLoading()
+      next({ name: 'Exception500' })
     }
-  )
+  })
 }
 
 /**
@@ -141,7 +135,7 @@ async function handleRouteGuard(
   to: RouteLocationNormalized,
   from: RouteLocationNormalized,
   next: NavigationGuardNext,
-  router: Router
+  router: Router,
 ): Promise<void> {
   const settingStore = useSettingStore()
   const userStore = useUserStore()
@@ -204,7 +198,7 @@ async function handleRouteGuard(
 function handleLoginStatus(
   to: RouteLocationNormalized,
   userStore: ReturnType<typeof useUserStore>,
-  next: NavigationGuardNext
+  next: NavigationGuardNext,
 ): boolean {
   // 已登录或访问登录页或静态路由，直接放行
   if (userStore.isLogin || to.path === RoutesAlias.Login || isStaticRoute(to.path)) {
@@ -215,7 +209,7 @@ function handleLoginStatus(
   userStore.logOut()
   next({
     name: 'Login',
-    query: { redirect: to.fullPath }
+    query: { redirect: to.fullPath },
   })
   return false
 }
@@ -225,7 +219,7 @@ function handleLoginStatus(
  */
 function isStaticRoute(path: string): boolean {
   const checkRoute = (routes: any[], targetPath: string): boolean => {
-    return routes.some((route) => {
+    return routes.some(route => {
       // 404 catch-all 路由不应视为可匿名访问的静态页，
       // 否则未登录时手动输入任意地址会直接落到 404，无法跳转登录页。
       if (route.name === 'Exception404') {
@@ -256,7 +250,7 @@ function isStaticRoute(path: string): boolean {
 async function handleDynamicRoutes(
   to: RouteLocationNormalized,
   next: NavigationGuardNext,
-  router: Router
+  router: Router,
 ): Promise<void> {
   // 标记初始化进行中
   routeInitInProgress = true
@@ -298,7 +292,7 @@ async function handleDynamicRoutes(
         path: to.path,
         query: to.query,
         hash: to.hash,
-        replace: true
+        replace: true,
       })
       return
     }
@@ -308,7 +302,7 @@ async function handleDynamicRoutes(
     const { path: validatedPath, hasPermission } = RoutePermissionValidator.validatePath(
       to.path,
       menuList,
-      homePath.value || '/'
+      homePath.value || '/',
     )
 
     // 初始化成功，重置进行中标记
@@ -325,7 +319,7 @@ async function handleDynamicRoutes(
       // 直接跳转到首页
       next({
         path: validatedPath,
-        replace: true
+        replace: true,
       })
     } else {
       // 有权限，正常导航
@@ -333,7 +327,7 @@ async function handleDynamicRoutes(
         path: to.path,
         query: to.query,
         hash: to.hash,
-        replace: true
+        replace: true,
       })
     }
   } catch (error) {

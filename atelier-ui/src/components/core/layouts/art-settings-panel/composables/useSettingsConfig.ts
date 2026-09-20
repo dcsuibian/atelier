@@ -14,40 +14,40 @@ export function useSettingsConfig() {
   const tabStyleOptions = computed(() => [
     {
       value: 'tab-default',
-      label: t('setting.tabStyle.default')
+      label: t('setting.tabStyle.default'),
     },
     {
       value: 'tab-card',
-      label: t('setting.tabStyle.card')
+      label: t('setting.tabStyle.card'),
     },
     {
       value: 'tab-google',
-      label: t('setting.tabStyle.google')
-    }
+      label: t('setting.tabStyle.google'),
+    },
   ])
 
   // 页面切换动画选项
   const pageTransitionOptions = computed(() => [
     {
       value: '',
-      label: t('setting.transition.list.none')
+      label: t('setting.transition.list.none'),
     },
     {
       value: 'fade',
-      label: t('setting.transition.list.fade')
+      label: t('setting.transition.list.fade'),
     },
     {
       value: 'slide-left',
-      label: t('setting.transition.list.slideLeft')
+      label: t('setting.transition.list.slideLeft'),
     },
     {
       value: 'slide-bottom',
-      label: t('setting.transition.list.slideBottom')
+      label: t('setting.transition.list.slideBottom'),
     },
     {
       value: 'slide-top',
-      label: t('setting.transition.list.slideTop')
-    }
+      label: t('setting.transition.list.slideTop'),
+    },
   ])
 
   // 圆角大小选项
@@ -56,7 +56,7 @@ export function useSettingsConfig() {
     { value: '0.25', label: '0.25' },
     { value: '0.5', label: '0.5' },
     { value: '0.75', label: '0.75' },
-    { value: '1', label: '1' }
+    { value: '1', label: '1' },
   ]
 
   // 容器宽度选项
@@ -64,13 +64,13 @@ export function useSettingsConfig() {
     {
       value: ContainerWidthEnum.FULL,
       label: t('setting.container.list[0]'),
-      icon: 'icon-park-outline:auto-width'
+      icon: 'icon-park-outline:auto-width',
     },
     {
       value: ContainerWidthEnum.BOXED,
       label: t('setting.container.list[1]'),
-      icon: 'ix:width'
-    }
+      icon: 'ix:width',
+    },
   ])
 
   // 盒子样式选项
@@ -78,13 +78,13 @@ export function useSettingsConfig() {
     {
       value: 'border-mode',
       label: t('setting.box.list[0]'),
-      type: 'border-mode' as const
+      type: 'border-mode' as const,
     },
     {
       value: 'shadow-mode',
       label: t('setting.box.list[1]'),
-      type: 'shadow-mode' as const
-    }
+      type: 'shadow-mode' as const,
+    },
   ])
 
   // 从配置文件获取的选项
@@ -96,7 +96,7 @@ export function useSettingsConfig() {
     themeList: AppConfig.settingThemeList,
 
     // 菜单布局选项
-    menuLayoutList: AppConfig.menuLayoutList
+    menuLayoutList: AppConfig.menuLayoutList,
   }
 
   // 基础设置项配置
@@ -108,35 +108,35 @@ export function useSettingsConfig() {
         label: t('setting.basics.list.multiTab'),
         type: 'switch' as const,
         handler: 'workTab',
-        headerBarKey: null // 不依赖headerBar配置
+        headerBarKey: null, // 不依赖headerBar配置
       },
       {
         key: 'uniqueOpened',
         label: t('setting.basics.list.accordion'),
         type: 'switch' as const,
         handler: 'uniqueOpened',
-        headerBarKey: null // 不依赖headerBar配置
+        headerBarKey: null, // 不依赖headerBar配置
       },
       {
         key: 'showMenuButton',
         label: t('setting.basics.list.collapseSidebar'),
         type: 'switch' as const,
         handler: 'menuButton',
-        headerBarKey: 'menuButton' as const
+        headerBarKey: 'menuButton' as const,
       },
       {
         key: 'showFastEnter',
         label: t('setting.basics.list.fastEnter'),
         type: 'switch' as const,
         handler: 'fastEnter',
-        headerBarKey: 'fastEnter' as const
+        headerBarKey: 'fastEnter' as const,
       },
       {
         key: 'showRefreshButton',
         label: t('setting.basics.list.reloadPage'),
         type: 'switch' as const,
         handler: 'refreshButton',
-        headerBarKey: 'refreshButton' as const
+        headerBarKey: 'refreshButton' as const,
       },
       {
         key: 'showCrumbs',
@@ -144,35 +144,35 @@ export function useSettingsConfig() {
         type: 'switch' as const,
         handler: 'crumbs',
         mobileHide: true,
-        headerBarKey: 'breadcrumb' as const
+        headerBarKey: 'breadcrumb' as const,
       },
       {
         key: 'showLanguage',
         label: t('setting.basics.list.language'),
         type: 'switch' as const,
         handler: 'language',
-        headerBarKey: 'language' as const
+        headerBarKey: 'language' as const,
       },
       {
         key: 'showNprogress',
         label: t('setting.basics.list.progressBar'),
         type: 'switch' as const,
         handler: 'nprogress',
-        headerBarKey: null // 不依赖headerBar配置
+        headerBarKey: null, // 不依赖headerBar配置
       },
       {
         key: 'colorWeak',
         label: t('setting.basics.list.weakMode'),
         type: 'switch' as const,
         handler: 'colorWeak',
-        headerBarKey: null // 不依赖headerBar配置
+        headerBarKey: null, // 不依赖headerBar配置
       },
       {
         key: 'watermarkVisible',
         label: t('setting.basics.list.watermark'),
         type: 'switch' as const,
         handler: 'watermark',
-        headerBarKey: null // 不依赖headerBar配置
+        headerBarKey: null, // 不依赖headerBar配置
       },
       {
         key: 'menuOpenWidth',
@@ -184,7 +184,7 @@ export function useSettingsConfig() {
         step: 10,
         style: { width: '120px' },
         controlsPosition: 'right' as const,
-        headerBarKey: null // 不依赖headerBar配置
+        headerBarKey: null, // 不依赖headerBar配置
       },
       {
         key: 'tabStyle',
@@ -193,7 +193,7 @@ export function useSettingsConfig() {
         handler: 'tabStyle',
         options: tabStyleOptions.value,
         style: { width: '120px' },
-        headerBarKey: null // 不依赖headerBar配置
+        headerBarKey: null, // 不依赖headerBar配置
       },
       {
         key: 'pageTransition',
@@ -202,7 +202,7 @@ export function useSettingsConfig() {
         handler: 'pageTransition',
         options: pageTransitionOptions.value,
         style: { width: '120px' },
-        headerBarKey: null // 不依赖headerBar配置
+        headerBarKey: null, // 不依赖headerBar配置
       },
       {
         key: 'customRadius',
@@ -211,25 +211,23 @@ export function useSettingsConfig() {
         handler: 'customRadius',
         options: customRadiusOptions,
         style: { width: '120px' },
-        headerBarKey: null // 不依赖headerBar配置
-      }
+        headerBarKey: null, // 不依赖headerBar配置
+      },
     ]
 
     // 根据 headerBarConfig 过滤设置项
-    return (
-      allSettings
-        .filter((setting) => {
-          // 如果设置项不依赖headerBar配置，则始终显示
-          if (setting.headerBarKey === null) {
-            return true
-          }
+    return allSettings
+      .filter(setting => {
+        // 如果设置项不依赖headerBar配置，则始终显示
+        if (setting.headerBarKey === null) {
+          return true
+        }
 
-          // 如果依赖headerBar配置，检查对应的功能是否启用
-          const headerBarFeature = headerBarConfig[setting.headerBarKey]
-          return headerBarFeature?.enabled !== false
-        })
-        .map(({ headerBarKey: _headerBarKey, ...setting }) => setting)
-    )
+        // 如果依赖headerBar配置，检查对应的功能是否启用
+        const headerBarFeature = headerBarConfig[setting.headerBarKey]
+        return headerBarFeature?.enabled !== false
+      })
+      .map(({ headerBarKey: _headerBarKey, ...setting }) => setting)
   })
 
   return {
@@ -242,6 +240,6 @@ export function useSettingsConfig() {
     configOptions,
 
     // 设置项配置
-    basicSettingsConfig
+    basicSettingsConfig,
   }
 }

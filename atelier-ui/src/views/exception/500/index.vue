@@ -5,12 +5,12 @@
       title: '500',
       desc: $t('exceptionPage.500'),
       btnText: $t('exceptionPage.gohome'),
-      imgUrl
+      imgUrl,
     }"
   />
 </template>
 
 <script setup lang="ts">
-  import imgUrl from '@/assets/images/svg/500.svg'
-  defineOptions({ name: 'Exception500' })
+import imgUrl from '@/assets/images/svg/500.svg'
+defineOptions({ name: 'Exception500' })
 </script>

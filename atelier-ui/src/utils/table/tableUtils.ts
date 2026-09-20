@@ -77,7 +77,7 @@ function extractTotal(obj: Record<string, unknown>, records: unknown[], fields: 
 // 辅助函数：提取分页参数
 function extractPagination(
   obj: Record<string, unknown>,
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>,
 ): Pick<ApiResponse<unknown>, 'current' | 'size'> | undefined {
   const result: Partial<Pick<ApiResponse<unknown>, 'current' | 'size'>> = {}
   const sources = [obj, data ?? {}]
@@ -128,7 +128,7 @@ export const defaultResponseAdapter = <T>(response: unknown): ApiResponse<T> => 
       '[tableUtils] 无法识别的响应格式，支持的格式包括: 数组、包含' +
         recordFields.join('/') +
         '字段的对象、嵌套data对象。当前格式:',
-      response
+      response,
     )
     return { records: [], total: 0 }
   }
@@ -156,7 +156,7 @@ export const defaultResponseAdapter = <T>(response: unknown): ApiResponse<T> => 
     }
   }
 
-  if (!recordFields.some((field) => field in res) && records.length === 0) {
+  if (!recordFields.some(field => field in res) && records.length === 0) {
     console.warn('[tableUtils] 无法识别的响应格式')
     console.warn('支持的字段包括: ' + recordFields.join('、'), response)
     console.warn('扩展字段请到 utils/table/tableConfig 文件配置')
@@ -182,7 +182,7 @@ export const extractTableData = <T>(response: ApiResponse<T>): T[] => {
  */
 export const updatePaginationFromResponse = <T>(
   pagination: Api.Common.PaginationParams,
-  response: ApiResponse<T>
+  response: ApiResponse<T>,
 ): void => {
   pagination.total = response.total ?? pagination.total ?? 0
 
@@ -201,7 +201,7 @@ export const updatePaginationFromResponse = <T>(
  */
 export const createSmartDebounce = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  delay: number
+  delay: number,
 ): T & { cancel: () => void; flush: () => Promise<any> } => {
   let timeoutId: NodeJS.Timeout | null = null
   let lastArgs: Parameters<T> | null = null
@@ -266,21 +266,18 @@ export const createSmartDebounce = <T extends (...args: any[]) => Promise<any>>(
 /**
  * 生成错误处理函数
  */
-export const createErrorHandler = (
-  onError?: (error: TableError) => void,
-  enableLog: boolean = false
-) => {
+export const createErrorHandler = (onError?: (error: TableError) => void, enableLog: boolean = false) => {
   const logger = {
     error: (message: string, ...args: any[]) => {
       if (enableLog) console.error(`[useTable] ${message}`, ...args)
-    }
+    },
   }
 
   return (err: unknown, context: string): TableError => {
     const tableError: TableError = {
       code: 'UNKNOWN_ERROR',
       message: '未知错误',
-      details: err
+      details: err,
     }
 
     if (err instanceof Error) {

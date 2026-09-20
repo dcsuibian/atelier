@@ -26,9 +26,7 @@
             src="@/assets/images/user/avatar.webp"
           />
           <div class="w-[calc(100%-60px)] h-full">
-            <span class="block text-sm font-medium text-g-800 truncate">{{
-              userInfo.userName
-            }}</span>
+            <span class="block text-sm font-medium text-g-800 truncate">{{ userInfo.userName }}</span>
             <span class="block mt-0.5 text-xs text-g-500 truncate">{{ userInfo.email }}</span>
           </div>
         </div>
@@ -60,100 +58,100 @@
 </template>
 
 <script setup lang="ts">
-  import { useI18n } from 'vue-i18n'
-  import { useRouter } from 'vue-router'
-  import { ElMessageBox } from 'element-plus'
-  import { useUserStore } from '@/store/modules/user'
-  import { WEB_LINKS } from '@/utils/constants'
-  import { mittBus } from '@/utils/sys'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import { ElMessageBox } from 'element-plus'
+import { useUserStore } from '@/store/modules/user'
+import { WEB_LINKS } from '@/utils/constants'
+import { mittBus } from '@/utils/sys'
 
-  defineOptions({ name: 'ArtUserMenu' })
+defineOptions({ name: 'ArtUserMenu' })
 
-  const router = useRouter()
-  const { t } = useI18n()
-  const userStore = useUserStore()
+const router = useRouter()
+const { t } = useI18n()
+const userStore = useUserStore()
 
-  const { getUserInfo: userInfo } = storeToRefs(userStore)
-  const userMenuPopover = ref()
+const { getUserInfo: userInfo } = storeToRefs(userStore)
+const userMenuPopover = ref()
 
-  /**
-   * 页面跳转
-   * @param {string} path - 目标路径
-   */
-  const goPage = (path: string): void => {
-    router.push(path)
-  }
+/**
+ * 页面跳转
+ * @param {string} path - 目标路径
+ */
+const goPage = (path: string): void => {
+  router.push(path)
+}
 
-  /**
-   * 打开文档页面
-   */
-  const toDocs = (): void => {
-    window.open(WEB_LINKS.DOCS)
-  }
+/**
+ * 打开文档页面
+ */
+const toDocs = (): void => {
+  window.open(WEB_LINKS.DOCS)
+}
 
-  /**
-   * 打开 GitHub 页面
-   */
-  const toGithub = (): void => {
-    window.open(WEB_LINKS.GITHUB)
-  }
+/**
+ * 打开 GitHub 页面
+ */
+const toGithub = (): void => {
+  window.open(WEB_LINKS.GITHUB)
+}
 
-  /**
-   * 打开锁屏功能
-   */
-  const lockScreen = (): void => {
-    mittBus.emit('openLockScreen')
-  }
+/**
+ * 打开锁屏功能
+ */
+const lockScreen = (): void => {
+  mittBus.emit('openLockScreen')
+}
 
-  /**
-   * 用户登出确认
-   */
-  const loginOut = (): void => {
-    closeUserMenu()
-    setTimeout(() => {
-      ElMessageBox.confirm(t('common.logOutTips'), t('common.tips'), {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
-        customClass: 'login-out-dialog'
-      }).then(() => {
-        userStore.logOut()
-      })
-    }, 200)
-  }
+/**
+ * 用户登出确认
+ */
+const loginOut = (): void => {
+  closeUserMenu()
+  setTimeout(() => {
+    ElMessageBox.confirm(t('common.logOutTips'), t('common.tips'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      customClass: 'login-out-dialog',
+    }).then(() => {
+      userStore.logOut()
+    })
+  }, 200)
+}
 
-  /**
-   * 关闭用户菜单弹出层
-   */
-  const closeUserMenu = (): void => {
-    setTimeout(() => {
-      userMenuPopover.value.hide()
-    }, 100)
-  }
+/**
+ * 关闭用户菜单弹出层
+ */
+const closeUserMenu = (): void => {
+  setTimeout(() => {
+    userMenuPopover.value.hide()
+  }, 100)
+}
 </script>
 
 <style scoped>
-  @reference '@/assets/styles/core/tailwind.css';
+@reference '@/assets/styles/core/tailwind.css';
 
-  @layer components {
-    .btn-item {
-      @apply flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0;
+@layer components {
+  .btn-item {
+    @apply flex items-center p-2 mb-3 select-none rounded-md cursor-pointer last:mb-0;
 
-      span {
-        @apply text-sm;
-      }
+    span {
+      @apply text-sm;
+    }
 
-      .art-svg-icon {
-        @apply mr-2 text-base;
-      }
+    .art-svg-icon {
+      @apply mr-2 text-base;
+    }
 
-      &:hover {
-        background-color: var(--art-gray-200);
-      }
+    &:hover {
+      background-color: var(--art-gray-200);
     }
   }
+}
 
-  .log-out {
-    @apply py-1.5
+.log-out {
+  @apply py-1.5
     mt-5
     text-xs
     text-center
@@ -163,5 +161,5 @@
     transition-all
     duration-200
     hover:shadow-xl;
-  }
+}
 </style>

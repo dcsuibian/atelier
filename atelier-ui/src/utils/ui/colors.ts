@@ -102,12 +102,12 @@ export function hexToRgba(hex: string, opacity: number): RgbaResult {
   if (cleanHex.length === 3) {
     cleanHex = cleanHex
       .split('')
-      .map((char) => char.repeat(2))
+      .map(char => char.repeat(2))
       .join('')
   }
 
   // 解析 RGB 值
-  const [red, green, blue] = cleanHex.match(/\w\w/g)!.map((x) => parseInt(x, 16))
+  const [red, green, blue] = cleanHex.match(/\w\w/g)!.map(x => parseInt(x, 16))
 
   // 确保 opacity 在有效范围内
   const validOpacity = Math.max(0, Math.min(1, opacity))
@@ -136,7 +136,7 @@ export function hexToRgb(hexColor: string): number[] {
   if (hex.length === 3) {
     hex = hex
       .split('')
-      .map((char) => char.repeat(2))
+      .map(char => char.repeat(2))
       .join('')
   }
 
@@ -145,7 +145,7 @@ export function hexToRgb(hexColor: string): number[] {
     throw new Error('Invalid hex color format')
   }
 
-  return hexPairs.map((hexPair) => parseInt(hexPair, 16))
+  return hexPairs.map(hexPair => parseInt(hexPair, 16))
 }
 
 /**
@@ -208,7 +208,7 @@ export function getLightColor(color: string, level: number, isDark: boolean = fa
   }
 
   const rgb = hexToRgb(color)
-  const lightRgb = rgb.map((value) => Math.floor((255 - value) * level + value))
+  const lightRgb = rgb.map(value => Math.floor((255 - value) * level + value))
 
   return rgbToHex(lightRgb[0], lightRgb[1], lightRgb[2])
 }
@@ -226,7 +226,7 @@ export function getDarkColor(color: string, level: number): string {
   }
 
   const rgb = hexToRgb(color)
-  const darkRgb = rgb.map((value) => Math.floor(value * (1 - level)))
+  const darkRgb = rgb.map(value => Math.floor(value * (1 - level)))
 
   return rgbToHex(darkRgb[0], darkRgb[1], darkRgb[2])
 }
@@ -240,17 +240,11 @@ export function handleElementThemeColor(theme: string, isDark: boolean = false):
   document.documentElement.style.setProperty('--el-color-primary', theme)
 
   for (let i = 1; i <= 9; i++) {
-    document.documentElement.style.setProperty(
-      `--el-color-primary-light-${i}`,
-      getLightColor(theme, i / 10, isDark)
-    )
+    document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, getLightColor(theme, i / 10, isDark))
   }
 
   for (let i = 1; i <= 9; i++) {
-    document.documentElement.style.setProperty(
-      `--el-color-primary-dark-${i}`,
-      getDarkColor(theme, i / 10)
-    )
+    document.documentElement.style.setProperty(`--el-color-primary-dark-${i}`, getDarkColor(theme, i / 10))
   }
 }
 

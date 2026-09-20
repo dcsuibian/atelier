@@ -66,15 +66,7 @@ export const useChartOps = (): ChartThemeConfig => ({
   /** 主题颜色 */
   themeColor: getCssVar('--el-color-primary-light-1'),
   /** 颜色组 */
-  colors: [
-    getCssVar('--el-color-primary-light-1'),
-    '#4ABEFF',
-    '#EDF2FF',
-    '#14DEBA',
-    '#FFAF20',
-    '#FA8A6C',
-    '#FFAF20'
-  ]
+  colors: [getCssVar('--el-color-primary-light-1'), '#4ABEFF', '#EDF2FF', '#14DEBA', '#FFAF20', '#FA8A6C', '#FFAF20'],
 })
 
 // 常量定义
@@ -137,7 +129,7 @@ export function useChart(options: UseChartOptions = {}) {
     nextTick(requestAnimationResize)
 
     // 使用延迟时间，确保图表正确适应变化
-    delays.forEach((delay) => {
+    delays.forEach(delay => {
       setTimeout(requestAnimationResize, delay)
     })
   }
@@ -194,7 +186,7 @@ export function useChart(options: UseChartOptions = {}) {
   const createLineStyle = (color: string, width = 1, type?: 'solid' | 'dashed') => ({
     color,
     width,
-    ...(type && { type })
+    ...(type && { type }),
   })
 
   // 缓存样式配置以减少重复计算
@@ -202,7 +194,7 @@ export function useChart(options: UseChartOptions = {}) {
     axisLine: null as any,
     splitLine: null as any,
     axisLabel: null as any,
-    lastDarkValue: isDark.value
+    lastDarkValue: isDark.value,
   }
 
   const clearStyleCache = () => {
@@ -220,7 +212,7 @@ export function useChart(options: UseChartOptions = {}) {
     if (!styleCache.axisLine) {
       styleCache.axisLine = {
         show,
-        lineStyle: createLineStyle(isDark.value ? '#444' : '#EDEDED')
+        lineStyle: createLineStyle(isDark.value ? '#444' : '#EDEDED'),
       }
     }
     return styleCache.axisLine
@@ -234,7 +226,7 @@ export function useChart(options: UseChartOptions = {}) {
     if (!styleCache.splitLine) {
       styleCache.splitLine = {
         show,
-        lineStyle: createLineStyle(isDark.value ? '#444' : '#EDEDED', 1, 'dashed')
+        lineStyle: createLineStyle(isDark.value ? '#444' : '#EDEDED', 1, 'dashed'),
       }
     }
     return styleCache.splitLine
@@ -250,7 +242,7 @@ export function useChart(options: UseChartOptions = {}) {
       styleCache.axisLabel = {
         show,
         color: fontColor,
-        fontSize
+        fontSize,
       }
     }
     return styleCache.axisLabel
@@ -258,14 +250,14 @@ export function useChart(options: UseChartOptions = {}) {
 
   // 坐标轴刻度样式（静态配置，无需缓存）
   const getAxisTickStyle = () => ({
-    show: false
+    show: false,
   })
 
   // 获取动画配置
   const getAnimationConfig = (animationDelay: number = 50, animationDuration: number = 1500) => ({
     animationDelay: (idx: number) => idx * animationDelay + 200,
     animationDuration: (idx: number) => animationDuration - idx * 50,
-    animationEasing: 'quarticOut' as const
+    animationEasing: 'quarticOut' as const,
   })
 
   // 获取统一的 tooltip 配置
@@ -275,24 +267,21 @@ export function useChart(options: UseChartOptions = {}) {
     borderColor: isDark.value ? '#333' : '#ddd',
     borderWidth: 1,
     textStyle: {
-      color: isDark.value ? '#fff' : '#333'
+      color: isDark.value ? '#fff' : '#333',
     },
-    ...customOptions
+    ...customOptions,
   })
 
   // 获取统一的图例配置
-  const getLegendStyle = (
-    position: 'bottom' | 'top' | 'left' | 'right' = 'bottom',
-    customOptions: any = {}
-  ) => {
+  const getLegendStyle = (position: 'bottom' | 'top' | 'left' | 'right' = 'bottom', customOptions: any = {}) => {
     const baseConfig = {
       textStyle: {
-        color: isDark.value ? '#fff' : '#333'
+        color: isDark.value ? '#fff' : '#333',
       },
       itemWidth: 12,
       itemHeight: 12,
       itemGap: 20,
-      ...customOptions
+      ...customOptions,
     }
 
     // 根据位置设置不同的配置
@@ -303,7 +292,7 @@ export function useChart(options: UseChartOptions = {}) {
           bottom: 0,
           left: 'center',
           orient: 'horizontal',
-          icon: 'roundRect'
+          icon: 'roundRect',
         }
       case 'top':
         return {
@@ -311,7 +300,7 @@ export function useChart(options: UseChartOptions = {}) {
           top: 0,
           left: 'center',
           orient: 'horizontal',
-          icon: 'roundRect'
+          icon: 'roundRect',
         }
       case 'left':
         return {
@@ -319,7 +308,7 @@ export function useChart(options: UseChartOptions = {}) {
           left: 0,
           top: 'center',
           orient: 'vertical',
-          icon: 'roundRect'
+          icon: 'roundRect',
         }
       case 'right':
         return {
@@ -327,7 +316,7 @@ export function useChart(options: UseChartOptions = {}) {
           right: 0,
           top: 'center',
           orient: 'vertical',
-          icon: 'roundRect'
+          icon: 'roundRect',
         }
       default:
         return baseConfig
@@ -338,7 +327,7 @@ export function useChart(options: UseChartOptions = {}) {
   const getGridWithLegend = (
     showLegend: boolean,
     legendPosition: 'bottom' | 'top' | 'left' | 'right' = 'bottom',
-    baseGrid: any = {}
+    baseGrid: any = {},
   ) => {
     const defaultGrid = {
       top: 15,
@@ -346,7 +335,7 @@ export function useChart(options: UseChartOptions = {}) {
       bottom: 8,
       left: 0,
       containLabel: true,
-      ...baseGrid
+      ...baseGrid,
     }
 
     if (!showLegend) {
@@ -358,22 +347,22 @@ export function useChart(options: UseChartOptions = {}) {
       case 'bottom':
         return {
           ...defaultGrid,
-          bottom: 40
+          bottom: 40,
         }
       case 'top':
         return {
           ...defaultGrid,
-          top: 40
+          top: 40,
         }
       case 'left':
         return {
           ...defaultGrid,
-          left: 120
+          left: 120,
         }
       case 'right':
         return {
           ...defaultGrid,
-          right: 120
+          right: 120,
         }
       default:
         return defaultGrid
@@ -385,8 +374,8 @@ export function useChart(options: UseChartOptions = {}) {
     if (intersectionObserver || !chartRef.value) return
 
     intersectionObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting && pendingOptions && !isDestroyed) {
             // 使用 requestAnimationFrame 确保在下一帧初始化图表
             requestAnimationFrame(() => {
@@ -399,7 +388,7 @@ export function useChart(options: UseChartOptions = {}) {
 
                   // 触发自定义事件，让组件处理动画逻辑
                   const event = new CustomEvent('chartVisible', {
-                    detail: { options: pendingOptions }
+                    detail: { options: pendingOptions },
                   })
                   entry.target.dispatchEvent(event)
 
@@ -413,7 +402,7 @@ export function useChart(options: UseChartOptions = {}) {
           }
         })
       },
-      { threshold }
+      { threshold },
     )
 
     intersectionObserver.observe(chartRef.value)
@@ -471,10 +460,7 @@ export function useChart(options: UseChartOptions = {}) {
       emptyStateDiv.innerHTML = `<span>暂无数据</span>`
 
       // 确保父容器有相对定位
-      if (
-        chartRef.value.style.position !== 'relative' &&
-        chartRef.value.style.position !== 'absolute'
-      ) {
+      if (chartRef.value.style.position !== 'relative' && chartRef.value.style.position !== 'absolute') {
         chartRef.value.style.position = 'relative'
       }
 
@@ -492,7 +478,7 @@ export function useChart(options: UseChartOptions = {}) {
       if (emptyStateDiv) {
         emptyStateDiv.style.color = isDark.value ? '#666' : '#999'
       }
-    }
+    },
   }
 
   // 初始化图表
@@ -618,7 +604,7 @@ export function useChart(options: UseChartOptions = {}) {
     getTooltipStyle,
     getLegendStyle,
     useChartOps,
-    getGridWithLegend
+    getGridWithLegend,
   }
 }
 
@@ -639,14 +625,7 @@ interface UseChartComponentOptions<T extends BaseChartProps> {
 }
 
 export function useChartComponent<T extends BaseChartProps>(options: UseChartComponentOptions<T>) {
-  const {
-    props,
-    generateOptions,
-    checkEmpty,
-    watchSources = [],
-    onVisible,
-    chartOptions = {}
-  } = options
+  const { props, generateOptions, checkEmpty, watchSources = [], onVisible, chartOptions = {} } = options
 
   const chart = useChart(chartOptions)
   const { chartRef, initChart, isDark, emptyStateManager } = chart
@@ -705,7 +684,7 @@ export function useChartComponent<T extends BaseChartProps>(options: UseChartCom
 
   // 清理所有监听器
   const cleanupWatchers = () => {
-    stopHandles.forEach((stop) => stop())
+    stopHandles.forEach(stop => stop())
     stopHandles.length = 0
   }
 
@@ -740,6 +719,6 @@ export function useChartComponent<T extends BaseChartProps>(options: UseChartCom
     ...chart,
     isEmpty,
     updateChart,
-    handleChartVisible
+    handleChartVisible,
   }
 }

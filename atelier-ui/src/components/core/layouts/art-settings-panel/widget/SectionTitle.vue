@@ -8,10 +8,10 @@
 </template>
 
 <script setup lang="ts">
-  interface Props {
-    title: string
-    style?: Record<string, any>
-  }
+interface Props {
+  title: string
+  style?: Record<string, any>
+}
 
-  defineProps<Props>()
+defineProps<Props>()
 </script>

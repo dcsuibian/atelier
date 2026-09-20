@@ -21,18 +21,14 @@ import { ref, reactive, computed, onMounted, onUnmounted, nextTick, readonly } f
 import { useWindowSize } from '@vueuse/core'
 import { useTableColumns } from './useTableColumns'
 import type { ColumnOption } from '@/types/component'
-import {
-  TableCache,
-  CacheInvalidationStrategy,
-  type ApiResponse
-} from '../../utils/table/tableCache'
+import { TableCache, CacheInvalidationStrategy, type ApiResponse } from '../../utils/table/tableCache'
 import {
   type TableError,
   defaultResponseAdapter,
   extractTableData,
   updatePaginationFromResponse,
   createSmartDebounce,
-  createErrorHandler
+  createErrorHandler,
 } from '../../utils/table/tableUtils'
 import { tableConfig } from '../../utils/table/tableConfig'
 
@@ -46,7 +42,7 @@ export interface UseTableConfig<
   TApiFn extends (params: any) => Promise<any> = (params: any) => Promise<any>,
   TRecord = InferRecordType<InferApiResponse<TApiFn>>,
   TParams = InferApiParams<TApiFn>,
-  TResponse = InferApiResponse<TApiFn>
+  TResponse = InferApiResponse<TApiFn>,
 > {
   // 核心配置
   core: {
@@ -112,9 +108,7 @@ export interface UseTableConfig<
   }
 }
 
-export function useTable<TApiFn extends (params: any) => Promise<any>>(
-  config: UseTableConfig<TApiFn>
-) {
+export function useTable<TApiFn extends (params: any) => Promise<any>>(config: UseTableConfig<TApiFn>) {
   return useTableImpl(config)
 }
 
@@ -129,9 +123,7 @@ export function useTable<TApiFn extends (params: any) => Promise<any>>(
  * - 错误处理
  * - 列配置管理
  */
-function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
-  config: UseTableConfig<TApiFn>
-) {
+function useTableImpl<TApiFn extends (params: any) => Promise<any>>(config: UseTableConfig<TApiFn>) {
   type TRecord = InferRecordType<InferApiResponse<TApiFn>>
   type TParams = InferApiParams<TApiFn>
   const {
@@ -141,17 +133,12 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
       excludeParams = [],
       immediate = true,
       columnsFactory,
-      paginationKey
+      paginationKey,
     },
     transform: { dataTransformer, responseAdapter = defaultResponseAdapter } = {},
-    performance: {
-      enableCache = false,
-      cacheTime = 5 * 60 * 1000,
-      debounceTime = 300,
-      maxCacheSize = 50
-    } = {},
+    performance: { enableCache = false, cacheTime = 5 * 60 * 1000, debounceTime = 300, maxCacheSize = 50 } = {},
     hooks: { onSuccess, onError, onCacheHit, resetFormCallback } = {},
-    debug: { enableLog = false } = {}
+    debug: { enableLog = false } = {},
   } = config
 
   // 分页字段名配置：优先使用传入的配置，否则使用全局配置
@@ -177,7 +164,7 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
       if (enableLog) {
         console.error(`[useTable] ${message}`, ...args)
       }
-    }
+    },
   }
 
   // 缓存实例
@@ -205,24 +192,24 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
     Object.assign(
       {
         [pageKey]: 1,
-        [sizeKey]: 10
+        [sizeKey]: 10,
       },
-      apiParams || {}
-    ) as TParams
+      apiParams || {},
+    ) as TParams,
   )
 
   // 分页配置
   const pagination = reactive<Api.Common.PaginationParams>({
     current: ((searchParams as Record<string, unknown>)[pageKey] as number) || 1,
     size: ((searchParams as Record<string, unknown>)[sizeKey] as number) || 10,
-    total: 0
+    total: 0,
   })
 
   // 移动端分页 (响应式)
   const { width } = useWindowSize()
   const mobilePagination = computed(() => ({
     ...pagination,
-    small: width.value < 768
+    small: width.value < 768,
   }))
 
   // 列配置
@@ -276,10 +263,7 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
   }
 
   // 获取数据的核心方法
-  const fetchData = async (
-    params?: Partial<TParams>,
-    useCache = enableCache
-  ): Promise<ApiResponse<TRecord>> => {
+  const fetchData = async (params?: Partial<TParams>, useCache = enableCache): Promise<ApiResponse<TRecord>> => {
     // 取消上一个请求
     if (abortController) {
       abortController.abort()
@@ -299,15 +283,15 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
         searchParams,
         {
           [pageKey]: pagination.current,
-          [sizeKey]: pagination.size
+          [sizeKey]: pagination.size,
         },
-        params || {}
+        params || {},
       ) as TParams
 
       // 剔除不需要的参数
       if (excludeParams.length > 0) {
         const filteredParams = { ...requestParams }
-        excludeParams.forEach((key) => {
+        excludeParams.forEach(key => {
           delete (filteredParams as Record<string, unknown>)[key]
         })
         requestParams = filteredParams as TParams
@@ -448,11 +432,11 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
     const paramsRecord = searchParams as Record<string, unknown>
     const defaultPagination = {
       [pageKey]: 1,
-      [sizeKey]: (paramsRecord[sizeKey] as number) || 10
+      [sizeKey]: (paramsRecord[sizeKey] as number) || 10,
     }
 
     // 清空所有搜索参数
-    Object.keys(searchParams).forEach((key) => {
+    Object.keys(searchParams).forEach(key => {
       delete paramsRecord[key]
     })
 
@@ -725,8 +709,8 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
       /** 获取所有列配置 */
       getAllColumns: columnConfig.getAllColumns,
       /** 重置所有列配置到默认状态 */
-      resetColumns: columnConfig.resetColumns
-    })
+      resetColumns: columnConfig.resetColumns,
+    }),
   }
 }
 

@@ -32,8 +32,7 @@ export function useHeaderBar() {
   const headerBarConfigRef = computed<HeaderBarFeatureConfig>(() => headerBarConfig)
 
   // 从store中获取相关状态
-  const { showMenuButton, showFastEnter, showRefreshButton, showCrumbs, showLanguage } =
-    storeToRefs(settingStore)
+  const { showMenuButton, showFastEnter, showRefreshButton, showCrumbs, showLanguage } = storeToRefs(settingStore)
 
   /**
    * 检查特定功能是否启用
@@ -138,7 +137,7 @@ export function useHeaderBar() {
    */
   const getEnabledFeatures = (): (keyof HeaderBarFeatureConfig)[] => {
     return Object.keys(headerBarConfigRef.value).filter(
-      (key) => headerBarConfigRef.value[key as keyof HeaderBarFeatureConfig]?.enabled
+      key => headerBarConfigRef.value[key as keyof HeaderBarFeatureConfig]?.enabled,
     ) as (keyof HeaderBarFeatureConfig)[]
   }
 
@@ -148,7 +147,7 @@ export function useHeaderBar() {
    */
   const getDisabledFeatures = (): (keyof HeaderBarFeatureConfig)[] => {
     return Object.keys(headerBarConfigRef.value).filter(
-      (key) => !headerBarConfigRef.value[key as keyof HeaderBarFeatureConfig]?.enabled
+      key => !headerBarConfigRef.value[key as keyof HeaderBarFeatureConfig]?.enabled,
     ) as (keyof HeaderBarFeatureConfig)[]
   }
 
@@ -196,6 +195,6 @@ export function useHeaderBar() {
     getEnabledFeatures, // 获取所有启用的功能
     getDisabledFeatures, // 获取所有禁用的功能
     getActiveFeatures, // 获取所有启用的功能（别名）
-    getInactiveFeatures // 获取所有禁用的功能（别名）
+    getInactiveFeatures, // 获取所有禁用的功能（别名）
   }
 }

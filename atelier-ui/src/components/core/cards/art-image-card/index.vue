@@ -15,19 +15,13 @@
             </div>
           </template>
         </ElImage>
-        <div
-          class="absolute right-3.5 bottom-3.5 py-1 px-2 text-xs bg-g-200 rounded"
-          v-if="props.readTime"
-        >
+        <div class="absolute right-3.5 bottom-3.5 py-1 px-2 text-xs bg-g-200 rounded" v-if="props.readTime">
           {{ props.readTime }} 阅读
         </div>
       </div>
 
       <div class="p-4">
-        <div
-          class="inline-block py-0.5 px-2 mb-2 text-xs bg-g-300/70 rounded"
-          v-if="props.category"
-        >
+        <div class="inline-block py-0.5 px-2 mb-2 text-xs bg-g-300/70 rounded" v-if="props.category">
           {{ props.category }}
         </div>
         <p class="m-0 mb-3 text-base font-medium">{{ props.title }}</p>
@@ -48,42 +42,42 @@
 </template>
 
 <script setup lang="ts">
-  import { Picture, View, ChatLineRound } from '@element-plus/icons-vue'
+import { Picture, View, ChatLineRound } from '@element-plus/icons-vue'
 
-  defineOptions({ name: 'ArtImageCard' })
+defineOptions({ name: 'ArtImageCard' })
 
-  interface Props {
-    /** 图片地址 */
-    imageUrl: string
-    /** 标题 */
-    title: string
-    /** 分类 */
-    category?: string
-    /** 阅读时间 */
-    readTime?: string
-    /** 浏览量 */
-    views?: number
-    /** 评论数 */
-    comments?: number
-    /** 日期 */
-    date?: string
-  }
+interface Props {
+  /** 图片地址 */
+  imageUrl: string
+  /** 标题 */
+  title: string
+  /** 分类 */
+  category?: string
+  /** 阅读时间 */
+  readTime?: string
+  /** 浏览量 */
+  views?: number
+  /** 评论数 */
+  comments?: number
+  /** 日期 */
+  date?: string
+}
 
-  const props = withDefaults(defineProps<Props>(), {
-    imageUrl: '',
-    title: '',
-    category: '',
-    readTime: '',
-    views: 0,
-    comments: 0,
-    date: ''
-  })
+const props = withDefaults(defineProps<Props>(), {
+  imageUrl: '',
+  title: '',
+  category: '',
+  readTime: '',
+  views: 0,
+  comments: 0,
+  date: '',
+})
 
-  const emit = defineEmits<{
-    (e: 'click', card: Props): void
-  }>()
+const emit = defineEmits<{
+  (e: 'click', card: Props): void
+}>()
 
-  const handleClick = () => {
-    emit('click', props)
-  }
+const handleClick = () => {
+  emit('click', props)
+}
 </script>

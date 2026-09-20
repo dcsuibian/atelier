@@ -1,10 +1,5 @@
 <template>
-  <ArtResultPage
-    type="fail"
-    title="提交失败"
-    message="请核对并修改以下信息后，再重新提交。"
-    iconCode="ri:close-fill"
-  >
+  <ArtResultPage type="fail" title="提交失败" message="请核对并修改以下信息后，再重新提交。" iconCode="ri:close-fill">
     <template #content>
       <p>您提交的内容有如下错误：</p>
       <p>
@@ -24,5 +19,5 @@
 </template>
 
 <script setup lang="ts">
-  defineOptions({ name: 'ResultFail' })
+defineOptions({ name: 'ResultFail' })
 </script>

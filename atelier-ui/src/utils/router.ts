@@ -22,7 +22,7 @@ export const configureNProgress = () => {
     easing: 'ease',
     speed: 600,
     showSpinner: false,
-    parent: 'body'
+    parent: 'body',
   })
 }
 

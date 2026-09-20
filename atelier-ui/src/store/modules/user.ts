@@ -171,7 +171,7 @@ export const useUserStore = defineStore(
       const redirect = currentRoute.path !== '/login' ? currentRoute.fullPath : undefined
       router.push({
         name: 'Login',
-        query: redirect ? { redirect } : undefined
+        query: redirect ? { redirect } : undefined,
       })
     }
 
@@ -223,13 +223,13 @@ export const useUserStore = defineStore(
       setLockPassword,
       setToken,
       logOut,
-      checkAndClearWorktabs
+      checkAndClearWorktabs,
     }
   },
   {
     persist: {
       key: 'user',
-      storage: localStorage
-    }
-  }
+      storage: localStorage,
+    },
+  },
 )

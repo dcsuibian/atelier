@@ -42,7 +42,7 @@ import type { ColumnOption } from '@/types/component'
 const SPECIAL_COLUMNS: Record<string, { prop: string; label: string }> = {
   selection: { prop: '__selection__', label: $t('table.column.selection') },
   expand: { prop: '__expand__', label: $t('table.column.expand') },
-  index: { prop: '__index__', label: $t('table.column.index') }
+  index: { prop: '__index__', label: $t('table.column.index') },
 }
 
 /**
@@ -68,7 +68,7 @@ export const getColumnVisibility = <T>(col: ColumnOption<T>): boolean => {
  * 获取列的检查状态
  */
 export const getColumnChecks = <T>(columns: ColumnOption<T>[]) =>
-  columns.map((col) => {
+  columns.map(col => {
     const special = col.type && SPECIAL_COLUMNS[col.type]
     const visibility = getColumnVisibility(col)
 
@@ -107,7 +107,7 @@ export interface DynamicColumnConfig<T = any> {
    */
   updateColumn: (
     prop: string | Array<{ prop: string; updates: Partial<ColumnOption<T>> }>,
-    updates?: Partial<ColumnOption<T>>
+    updates?: Partial<ColumnOption<T>>,
   ) => void
   /**
    * 批量更新列（兼容旧版本，推荐使用 updateColumn 的数组模式）
@@ -139,7 +139,7 @@ export interface DynamicColumnConfig<T = any> {
 }
 
 export function useTableColumns<T = any>(
-  columnsFactory: () => ColumnOption<T>[]
+  columnsFactory: () => ColumnOption<T>[],
 ): {
   columns: any
   columnChecks: any
@@ -150,30 +150,28 @@ export function useTableColumns<T = any>(
   // 当 dynamicColumns 变动时，重新生成 columnChecks 且保留已存在的显示状态
   watch(
     dynamicColumns,
-    (newCols) => {
-      const visibilityMap = new Map(
-        columnChecks.value.map((c) => [getColumnKey(c), getColumnVisibility(c)])
-      )
-      const newChecks = getColumnChecks(newCols).map((c) => {
+    newCols => {
+      const visibilityMap = new Map(columnChecks.value.map(c => [getColumnKey(c), getColumnVisibility(c)]))
+      const newChecks = getColumnChecks(newCols).map(c => {
         const key = getColumnKey(c)
         const visibility = visibilityMap.has(key) ? visibilityMap.get(key) : getColumnVisibility(c)
         return {
           ...c,
           checked: visibility,
-          visible: visibility
+          visible: visibility,
         }
       })
       columnChecks.value = newChecks
     },
-    { deep: true }
+    { deep: true },
   )
 
   // 当前显示列（基于 columnChecks 的 checked 或 visible）
   const columns = computed(() => {
-    const colMap = new Map(dynamicColumns.value.map((c) => [getColumnKey(c), c]))
+    const colMap = new Map(dynamicColumns.value.map(c => [getColumnKey(c), c]))
     return columnChecks.value
-      .filter((c) => getColumnVisibility(c))
-      .map((c) => colMap.get(getColumnKey(c)))
+      .filter(c => getColumnVisibility(c))
+      .map(c => colMap.get(getColumnKey(c)))
       .filter(Boolean) as ColumnOption<T>[]
   })
 
@@ -192,11 +190,10 @@ export function useTableColumns<T = any>(
      * 新增列（支持单个或批量）
      */
     addColumn: (column: ColumnOption<T> | ColumnOption<T>[], index?: number) =>
-      setDynamicColumns((cols) => {
+      setDynamicColumns(cols => {
         const next = [...cols]
         const columnsToAdd = Array.isArray(column) ? column : [column]
-        const insertIndex =
-          typeof index === 'number' && index >= 0 && index <= next.length ? index : next.length
+        const insertIndex = typeof index === 'number' && index >= 0 && index <= next.length ? index : next.length
 
         // 批量插入
         next.splice(insertIndex, 0, ...columnsToAdd)
@@ -207,9 +204,9 @@ export function useTableColumns<T = any>(
      * 删除列（支持单个或批量）
      */
     removeColumn: (prop: string | string[]) =>
-      setDynamicColumns((cols) => {
+      setDynamicColumns(cols => {
         const propsToRemove = Array.isArray(prop) ? prop : [prop]
-        return cols.filter((c) => !propsToRemove.includes(getColumnKey(c)))
+        return cols.filter(c => !propsToRemove.includes(getColumnKey(c)))
       }),
 
     /**
@@ -217,13 +214,13 @@ export function useTableColumns<T = any>(
      */
     updateColumn: (
       prop: string | Array<{ prop: string; updates: Partial<ColumnOption<T>> }>,
-      updates?: Partial<ColumnOption<T>>
+      updates?: Partial<ColumnOption<T>>,
     ) => {
       // 批量模式：prop 是数组
       if (Array.isArray(prop)) {
-        setDynamicColumns((cols) => {
-          const map = new Map(prop.map((u) => [u.prop, u.updates]))
-          return cols.map((c) => {
+        setDynamicColumns(cols => {
+          const map = new Map(prop.map(u => [u.prop, u.updates]))
+          return cols.map(c => {
             const key = getColumnKey(c)
             const upd = map.get(key)
             return upd ? { ...c, ...upd } : c
@@ -232,9 +229,7 @@ export function useTableColumns<T = any>(
       }
       // 单个模式：prop 是字符串
       else if (updates) {
-        setDynamicColumns((cols) =>
-          cols.map((c) => (getColumnKey(c) === prop ? { ...c, ...updates } : c))
-        )
+        setDynamicColumns(cols => cols.map(c => (getColumnKey(c) === prop ? { ...c, ...updates } : c)))
       }
     },
 
@@ -245,8 +240,8 @@ export function useTableColumns<T = any>(
       const propsToToggle = Array.isArray(prop) ? prop : [prop]
       const next = [...columnChecks.value]
 
-      propsToToggle.forEach((p) => {
-        const i = next.findIndex((c) => getColumnKey(c) === p)
+      propsToToggle.forEach(p => {
+        const i = next.findIndex(c => getColumnKey(c) === p)
         if (i > -1) {
           const currentVisibility = getColumnVisibility(next[i])
           const newVisibility = visible ?? !currentVisibility
@@ -269,10 +264,10 @@ export function useTableColumns<T = any>(
      * 批量更新列（兼容旧版本）
      * @deprecated 推荐使用 updateColumn 的数组模式
      */
-    batchUpdateColumns: (updates) =>
-      setDynamicColumns((cols) => {
-        const map = new Map(updates.map((u) => [u.prop, u.updates]))
-        return cols.map((c) => {
+    batchUpdateColumns: updates =>
+      setDynamicColumns(cols => {
+        const map = new Map(updates.map(u => [u.prop, u.updates]))
+        return cols.map(c => {
           const key = getColumnKey(c)
           const upd = map.get(key)
           return upd ? { ...c, ...upd } : c
@@ -283,7 +278,7 @@ export function useTableColumns<T = any>(
      * 重新排序列
      */
     reorderColumns: (fromIndex: number, toIndex: number) =>
-      setDynamicColumns((cols) => {
+      setDynamicColumns(cols => {
         if (
           fromIndex < 0 ||
           fromIndex >= cols.length ||
@@ -302,11 +297,11 @@ export function useTableColumns<T = any>(
     /**
      * 获取列配置
      */
-    getColumnConfig: (prop: string) => dynamicColumns.value.find((c) => getColumnKey(c) === prop),
+    getColumnConfig: (prop: string) => dynamicColumns.value.find(c => getColumnKey(c) === prop),
 
     /**
      * 获取所有列配置
      */
-    getAllColumns: () => [...dynamicColumns.value]
+    getAllColumns: () => [...dynamicColumns.value],
   }
 }

@@ -36,7 +36,7 @@ export class RouteTransformer {
     // 基础路由配置
     const converted: ConvertedRoute = {
       ...routeConfig,
-      component: undefined
+      component: undefined,
     }
 
     // 处理不同类型的路由
@@ -50,7 +50,7 @@ export class RouteTransformer {
 
     // 递归处理子路由
     if (children?.length) {
-      converted.children = children.map((child) => this.transform(child, depth + 1))
+      converted.children = children.map(child => this.transform(child, depth + 1))
     }
 
     return converted
@@ -66,11 +66,7 @@ export class RouteTransformer {
   /**
    * 处理 iframe 类型路由
    */
-  private handleIframeRoute(
-    targetRoute: ConvertedRoute,
-    sourceRoute: AppRouteRecord,
-    depth: number
-  ): void {
+  private handleIframeRoute(targetRoute: ConvertedRoute, sourceRoute: AppRouteRecord, depth: number): void {
     if (depth === 0) {
       // 顶级 iframe：用 Layout 包裹
       targetRoute.component = this.componentLoader.loadLayout()
@@ -80,8 +76,8 @@ export class RouteTransformer {
       targetRoute.children = [
         {
           ...sourceRoute,
-          component: this.componentLoader.loadIframe()
-        } as ConvertedRoute
+          component: this.componentLoader.loadIframe(),
+        } as ConvertedRoute,
       ]
     } else {
       // 非顶级（嵌套）iframe：直接使用 Iframe.vue
@@ -95,11 +91,7 @@ export class RouteTransformer {
   /**
    * 处理一级菜单路由
    */
-  private handleFirstLevelRoute(
-    converted: ConvertedRoute,
-    route: AppRouteRecord,
-    component: string | undefined
-  ): void {
+  private handleFirstLevelRoute(converted: ConvertedRoute, route: AppRouteRecord, component: string | undefined): void {
     converted.component = this.componentLoader.loadLayout()
     converted.path = this.extractFirstSegment(route.path || '')
     converted.name = ''
@@ -108,8 +100,8 @@ export class RouteTransformer {
     converted.children = [
       {
         ...route,
-        component: component ? this.componentLoader.load(component) : undefined
-      } as ConvertedRoute
+        component: component ? this.componentLoader.load(component) : undefined,
+      } as ConvertedRoute,
     ]
   }
 

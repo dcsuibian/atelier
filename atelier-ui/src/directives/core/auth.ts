@@ -33,7 +33,7 @@
  */
 
 import { router } from '@/router'
-import { App, Directive, DirectiveBinding } from 'vue'
+import type { App, Directive, DirectiveBinding } from 'vue'
 
 export type AuthDirective = Directive<HTMLElement, string>
 

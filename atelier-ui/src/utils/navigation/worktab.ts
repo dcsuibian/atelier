@@ -22,7 +22,7 @@
  * @author Art Design Pro Team
  */
 import { useWorktabStore } from '@/store/modules/worktab'
-import { RouteLocationNormalized } from 'vue-router'
+import type { RouteLocationNormalized } from 'vue-router'
 import { isIframe } from './route'
 import { useSettingStore } from '@/store/modules/setting'
 import { IframeRouteManager } from '@/router/core'

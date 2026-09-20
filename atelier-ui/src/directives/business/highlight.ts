@@ -41,7 +41,7 @@
  * @author Art Design Pro Team
  */
 
-import { App, Directive } from 'vue'
+import type { App, Directive } from 'vue'
 import hljs from 'highlight.js'
 
 export type HighlightDirective = Directive<HTMLElement>

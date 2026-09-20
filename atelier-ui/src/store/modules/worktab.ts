@@ -40,8 +40,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { router } from '@/router'
-import { LocationQueryRaw, Router } from 'vue-router'
-import { WorkTab } from '@/types'
+import type { LocationQueryRaw, Router } from 'vue-router'
+import type { WorkTab } from '@/types'
 import { useCommon } from '@/hooks/core/useCommon'
 
 interface WorktabState {

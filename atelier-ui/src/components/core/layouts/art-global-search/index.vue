@@ -95,7 +95,7 @@
 
 <script lang="ts" setup>
   import { useUserStore } from '@/store/modules/user'
-  import { AppRouteRecord } from '@/types/router'
+  import type { AppRouteRecord } from '@/types/router'
   import { Search } from '@element-plus/icons-vue'
   import { mittBus } from '@/utils/sys'
   import { useMenuStore } from '@/store/modules/menu'

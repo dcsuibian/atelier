@@ -1,0 +1,19 @@
+# 系统
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+
+# 环境
+.env
+.env.*
+
+# AI
+.claude/
+vibe/
+
+# 防御：子项目命令在错误目录（如根目录）误生成的产物
+node_modules/
+dist/
+target/

@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: atelier-engine
+  profiles:
+    active: development
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: atelier

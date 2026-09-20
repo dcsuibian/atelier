@@ -43,5 +43,5 @@ __screenshots__/
 .cursorrules
 
 # Auto-generated files
-src/types/import/auto-imports.d.ts
-src/types/import/components.d.ts
+auto-imports.d.ts
+components.d.ts

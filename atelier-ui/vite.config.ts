@@ -72,12 +72,7 @@ export default ({ mode }: { mode: string }) => {
       AutoImport({
         imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
         dts: 'src/types/import/auto-imports.d.ts',
-        resolvers: [ElementPlusResolver()],
-        eslintrc: {
-          enabled: true,
-          filepath: './.auto-import.json',
-          globalsPropValue: true
-        }
+        resolvers: [ElementPlusResolver()]
       }),
       // 自动按需导入组件
       Components({

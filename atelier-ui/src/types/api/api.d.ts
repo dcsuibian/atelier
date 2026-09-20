@@ -18,7 +18,6 @@
  *
  * ## 注意事项
  *
- * - 在 .vue 文件使用需要在 eslint.config.mjs 中配置 globals: { Api: 'readonly' }
  * - 使用全局命名空间，无需导入即可使用
  *
  * ## 使用方式

@@ -6,8 +6,7 @@
     "dev": "vite --open",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
-    "lint:prettier": "prettier --write \"**/*.{js,cjs,ts,json,tsx,css,less,scss,vue,html,md}\"",
-    "clean:dev": "tsx scripts/clean-dev.ts"
+    "lint:prettier": "prettier --write \"**/*.{js,cjs,ts,json,tsx,css,less,scss,vue,html,md}\""
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
@@ -45,7 +44,6 @@
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "^1.81.0",
     "terser": "^5.36.0",
-    "tsx": "^4.20.3",
     "typescript": "~5.6.3",
     "unplugin-auto-import": "^20.2.0",
     "unplugin-element-plus": "^0.10.0",

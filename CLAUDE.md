@@ -50,9 +50,20 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 - **husky、lint-staged**：git hook 那一套
 - **commitizen、cz-git、commitlint**：交互式提交与提交信息校验
 - **ESLint、Stylelint**，连同桥接包 `eslint-config-prettier`、`eslint-plugin-prettier`。清理还波及 `vite.config.ts` 中 AutoImport 的 `eslintrc` 块（它专为 ESLint 生成 `.auto-import.json`，已无消费者）
+- **`vite-plugin-vue-devtools`**：插件版会默认注入页面，大型项目从启动起就处于降速状态。需要时用浏览器扩展版，它按需加载
 - **`scripts/clean-dev.ts`**：这一条另有具体理由——它写死的路径已与当前目录结构脱节，且会写回 ADP 的推广链接与演示后端的接口约定。演示内容删哪些、留哪些改为按需手动决定；脚本里那份 21 项的演示内容清单仍有参考价值，可从 git 历史中取回
 
 **Prettier 是保留的**，它是 formatter 不是 linter，清理 lint 工具时别顺手带走。
+
+### 已删除的演示内容
+
+ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` 从 367 个文件降到 266 个）。判断标准是：**演示页面用完即弃，去 ADP 仓库看就行；可复用组件要留下**。
+
+- 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested
+- 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件——它们各自绑着一个重型 npm 依赖
+- **统计卡片（8 个）与图表组件（6 个）全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
+
+连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`fastEnter` 配置、`changeLog` 数据、`optimizeDeps.include`、`env.d.ts` 的 declare module 和 `utils/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
 
 ### 已替换为自有配置
 
@@ -60,12 +71,21 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 - **tsconfig**：拆成 project references（`tsconfig.app.json` / `tsconfig.node.json`），基础配置取自 `@vue/tsconfig` 与 `@tsconfig/node24`
 - **`.gitignore`**：以 Vite 官方模板为底
 - **`.vscode/`**：与 helix-ui 保持一致
+- **路径别名只保留 `@`**：ADP 的 `@views`/`@imgs`/`@icons`/`@utils`/`@stores`/`@styles` 全部改写为 `@/` 开头的完整路径。其中 `@stores` 指向的是 `src/store`（单复数不一致），`@icons` 指向的目录根本不存在
+- **打包配置做减法**：移除等同默认值的 `target`/`outDir`，`minify` 回落到 esbuild（terser 依赖一并删除），gzip 预压缩交给部署层。体积分析改为 `pnpm build:analyze` 按需启用，而非 ADP 那样整段注释掉
+- **自动生成的 `auto-imports.d.ts` / `components.d.ts` 移到项目根目录**：它们是构建产物，不该混在源码里
+- **类型声明优先用 `@types/*` 包**：`env.d.ts` 里只留 `vite/client` 引用和全局变量声明，不手写 `declare module`
 
 ### 其它
 
 - ADP 的 `README` 与 `CHANGELOG`（含 zh-CN 版本）已删除
 - **`atelier-ui/LICENSE` 必须保留**：ADP 采用 MIT，衍生作品须保留原版权声明。清理「上游痕迹」时最容易误删这一个
 - **`@plugins` 路径别名未保留**：它只存在于 tsconfig，`vite.config.ts` 里从来没有过，用了会 TS 不报错但构建失败
+- `index.html` 补了 `<html lang="zh-CN">`，favicon 改走 `public/`
+
+### 尚未清理的上游痕迹
+
+`src/utils/constants/links.ts` 里 7 个常量全指向 ADP（GitHub 仓库、artd.pro 文档站与社区、作者的 B 站），被 `dashboard/console/modules/about-project.vue` 和 `art-header-bar/widget/ArtUserMenu.vue` 引用着。`index.html` 的 `<title>` 和 description 同样还是上游的。**这些是有意留着的**，等决定好要显示什么内容再一起换。
 
 ## 仓库构成
 
@@ -86,23 +106,28 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 - `pnpm dev`：启动开发服务器
 - `pnpm build`：并行跑 type-check 与 vite build
+- `pnpm build:analyze`：构建并输出体积分析到 `dist/stats.html`
 - `pnpm type-check`：`vue-tsc --build`
 - `pnpm serve`：预览构建产物
 - `pnpm format`：Prettier 格式化，**范围仅 `src/`**，根目录的配置文件不在其中
+
+**新克隆的仓库首次跑 `pnpm build` 会失败。** `auto-imports.d.ts` / `components.d.ts` 生成在项目根目录且不进版本库，而 `tsconfig.app.json` include 了它们；`build` 又是并行跑 type-check 与构建，type-check 会先撞上缺失的自动导入类型。先跑一次 `pnpm dev` 或 `pnpm build-only` 生成它们即可。
 
 ### atelier-engine
 
 尚未配置数据源，`mvnd` 相关命令暂不可用。
 
+## 代码约定
+
+### atelier-ui
+
+- **类型导入一律 type-only**（`verbatimModuleSyntax` 已开启）。整条 import 的具名导入都是类型时，整条写成 `import type { X } from '...'`；与值混在一条时用内联形式 `import { type X, y } from '...'`，保持单行不拆分。
+- **路径引用只用 `@`**，不要新增其它别名。
+
 ## 当前状态
 
-- `atelier-ui/`：工具链清理与配置替换已完成，ADP 的演示内容尚未动
-- `atelier-engine/`：仅有 Spring Initializr 骨架，pom 还缺 MapStruct（含 `annotationProcessorPaths`）、jooq-codegen 插件、`spring-security-crypto`
-
-### 已知遗留
-
-- **`pnpm type-check` 有 3 处报错**，均为 TS 6 收紧类型后暴露的上游问题（wangeditor 未正确暴露类型声明、socket 中两处 `SharedArrayBuffer` 不兼容）。因 `build` 串了 type-check，`pnpm build` 当前同样失败。
-- **248/303 个源文件尚未按新 Prettier 配置格式化。** 真跑全量格式化时注意：`htmlWhitespaceSensitivity` 已从 ADP 的 `strict` 回落到默认的 `css`，inline 元素间距可能变化，需要在浏览器里确认。该操作应独立成一个提交。
+- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化均已完成。`type-check` 与 `build` 全绿。
+- `atelier-engine/`：仅有 Spring Initializr 骨架，pom 还缺 MapStruct（含 `annotationProcessorPaths`）、jooq-codegen 插件、`spring-security-crypto`；数据源未配置。
 
 ### 待定
 

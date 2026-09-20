@@ -418,7 +418,7 @@
 </script>
 
 <style scoped>
-  @reference '@styles/core/tailwind.css';
+  @reference '@/assets/styles/core/tailwind.css';
 
   .art-notification-panel {
     @apply absolute 

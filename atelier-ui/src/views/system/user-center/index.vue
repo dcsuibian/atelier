@@ -4,10 +4,10 @@
     <div class="relative flex-b mt-2.5 max-md:block max-md:mt-1">
       <div class="w-112 mr-5 max-md:w-full max-md:mr-0">
         <div class="art-card-sm relative p-9 pb-6 overflow-hidden text-center">
-          <img class="absolute top-0 left-0 w-full h-50 object-cover" src="@imgs/user/bg.webp" />
+          <img class="absolute top-0 left-0 w-full h-50 object-cover" src="@/assets/images/user/bg.webp" />
           <img
             class="relative z-10 w-20 h-20 mt-30 mx-auto object-cover border-2 border-white rounded-full"
-            src="@imgs/user/avatar.webp"
+            src="@/assets/images/user/avatar.webp"
           />
           <h2 class="mt-5 text-xl font-normal">{{ userInfo.userName }}</h2>
           <p class="mt-5 text-sm">专注于用户体验跟视觉设计</p>

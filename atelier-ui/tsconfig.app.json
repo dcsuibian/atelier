@@ -9,13 +9,7 @@
     "types": ["vite/client", "node", "element-plus/global"],
 
     "paths": {
-      "@/*": ["./src/*"],
-      "@views/*": ["./src/views/*"],
-      "@imgs/*": ["./src/assets/images/*"],
-      "@icons/*": ["./src/assets/icons/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@stores/*": ["./src/store/*"],
-      "@styles/*": ["./src/assets/styles/*"]
+      "@/*": ["./src/*"]
     },
 
     // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.

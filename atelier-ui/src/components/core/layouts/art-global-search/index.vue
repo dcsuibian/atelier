@@ -413,7 +413,7 @@
 </style>
 
 <style scoped>
-  @reference '@styles/core/tailwind.css';
+  @reference '@/assets/styles/core/tailwind.css';
 
   .keyboard {
     @apply mr-2 

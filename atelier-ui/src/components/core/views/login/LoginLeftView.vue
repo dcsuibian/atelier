@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
   import AppConfig from '@/config'
-  import loginIcon from '@imgs/svg/login_icon.svg'
+  import loginIcon from '@/assets/images/svg/login_icon.svg'
   import { themeAnimation } from '@/utils/ui/animation'
 
   // 定义 props

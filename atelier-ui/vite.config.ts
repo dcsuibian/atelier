@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path'
 import { fileURLToPath } from 'url'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -35,13 +34,7 @@ export default ({ mode }: { mode: string }) => {
     // 路径别名
     resolve: {
       alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url)),
-        '@views': resolvePath('src/views'),
-        '@imgs': resolvePath('src/assets/images'),
-        '@icons': resolvePath('src/assets/icons'),
-        '@utils': resolvePath('src/utils'),
-        '@stores': resolvePath('src/store'),
-        '@styles': resolvePath('src/assets/styles')
+        '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
     build: {
@@ -97,8 +90,8 @@ export default ({ mode }: { mode: string }) => {
         // sass variable and mixin
         scss: {
           additionalData: `
-            @use "@styles/core/el-light.scss" as *;
-            @use "@styles/core/mixin.scss" as *;
+            @use "@/assets/styles/core/el-light.scss" as *;
+            @use "@/assets/styles/core/mixin.scss" as *;
           `
         }
       },
@@ -118,8 +111,4 @@ export default ({ mode }: { mode: string }) => {
       }
     }
   })
-}
-
-function resolvePath(paths: string) {
-  return path.resolve(__dirname, paths)
 }

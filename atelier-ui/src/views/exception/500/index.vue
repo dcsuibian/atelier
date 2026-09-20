@@ -11,6 +11,6 @@
 </template>
 
 <script setup lang="ts">
-  import imgUrl from '@imgs/svg/500.svg'
+  import imgUrl from '@/assets/images/svg/500.svg'
   defineOptions({ name: 'Exception500' })
 </script>

@@ -2,11 +2,10 @@ package com.dcsuibian.atelier.controller;
 
 import com.dcsuibian.atelier.domain.Permission;
 import com.dcsuibian.atelier.domain.Role;
-import com.dcsuibian.atelier.domain.User;
 import com.dcsuibian.atelier.dto.IdDto;
-import com.dcsuibian.atelier.qo.UserQo;
+import com.dcsuibian.atelier.qo.RoleQo;
 import com.dcsuibian.atelier.service.RbacService;
-import com.dcsuibian.atelier.service.UserService;
+import com.dcsuibian.atelier.service.RoleService;
 import com.dcsuibian.atelier.validation.Add;
 import com.dcsuibian.atelier.validation.EditPartially;
 import com.dcsuibian.atelier.vo.PageWrapper;
@@ -29,21 +28,21 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/roles")
+public class RoleController {
 
-	private final UserService service;
+	private final RoleService service;
 	private final RbacService rbacService;
 
 	@Autowired
-	public UserController(UserService service, RbacService rbacService) {
+	public RoleController(RoleService service, RbacService rbacService) {
 		this.service = service;
 		this.rbacService = rbacService;
 	}
 
 	@GetMapping
-	public ResponseWrapper<PageWrapper<User>> get(
-			UserQo qo,
+	public ResponseWrapper<PageWrapper<Role>> get(
+			RoleQo qo,
 			@RequestParam("pageNumber") @Min(value = 1, message = "页码从1开始") int pageNumber,
 			@RequestParam("pageSize") @Min(value = 1, message = "每页数量至少为1") int pageSize
 	) {
@@ -51,22 +50,22 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseWrapper<User> getById(@PathVariable("id") long id) {
+	public ResponseWrapper<Role> getById(@PathVariable("id") long id) {
 		return ResponseWrapper.success(service.getById(id));
 	}
 
 	@PostMapping
-	public ResponseWrapper<User> add(@RequestBody @Validated(Add.class) User user) {
-		return ResponseWrapper.success(service.add(user));
+	public ResponseWrapper<Role> add(@RequestBody @Validated(Add.class) Role role) {
+		return ResponseWrapper.success(service.add(role));
 	}
 
 	@PatchMapping("/{id}")
-	public ResponseWrapper<User> editPartially(
+	public ResponseWrapper<Role> editPartially(
 			@PathVariable("id") long id,
-			@RequestBody @Validated(EditPartially.class) User user
+			@RequestBody @Validated(EditPartially.class) Role role
 	) {
-		user.setId(id);
-		return ResponseWrapper.success(service.editPartially(user));
+		role.setId(id);
+		return ResponseWrapper.success(service.editPartially(role));
 	}
 
 	@DeleteMapping("/{id}")
@@ -75,26 +74,18 @@ public class UserController {
 		return ResponseWrapper.success();
 	}
 
-	@GetMapping("/{id}/roles")
-	public ResponseWrapper<List<Role>> getRoles(@PathVariable("id") long id) {
-		return ResponseWrapper.success(rbacService.getRolesByUserId(id));
+	@GetMapping("/{id}/permissions")
+	public ResponseWrapper<List<Permission>> getPermissions(@PathVariable("id") long id) {
+		return ResponseWrapper.success(rbacService.getPermissionsByRoleId(id));
 	}
 
-	@PutMapping("/{id}/roles")
-	public ResponseWrapper<List<IdDto>> setRoles(
+	@PutMapping("/{id}/permissions")
+	public ResponseWrapper<List<IdDto>> setPermissions(
 			@PathVariable("id") long id,
 			@RequestBody List<@Valid IdDto> dtos
 	) {
-		rbacService.setRolesToUser(id, dtos.stream().map(IdDto::getId).toList());
+		rbacService.setPermissionsToRole(id, dtos.stream().map(IdDto::getId).toList());
 		return ResponseWrapper.success(dtos);
-	}
-
-	/**
-	 * 当前可用的权限：用户启用、角色启用、权限启用三者都满足，超级管理员为全部启用的权限。前端登录后靠它决定展示什么
-	 */
-	@GetMapping("/{id}/available-permissions")
-	public ResponseWrapper<List<Permission>> getAvailablePermissions(@PathVariable("id") long id) {
-		return ResponseWrapper.success(rbacService.getAvailablePermissions(id));
 	}
 
 }

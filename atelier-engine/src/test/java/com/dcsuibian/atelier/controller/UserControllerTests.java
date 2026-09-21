@@ -1,6 +1,7 @@
 package com.dcsuibian.atelier.controller;
 
 import com.dcsuibian.atelier.IntegrationTests;
+import com.dcsuibian.atelier.constant.UserConstants;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -266,6 +267,27 @@ public class UserControllerTests extends IntegrationTests {
 				.andExpect(jsonPath("$.code").value(404));
 		mockMvc.perform(delete("/users/" + id))
 				.andExpect(jsonPath("$.code").value(404));
+	}
+
+	@Test
+	@DisplayName("超级管理员启动时已创建，不能被删除或禁用，但可以修改其他信息")
+	void superAdmin() throws Exception {
+		long id = UserConstants.SUPER_ADMIN_ID;
+		mockMvc.perform(get("/users/" + id))
+				.andExpect(jsonPath("$.result.name").value("admin"));
+
+		mockMvc.perform(delete("/users/" + id))
+				.andExpect(jsonPath("$.code").value(400));
+		mockMvc.perform(patch("/users/" + id).contentType(MediaType.APPLICATION_JSON).content("""
+						{"status": "DISABLED"}
+						"""))
+				.andExpect(jsonPath("$.code").value(400));
+		mockMvc.perform(patch("/users/" + id).contentType(MediaType.APPLICATION_JSON).content("""
+						{"realName": "超级管理员"}
+						"""))
+				.andExpect(jsonPath("$.code").value(200));
+		mockMvc.perform(get("/users/" + id))
+				.andExpect(jsonPath("$.result.status").value("ENABLED"));
 	}
 
 }

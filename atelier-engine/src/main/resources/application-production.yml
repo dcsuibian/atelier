@@ -7,5 +7,9 @@ spring:
     redis:
       host: ${REDIS_HOST}
       password: ${REDIS_PASSWORD:}
+atelier:
+  super-admin:
+    # 只在库里还没有任何用户时用来创建超级管理员 admin，之后改这里不影响已有密码
+    initial-password: ${ATELIER_PASSWORD:}
 server:
   port: 80

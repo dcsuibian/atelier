@@ -55,6 +55,10 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 - **上游原件连文件名都不改。** `tableCache.ts`、`ComponentLoader.ts` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
 - **改动大到「接管」的模块不留原件。** `stores/`、`router/`、`apis/` 属于重写而非微调，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。在 `art/` 下留一份用不到的副本，只会制造「到底该改哪个」的困惑。
 
+**已知的破例有一处**：`types/art/router/index.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。往 `art/` 里加东西之前先掂量这笔账，别让破例变成常例。
+
+顺带一提，`RouteMeta` 继承了 `Record<string | number | symbol, unknown>`，**这意味着路由 meta 里写错字段名永远不会报错**——ADP 的 `roles`、`authList` 能在改造后一直残留到被专门清理，就是这么来的。
+
 与 ADP 的目录差异，命名向下游看齐以便对照：
 
 | ADP | atelier |
@@ -95,6 +99,15 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **统计卡片（8 个）与图表组件（6 个）全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
 
 连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`fastEnter` 配置、`changeLog` 数据、`optimizeDeps.include`、`env.d.ts` 的 declare module 和 `utils/art/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
+
+### 已移除的机制
+
+这几样不是演示内容，是 ADP 的实现方式与本项目的设计对不上，对接后端时一并换掉了。
+
+- **ADP 的 HTTP 层**（`utils/art/http/`）：它按 `{ code, msg, data }` 收响应、往 header 注入 token、自带重试与 401 自动登出。响应结构与 `ResponseWrapper` 对不上，token 与 Cookie 会话也不是一回事。换成 `utils/http.ts`：只解包 `result`，不带 token、不重试、不自动登出——重试和登出该由调用方按场景决定，放在这层只会误伤。
+- **`v-auth` 与 `v-roles` 指令**：理由见「前端的会话与权限」。`src/directives/` 现在只剩 `highlight` 和 `ripple` 两个纯 UI 指令。
+- **userStore 这个杂物袋**：ADP 把登录态、用户信息、语言、搜索历史、锁屏全塞在一个 store 里。语言、搜索历史、锁屏是跟着浏览器走的用户偏好，与登录与否无关，已迁入 `settingStore`；剩下的会话部分由 `stores/session.ts` 接管。
+- **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。`ComponentLoader`、`RouteTransformer`、`RouteValidator`、`IframeRouteManager` 属于机制层，保留在 `core/` 下不动。
 
 ### 已替换为自有配置
 
@@ -142,6 +155,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - `pnpm serve`：预览构建产物
 - `pnpm format`：Prettier 格式化，**范围仅 `src/`**，根目录的配置文件不在其中
 
+开发环境前端跑在 **32732**，后端 `development` 跑在 **32733**。前端请求带 `/api` 前缀，由 vite 代理 rewrite 掉——后端没有 context-path，接口路径就是 `/session`、`/users`，前缀属于部署层的事。端口取值区间是 **10000–49151**：Windows 的动态端口从 49152 起，WSL2 与 Hyper-V 的保留块都从那里面划，避开就不会撞上。
+
 **新克隆的仓库首次跑 `pnpm build` 会失败。** `auto-imports.d.ts` / `components.d.ts` 生成在项目根目录且不进版本库，而 `tsconfig.app.json` include 了它们；`build` 又是并行跑 type-check 与构建，type-check 会先撞上缺失的自动导入类型。先跑一次 `pnpm dev` 或 `pnpm build-only` 生成它们即可。
 
 ### atelier-engine
@@ -162,6 +177,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **类型导入一律 type-only**（`verbatimModuleSyntax` 已开启）。整条 import 的具名导入都是类型时，整条写成 `import type { X } from '...'`；与值混在一条时用内联形式 `import { type X, y } from '...'`，保持单行不拆分。
 - **路径引用只用 `@`**，不要新增其它别名。跨目录引用一律 `@/` 开头，不写 `../../` 这种相对路径（同目录内的 `./xxx` 不在此列）。
 - **新文件用 kebab-case**，`art/` 与 `core/` 下的上游原件保持原名，理由见「代码组织」一节。
+- **递归类型用对象，别用元组。** 自引用的元组（`type X = string | [X, 'AND' | 'OR', X]`）一旦进了 `RouteMeta`，Vue 模板推导路由对象时会撞上 `TS2589: Type instantiation is excessively deep`；对象的自引用是惰性解析的，不会触发。同一份代码在 TS 5.9 + vue-tsc 3.2 下不报错，所以这是工具链版本差异而非写法错误——但对象写法在新旧两边都成立，没有理由赌旧版本。
+- **别用 `<!-- @vue-ignore -->` 压 TS2589。** 它能让 type-check 过，代价是那个元素上所有表达式一起失去检查，而且随着使用面扩大要到处补；治本的办法是让类型推导得动。
 
 ### atelier-engine
 
@@ -182,10 +199,32 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **删除时连带的数据**：删用户时，连同他的角色分配一起删；删角色时，连同它的权限分配一起删；但角色还分配给用户时拒绝删除（409），以免用户的权限悄悄变少。
 - **集成测试继承 `IntegrationTests`**，所有测试共用一个 Spring 上下文和一套容器。新测试不要另加 `@MockitoBean` 之类会改变上下文的注解，否则会多起一套容器。
 
+## 前端的会话与权限
+
+后端不做授权拦截，前端这套东西的目标不是拦截，而是**别让人看见点不动的入口**。真正的鉴权由下游按自己的场景补在后端。
+
+### 会话
+
+- **`stores/session.ts` 是登录态的唯一出口**：`user`、`isLoggedIn`、`ensureLoaded()`、`login()`、`logout()`。登录态在 Cookie 里、前端不持有凭证，服务端才是真相源，本地状态只是副本——所以这个 store 不做持久化，每次启动由守卫 `await ensureLoaded()` 重新向服务端确认。
+- **权限由 session 统一编排**，别在其它地方单独去填或清 permission store。两个 store 各自为政的下场是「登出时要记得清七个地方」，漏一个就是 bug。
+- **并发去重用进行中的 Promise，不要用 boolean 标志。** `if (!fetched) { await ...; fetched = true }` 这种写法，两个导航同时进来时会重复打后端。
+- **先把数据取齐再赋值。** 会话拿到了但权限请求失败时，本地状态应当保持原样，不要留下「有 user 却没有权限」的半截状态。
+
+### 权限
+
+- **权限码是唯一依据，不认角色。** 角色是库里的数据、名字随时会被改；权限码写在后端 `permissions.yml` 里、发布后不改名，只有它适合写进前端代码。ADP 的 `meta.roles`、`v-roles`、`info.buttons` 已全部移除。
+- **权限码集中在 `constants/permission.ts`**，一律引用 `PERMISSIONS.XXX`，不写裸字符串——后端增删权限时，靠这张表就能找全前端的引用点。
+- **`PermissionExpression` 只有 and / or。** 不要加 NOT：一旦出现「没有某权限才能看见」，权限就不再是单调递增的，加权限反而可能让人少看见东西，排查起来极难。
+- **权限在路由注册这一步落地。** `filterByPermission(dynamicRoutes)` 筛完才注册，没权限的路由压根不进路由表，于是菜单、可访问路径、路由表三者天然同源，不必再单独做一遍路径权限校验。子项被筛光的目录会一并消失，所以目录本身不用重复声明权限。
+- **按钮级判断只有 `useAuth().hasAuth()` 一条路径**，写成 `v-if="hasAuth(...)"`。`v-auth` 指令已删：它在 `mounted` 之后用 `removeChild` 摘 DOM，绕过虚拟 DOM、不响应权限变化，而且下游真实项目里两年没人用过一次。
+- **一个页面都没有时要兜底。** 路由注册结果为空，说明这个账号什么都看不到，应当提示并登出，而不是让他掉进 404。
+
 ## 当前状态
 
-- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、以及「代码组织」一节所述的目录重组均已完成。`type-check` 与 `build` 全绿。**尚未对接后端**：`apis/` 下仍是 ADP 的演示接口，`utils/art/http` 按的是 ADP 的 `{ code, msg, data }`，与后端的 `ResponseWrapper` 对不上；登录走的是 token + localStorage，与后端的 Cookie + Spring Session 也对不上。
-- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成，前端尚未对接。
+- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check` 与 `build` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。
+- **前端尚未对接的部分**：`views/system/{user,role}` 两个页面仍是 ADP 的演示实现，用着 mock 的数据结构与状态值（`status=1`），调用后端会因枚举转换失败返回 400；`apis/system-manage.ts` 是过渡产物，待拆成按资源划分的 `apis/role.ts` 等；`types/art/api/api.d.ts` 里的 `Api.Auth`、`Api.SystemManage` 已作废待删；`views/system/menu` 是 ADP 的菜单管理演示页，依赖不存在的 `/menus` 接口，而前端模式下菜单写在 `router/modules/` 里，这页建议删；注册页与忘记密码页后端没有对应接口，链接目前指向死路。
+- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。
+- **已知的后端小问题**：参数类型转换失败时，`GlobalExceptionHandler` 把 Spring 的原始异常消息透给了前端，内容里带有 `com.dcsuibian.atelier.domain.User$Status` 这样的包名与内部类名——对使用者无意义，也是不必要的实现细节外泄。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
 ### 待定

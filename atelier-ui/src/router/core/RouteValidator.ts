@@ -8,7 +8,7 @@
  */
 
 import type { AppRouteRecord } from '@/types/art/router'
-import { RoutesAlias } from '../routesAlias'
+import { RoutesAlias } from '../routes-alias'
 
 export interface ValidationResult {
   valid: boolean

@@ -11,8 +11,8 @@ import type { AppRouteRecord } from '@/types/art/router'
 import { useUserStore } from '@/stores/user'
 import { useAppMode } from '@/hooks/core/useAppMode'
 import { fetchGetMenuList } from '@/apis/system-manage'
-import { asyncRoutes } from '../routes/asyncRoutes'
-import { RoutesAlias } from '../routesAlias'
+import { dynamicRoutes } from '../routes/dynamic-routes'
+import { RoutesAlias } from '../routes-alias'
 import { formatMenuTitle } from '@/utils/art'
 
 export class MenuProcessor {
@@ -43,7 +43,7 @@ export class MenuProcessor {
     const userStore = useUserStore()
     const roles = userStore.info?.roles
 
-    let menuList = [...asyncRoutes]
+    let menuList = [...dynamicRoutes]
 
     // 根据角色过滤菜单
     if (roles && roles.length > 0) {

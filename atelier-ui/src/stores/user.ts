@@ -39,7 +39,7 @@ import { useSettingStore } from './setting'
 import { useWorktabStore } from './work-tab'
 import type { AppRouteRecord } from '@/types/art/router'
 import { setPageTitle } from '@/utils/art/router'
-import { resetRouterState } from '@/router/guards/beforeEach'
+import { resetRouterState } from '@/router/guards/before-each'
 import { useMenuStore } from './menu'
 import { StorageConfig } from '@/utils/art/storage/storage-config'
 

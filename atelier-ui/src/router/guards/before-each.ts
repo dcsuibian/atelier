@@ -32,7 +32,7 @@
  * 5. 处理根路径重定向到首页
  * 6. 未匹配路由跳转到 404 页面
  *
- * @module router/guards/beforeEach
+ * @module router/guards/before-each
  * @author Art Design Pro Team
  */
 import type { Router, RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
@@ -43,8 +43,8 @@ import { useUserStore } from '@/stores/user'
 import { useMenuStore } from '@/stores/menu'
 import { setWorktab } from '@/utils/art/navigation'
 import { setPageTitle } from '@/utils/art/router'
-import { RoutesAlias } from '../routesAlias'
-import { staticRoutes } from '../routes/staticRoutes'
+import { RoutesAlias } from '../routes-alias'
+import { staticRoutes } from '../routes/static-routes'
 import { loadingService } from '@/utils/art/ui'
 import { useCommon } from '@/hooks/core/useCommon'
 import { useWorktabStore } from '@/stores/work-tab'

@@ -49,7 +49,7 @@ import { fetchGetUserList } from '@/api/system-manage'
 import UserSearch from './modules/user-search.vue'
 import UserDialog from './modules/user-dialog.vue'
 import { ElTag, ElMessageBox, ElImage } from 'element-plus'
-import type { DialogType } from '@/types'
+import type { DialogType } from '@/types/art'
 
 defineOptions({ name: 'User' })
 

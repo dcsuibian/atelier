@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import type { AppRouteRecord } from '@/types/router'
+import type { AppRouteRecord } from '@/types/art/router'
 import HorizontalSubmenu from './widget/HorizontalSubmenu.vue'
 import { useSettingStore } from '@/store/modules/setting'
 

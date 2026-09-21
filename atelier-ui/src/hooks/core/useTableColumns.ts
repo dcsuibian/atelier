@@ -34,7 +34,7 @@
 
 import { ref, computed, watch } from 'vue'
 import { $t } from '@/locales'
-import type { ColumnOption } from '@/types/component'
+import type { ColumnOption } from '@/types/art/component'
 
 /**
  * 特殊列类型

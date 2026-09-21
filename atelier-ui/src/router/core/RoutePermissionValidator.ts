@@ -20,7 +20,7 @@
  * @author Art Design Pro Team
  */
 
-import type { AppRouteRecord } from '@/types/router'
+import type { AppRouteRecord } from '@/types/art/router'
 
 /**
  * 路由权限验证器

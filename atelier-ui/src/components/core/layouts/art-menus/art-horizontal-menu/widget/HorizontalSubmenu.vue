@@ -38,7 +38,7 @@
 
 <script lang="ts" setup>
 import { computed, type PropType } from 'vue'
-import type { AppRouteRecord } from '@/types/router'
+import type { AppRouteRecord } from '@/types/art/router'
 import { handleMenuJump } from '@/utils/navigation'
 import { formatMenuTitle } from '@/utils/router'
 

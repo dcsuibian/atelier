@@ -22,7 +22,7 @@
  * @author Art Design Pro Team
  */
 
-import type { AppRouteRecord } from '@/types'
+import type { AppRouteRecord } from '@/types/art'
 
 // 检查是否为 iframe 路由
 export function isIframe(url: string): boolean {

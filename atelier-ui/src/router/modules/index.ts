@@ -1,4 +1,4 @@
-import type { AppRouteRecord } from '@/types/router'
+import type { AppRouteRecord } from '@/types/art/router'
 import { dashboardRoutes } from './dashboard'
 import { systemRoutes } from './system'
 import { resultRoutes } from './result'

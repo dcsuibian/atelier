@@ -14,7 +14,7 @@
  * @module utils/navigation/jump
  * @author Art Design Pro Team
  */
-import type { AppRouteRecord } from '@/types/router'
+import type { AppRouteRecord } from '@/types/art/router'
 import { router } from '@/router'
 import { isNavigableMenuItem } from './route'
 

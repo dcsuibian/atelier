@@ -20,7 +20,7 @@
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, readonly } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { useTableColumns } from './useTableColumns'
-import type { ColumnOption } from '@/types/component'
+import type { ColumnOption } from '@/types/art/component'
 import { TableCache, CacheInvalidationStrategy, type ApiResponse } from '../../utils/table/tableCache'
 import {
   type TableError,

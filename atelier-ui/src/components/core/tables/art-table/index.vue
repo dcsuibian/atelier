@@ -75,7 +75,7 @@
 import { ref, computed, nextTick, watchEffect, getCurrentInstance, useAttrs } from 'vue'
 import type { ElTable, TableProps } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import type { ColumnOption } from '@/types'
+import type { ColumnOption } from '@/types/art'
 import { useTableStore } from '@/store/modules/table'
 import { useCommon } from '@/hooks/core/useCommon'
 import { useTableHeight } from '@/hooks/core/useTableHeight'

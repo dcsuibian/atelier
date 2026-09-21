@@ -34,7 +34,7 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store/modules/user'
 import { useAppMode } from '@/hooks/core/useAppMode'
-import type { AppRouteRecord } from '@/types/router'
+import type { AppRouteRecord } from '@/types/art/router'
 
 type AuthItem = NonNullable<AppRouteRecord['meta']['authList']>[number]
 

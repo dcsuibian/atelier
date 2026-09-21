@@ -7,7 +7,7 @@
  * @author Art Design Pro Team
  */
 
-import type { AppRouteRecord } from '@/types/router'
+import type { AppRouteRecord } from '@/types/art/router'
 
 export class IframeRouteManager {
   private static instance: IframeRouteManager

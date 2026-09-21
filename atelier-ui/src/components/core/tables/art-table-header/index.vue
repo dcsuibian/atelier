@@ -117,7 +117,7 @@ import { TableSizeEnum } from '@/enums/formEnum'
 import { useTableStore } from '@/store/modules/table'
 import { VueDraggable } from 'vue-draggable-plus'
 import { useI18n } from 'vue-i18n'
-import type { ColumnOption } from '@/types/component'
+import type { ColumnOption } from '@/types/art/component'
 import { ElScrollbar } from 'element-plus'
 
 defineOptions({ name: 'ArtTableHeader' })

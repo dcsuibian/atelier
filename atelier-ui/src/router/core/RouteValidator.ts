@@ -7,7 +7,7 @@
  * @author Art Design Pro Team
  */
 
-import type { AppRouteRecord } from '@/types/router'
+import type { AppRouteRecord } from '@/types/art/router'
 import { RoutesAlias } from '../routesAlias'
 
 export interface ValidationResult {

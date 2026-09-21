@@ -12,7 +12,7 @@
 import { graphic, type EChartsOption } from '@/plugins/echarts'
 import { getCssVar, hexToRgba } from '@/utils/ui'
 import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
-import type { LineChartProps, LineDataItem } from '@/types/component/chart'
+import type { LineChartProps, LineDataItem } from '@/types/art/component/chart'
 
 defineOptions({ name: 'ArtLineChart' })
 

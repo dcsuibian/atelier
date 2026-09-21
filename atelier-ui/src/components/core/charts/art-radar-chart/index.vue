@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import type { EChartsOption } from '@/plugins/echarts'
 import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
-import type { RadarChartProps } from '@/types/component/chart'
+import type { RadarChartProps } from '@/types/art/component/chart'
 
 defineOptions({ name: 'ArtRadarChart' })
 

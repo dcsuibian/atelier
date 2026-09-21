@@ -1,4 +1,4 @@
-import type { AppRouteRecord } from '@/types/router'
+import type { AppRouteRecord } from '@/types/art/router'
 
 export const systemRoutes: AppRouteRecord = {
   path: '/system',

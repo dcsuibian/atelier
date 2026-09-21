@@ -17,13 +17,15 @@ import { formatMenuTitle } from '@/utils/art'
 export class MenuProcessor {
   /**
    * 获取菜单数据
+   *
+   * @param routes 前端模式下要处理的路由，调用方已按权限过滤过；不传则用全量动态路由
    */
-  async getMenuList(): Promise<AppRouteRecord[]> {
+  async getMenuList(routes: AppRouteRecord[] = [...dynamicRoutes]): Promise<AppRouteRecord[]> {
     const { isFrontendMode } = useAppMode()
 
     let menuList: AppRouteRecord[]
     if (isFrontendMode.value) {
-      menuList = await this.processFrontendMenu()
+      menuList = this.filterEmptyMenus(routes)
     } else {
       menuList = await this.processBackendMenu()
     }
@@ -33,13 +35,6 @@ export class MenuProcessor {
 
     // 规范化路径（将相对路径转换为完整路径）
     return this.normalizeMenuPaths(menuList)
-  }
-
-  /**
-   * 处理前端控制模式的菜单
-   */
-  private async processFrontendMenu(): Promise<AppRouteRecord[]> {
-    return this.filterEmptyMenus([...dynamicRoutes])
   }
 
   /**

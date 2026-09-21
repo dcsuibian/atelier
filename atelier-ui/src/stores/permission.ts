@@ -26,8 +26,10 @@ export const usePermissionStore = defineStore('permission', () => {
     if ('string' === typeof expression) {
       return codes.value.has(expression)
     }
-    const [left, operator, right] = expression
-    return 'AND' === operator ? check(left) && check(right) : check(left) || check(right)
+    if ('and' in expression) {
+      return expression.and.every(item => check(item))
+    }
+    return expression.or.some(item => check(item))
   }
 
   return {

@@ -21,6 +21,7 @@
  */
 
 import type { RouteRecordRaw } from 'vue-router'
+import type { PermissionExpression } from '@/types'
 
 /**
  * 路由元数据接口
@@ -52,8 +53,12 @@ export interface RouteMeta extends Record<string | number | symbol, unknown> {
   }>
   /** 是否为一级菜单 */
   isFirstLevel?: boolean
-  /** 角色权限 */
-  roles?: string[]
+  /**
+   * 访问这个路由需要的权限。不写表示不设限
+   *
+   * 没有权限的路由压根不会被注册，所以菜单与可访问的路由天然同源，不需要另做校验
+   */
+  permission?: PermissionExpression
   /** 是否固定标签页 */
   fixedTab?: boolean
   /** 激活菜单路径 */

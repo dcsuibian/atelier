@@ -1,375 +1,144 @@
 /**
- * 路由全局前置守卫模块
+ * 路由全局前置守卫
  *
- * 提供完整的路由导航守卫功能
+ * 这里只做路由决策，数据加载都委托出去：会话与权限归 sessionStore（它自己保证幂等与
+ * 并发去重），菜单树处理归 MenuProcessor，权限过滤与注册归 DynamicRouteRegistry
  *
- * ## 主要功能
+ * ## 流程
  *
- * - 登录状态验证和重定向
- * - 动态路由注册和权限控制
- * - 菜单数据获取和处理（前端/后端模式）
- * - 用户信息获取和缓存
- * - 页面标题设置
- * - 工作标签页管理
- * - 进度条和加载动画控制
- * - 静态路由识别和处理
- * - 错误处理和异常跳转
- *
- * ## 使用场景
- *
- * - 路由跳转前的权限验证
- * - 动态菜单加载和路由注册
- * - 用户登录状态管理
- * - 页面访问控制
- * - 路由级别的加载状态管理
- *
- * ## 工作流程
- *
- * 1. 检查登录状态，未登录跳转到登录页
- * 2. 首次访问时获取用户信息和菜单数据
- * 3. 根据权限动态注册路由
- * 4. 设置页面标题和工作标签页
- * 5. 处理根路径重定向到首页
- * 6. 未匹配路由跳转到 404 页面
+ * 1. 静态路由（登录页除外）直接放行
+ * 2. 确认会话状态
+ * 3. 已登录却停在登录页，送回首页
+ * 4. 未登录，送去登录页并带上 redirect
+ * 5. 动态路由尚未注册，注册后重新导航
+ * 6. 根路径重定向到首页
+ * 7. 放行，顺带记录工作标签页与页面标题
  *
  * @module router/guards/before-each
- * @author Art Design Pro Team
  */
-import type { Router, RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
-import { nextTick } from 'vue'
+import type { NavigationGuardReturn, RouteLocationNormalized, Router } from 'vue-router'
 import NProgress from 'nprogress'
 import { useSettingStore } from '@/stores/setting'
 import { useSessionStore } from '@/stores/session'
 import { useMenuStore } from '@/stores/menu'
+import { useWorktabStore } from '@/stores/work-tab'
 import { setWorktab } from '@/utils/art/navigation'
 import { setPageTitle } from '@/utils/art/router'
+import { loadingService } from '@/utils/art/ui'
 import { RoutesAlias } from '../routes-alias'
 import { staticRoutes } from '../routes/static-routes'
-import { loadingService } from '@/utils/art/ui'
-import { useCommon } from '@/hooks/core/useCommon'
-import { useWorktabStore } from '@/stores/work-tab'
-import { RouteRegistry, MenuProcessor, IframeRouteManager, RoutePermissionValidator } from '../core'
+import { dynamicRoutes } from '../routes/dynamic-routes'
+import { IframeRouteManager, MenuProcessor } from '../core'
+import { DynamicRouteRegistry, filterByPermission } from './route-registry'
 
-// 路由注册器实例
-let routeRegistry: RouteRegistry | null = null
-
-// 菜单处理器实例
 const menuProcessor = new MenuProcessor()
 
-// 跟踪是否需要关闭 loading
-let pendingLoading = false
-
-// 路由初始化失败标记，防止死循环
-// 一旦设置为 true，只有刷新页面或重新登录才能重置
-let routeInitFailed = false
-
-// 路由初始化进行中标记，防止并发请求
-let routeInitInProgress = false
-
-/**
- * 获取 pendingLoading 状态
- */
-export function getPendingLoading(): boolean {
-  return pendingLoading
-}
-
-/**
- * 重置 pendingLoading 状态
- */
-export function resetPendingLoading(): void {
-  pendingLoading = false
-}
-
-/**
- * 获取路由初始化失败状态
- */
-export function getRouteInitFailed(): boolean {
-  return routeInitFailed
-}
-
-/**
- * 重置路由初始化状态（用于重新登录场景）
- */
-export function resetRouteInitState(): void {
-  routeInitFailed = false
-  routeInitInProgress = false
-}
-
-/**
- * 设置路由全局前置守卫
- */
 export function setupBeforeEachGuard(router: Router): void {
-  // 初始化路由注册器
-  routeRegistry = new RouteRegistry(router)
+  const registry = DynamicRouteRegistry.getInstance(router)
 
-  router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+  router.beforeEach(async (to: RouteLocationNormalized): Promise<NavigationGuardReturn> => {
+    const settingStore = useSettingStore()
+    if (settingStore.showNprogress) {
+      NProgress.start()
+    }
+
+    // 只有真要等网络时才遮罩。注册完重新导航的那一轮不再满足条件，所以不会闪
+    const sessionStore = useSessionStore()
+    const needsLoading = !sessionStore.ready || !registry?.isRegistered()
+    if (needsLoading) {
+      loadingService.showLoading()
+    }
+
     try {
-      await handleRouteGuard(to, from, next, router)
+      return await resolve(to, router)
     } catch (error) {
-      console.error('[RouteGuard] 路由守卫处理失败:', error)
-      closeLoading()
-      next({ name: 'Exception500' })
+      console.error('[RouteGuard] 路由守卫处理失败', error)
+      return { name: 'Exception500', replace: true }
+    } finally {
+      if (needsLoading) {
+        loadingService.hideLoading()
+      }
     }
   })
 }
 
-/**
- * 关闭 loading 效果
- */
-function closeLoading(): void {
-  if (pendingLoading) {
-    nextTick(() => {
-      loadingService.hideLoading()
-      pendingLoading = false
-    })
-  }
-}
+async function resolve(to: RouteLocationNormalized, router: Router): Promise<NavigationGuardReturn> {
+  const isLoginRoute = RoutesAlias.Login === to.path
 
-/**
- * 处理路由守卫逻辑
- */
-async function handleRouteGuard(
-  to: RouteLocationNormalized,
-  from: RouteLocationNormalized,
-  next: NavigationGuardNext,
-  router: Router,
-): Promise<void> {
-  const settingStore = useSettingStore()
-  const sessionStore = useSessionStore()
-
-  // 启动进度条
-  if (settingStore.showNprogress) {
-    NProgress.start()
-  }
-
-  // 1. 确认会话状态（服务端才是真相源），再判断登录
-  await sessionStore.ensureLoaded()
-  if (!handleLoginStatus(to, sessionStore, next)) {
-    return
-  }
-
-  // 2. 检查路由初始化是否已失败（防止死循环）
-  if (routeInitFailed) {
-    // 已经失败过，直接放行到错误页面，不再重试
-    if (to.matched.length > 0) {
-      next()
-    } else {
-      // 未匹配到路由，跳转到 500 页面
-      next({ name: 'Exception500', replace: true })
-    }
-    return
-  }
-
-  // 3. 处理动态路由注册
-  if (!routeRegistry?.isRegistered() && sessionStore.isLoggedIn) {
-    // 防止并发请求（快速连续导航场景）
-    if (routeInitInProgress) {
-      // 正在初始化中，等待完成后重新导航
-      next(false)
-      return
-    }
-    await handleDynamicRoutes(to, next, router)
-    return
-  }
-
-  // 4. 处理根路径重定向
-  if (handleRootPathRedirect(to, next)) {
-    return
-  }
-
-  // 5. 处理已匹配的路由
-  if (to.matched.length > 0) {
-    setWorktab(to)
-    setPageTitle(to)
-    next()
-    return
-  }
-
-  // 6. 未匹配到路由，跳转到 404
-  next({ name: 'Exception404' })
-}
-
-/**
- * 处理登录状态
- * @returns true 表示可以继续，false 表示已处理跳转
- */
-function handleLoginStatus(
-  to: RouteLocationNormalized,
-  sessionStore: ReturnType<typeof useSessionStore>,
-  next: NavigationGuardNext,
-): boolean {
-  // 已登录或访问登录页或静态路由，直接放行
-  if (sessionStore.isLoggedIn || to.path === RoutesAlias.Login || isStaticRoute(to.path)) {
+  // 1. 静态路由不依赖登录态与菜单权限。登录页除外，它要判断是否已登录
+  if (!isLoginRoute && isStaticRoute(to.path)) {
     return true
   }
 
-  // 未登录且访问需要权限的页面，跳转到登录页并携带 redirect 参数
-  next({
-    name: 'Login',
-    query: { redirect: to.fullPath },
-  })
-  return false
+  // 2. 服务端才是登录态的真相源
+  const sessionStore = useSessionStore()
+  await sessionStore.ensureLoaded()
+
+  // 3. 已登录就别停在登录页了
+  if (sessionStore.isLoggedIn && isLoginRoute) {
+    return '/'
+  }
+
+  // 4. 未登录
+  if (!sessionStore.isLoggedIn) {
+    return isLoginRoute ? true : { name: 'Login', query: { redirect: to.fullPath } }
+  }
+
+  // 5. 首次进入，按权限注册动态路由，再重新走一遍导航
+  const registry = DynamicRouteRegistry.getInstance()
+  if (!registry?.isRegistered()) {
+    await registerDynamicRoutes(router)
+    return to.fullPath
+  }
+
+  // 6. 根路径交给首页
+  const homePath = useMenuStore().getHomePath()
+  if ('/' === to.path && homePath && '/' !== homePath) {
+    return { path: homePath, replace: true }
+  }
+
+  // 7. 放行。静态路由里有 404 兜底，走到这里必然已匹配
+  setWorktab(to)
+  setPageTitle(to)
+  return true
 }
 
 /**
- * 检查路由是否为静态路由
+ * 按当前用户的权限注册动态路由，并同步菜单数据
+ *
+ * 先过滤权限再交给菜单处理：被筛空的目录会在 filterEmptyMenus 那步一并清掉
+ */
+async function registerDynamicRoutes(router: Router): Promise<void> {
+  const menuList = await menuProcessor.getMenuList(filterByPermission(dynamicRoutes))
+  const registry = DynamicRouteRegistry.getInstance()
+  registry?.register(menuList)
+
+  const menuStore = useMenuStore()
+  menuStore.setMenuList(menuList)
+  menuStore.addRemoveRouteFns(registry?.getRemoveRouteFns() ?? [])
+
+  IframeRouteManager.getInstance().save()
+  useWorktabStore().validateWorktabs(router)
+}
+
+/**
+ * 判断是否为静态路由
+ *
+ * 404 的 catch-all 不算，否则未登录时输入任意地址都会直接落到 404，而不是跳去登录页
  */
 function isStaticRoute(path: string): boolean {
-  const checkRoute = (routes: any[], targetPath: string): boolean => {
-    return routes.some(route => {
-      // 404 catch-all 路由不应视为可匿名访问的静态页，
-      // 否则未登录时手动输入任意地址会直接落到 404，无法跳转登录页。
-      if (route.name === 'Exception404') {
+  const match = (routes: readonly { name?: unknown; path: string; children?: unknown }[]): boolean =>
+    routes.some(route => {
+      if ('Exception404' === route.name) {
         return false
       }
-
-      // 处理动态路由参数匹配
-      const routePath = route.path
-      const pattern = routePath.replace(/:[^/]+/g, '[^/]+').replace(/\*/g, '.*')
-      const regex = new RegExp(`^${pattern}$`)
-
-      if (regex.test(targetPath)) {
+      const pattern = route.path.replace(/:[^/]+/g, '[^/]+').replace(/\*/g, '.*')
+      if (new RegExp(`^${pattern}$`).test(path)) {
         return true
       }
-      if (route.children && route.children.length > 0) {
-        return checkRoute(route.children, targetPath)
-      }
-      return false
+      const children = route.children as typeof routes | undefined
+      return children?.length ? match(children) : false
     })
-  }
 
-  return checkRoute(staticRoutes, path)
-}
-
-/**
- * 处理动态路由注册
- */
-async function handleDynamicRoutes(
-  to: RouteLocationNormalized,
-  next: NavigationGuardNext,
-  router: Router,
-): Promise<void> {
-  // 标记初始化进行中
-  routeInitInProgress = true
-
-  // 显示 loading
-  pendingLoading = true
-  loadingService.showLoading()
-
-  try {
-    // 1. 获取菜单数据
-    const menuList = await menuProcessor.getMenuList()
-
-    // 3. 验证菜单数据
-    if (!menuProcessor.validateMenuList(menuList)) {
-      throw new Error('获取菜单列表失败，请重新登录')
-    }
-
-    // 4. 注册动态路由
-    routeRegistry?.register(menuList)
-
-    // 5. 保存菜单数据到 store
-    const menuStore = useMenuStore()
-    menuStore.setMenuList(menuList)
-    menuStore.addRemoveRouteFns(routeRegistry?.getRemoveRouteFns() || [])
-
-    // 6. 保存 iframe 路由
-    IframeRouteManager.getInstance().save()
-
-    // 7. 验证工作标签页
-    useWorktabStore().validateWorktabs(router)
-
-    // 8. 静态路由不依赖菜单权限，初始化后直接恢复目标地址。
-    if (isStaticRoute(to.path)) {
-      routeInitInProgress = false
-      next({
-        path: to.path,
-        query: to.query,
-        hash: to.hash,
-        replace: true,
-      })
-      return
-    }
-
-    // 8. 验证目标路径权限
-    const { homePath } = useCommon()
-    const { path: validatedPath, hasPermission } = RoutePermissionValidator.validatePath(
-      to.path,
-      menuList,
-      homePath.value || '/',
-    )
-
-    // 初始化成功，重置进行中标记
-    routeInitInProgress = false
-
-    // 9. 重新导航到目标路由
-    if (!hasPermission) {
-      // 无权限访问，跳转到首页
-      closeLoading()
-
-      // 输出警告信息
-      console.warn(`[RouteGuard] 用户无权限访问路径: ${to.path}，已跳转到首页`)
-
-      // 直接跳转到首页
-      next({
-        path: validatedPath,
-        replace: true,
-      })
-    } else {
-      // 有权限，正常导航
-      next({
-        path: to.path,
-        query: to.query,
-        hash: to.hash,
-        replace: true,
-      })
-    }
-  } catch (error) {
-    console.error('[RouteGuard] 动态路由注册失败:', error)
-
-    // 关闭 loading
-    closeLoading()
-
-    // 标记初始化失败，防止死循环
-    routeInitFailed = true
-    routeInitInProgress = false
-
-    // 跳转到 500 页面，使用 replace 避免产生历史记录
-    next({ name: 'Exception500', replace: true })
-  }
-}
-
-/**
- * 重置路由相关状态
- */
-export function resetRouterState(delay: number): void {
-  setTimeout(() => {
-    routeRegistry?.unregister()
-    IframeRouteManager.getInstance().clear()
-
-    const menuStore = useMenuStore()
-    menuStore.removeAllDynamicRoutes()
-    menuStore.setMenuList([])
-
-    // 重置路由初始化状态，允许重新登录后再次初始化
-    resetRouteInitState()
-  }, delay)
-}
-
-/**
- * 处理根路径重定向到首页
- * @returns true 表示已处理跳转，false 表示无需跳转
- */
-function handleRootPathRedirect(to: RouteLocationNormalized, next: NavigationGuardNext): boolean {
-  if (to.path !== '/') {
-    return false
-  }
-
-  const { homePath } = useCommon()
-  if (homePath.value && homePath.value !== '/') {
-    next({ path: homePath.value, replace: true })
-    return true
-  }
-
-  return false
+  return match(staticRoutes)
 }

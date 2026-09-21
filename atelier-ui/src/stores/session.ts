@@ -2,6 +2,8 @@ import type { User } from '@/types'
 import { getSession, login as loginApi, logout as logoutApi } from '@/apis/session'
 import { getAvailablePermissionsByUserId } from '@/apis/user'
 import { usePermissionStore } from '@/stores/permission'
+import { useMenuStore } from '@/stores/menu'
+import { DynamicRouteRegistry } from '@/router/guards/route-registry'
 import { router } from '@/router'
 
 /**
@@ -88,12 +90,20 @@ export const useSessionStore = defineStore('session', () => {
 
   /**
    * 清空本地状态，回到「未向服务端确认过」的初始态
+   *
+   * 动态路由是按权限注册的，跟着会话一起注销：否则换个人登录会沿用上一个人的路由表。
+   * 工作标签页故意不清，免得误登出丢掉打开中的页面
    */
   function reset(): void {
     user.value = null
     loginTime.value = null
     ready.value = false
     usePermissionStore().clear()
+
+    DynamicRouteRegistry.getInstance()?.unregister()
+    const menuStore = useMenuStore()
+    menuStore.removeAllDynamicRoutes()
+    menuStore.setMenuList([])
   }
 
   return {

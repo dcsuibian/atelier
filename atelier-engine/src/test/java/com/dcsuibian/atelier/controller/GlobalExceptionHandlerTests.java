@@ -80,6 +80,15 @@ public class GlobalExceptionHandlerTests extends IntegrationTests {
 	}
 
 	@Test
+	@DisplayName("查询对象字段类型转换失败返回业务码 400，文案只指出字段，不回显类名")
+	void queryObjectTypeMismatch() throws Exception {
+		mockMvc.perform(get("/exception-tests/query-object").param("status", "1"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.code").value(400))
+				.andExpect(jsonPath("$.message").value("参数校验失败：status：取值无效；"));
+	}
+
+	@Test
 	@DisplayName("数据库约束冲突返回业务码 400 与固定文案，不回显 SQL")
 	void dataIntegrityViolation() throws Exception {
 		mockMvc.perform(get("/exception-tests/data-integrity"))
@@ -128,6 +137,10 @@ public class GlobalExceptionHandlerTests extends IntegrationTests {
 		void parameter(@RequestParam("pageNumber") int pageNumber) {
 		}
 
+		@GetMapping("/query-object")
+		void queryObject(Query query) {
+		}
+
 		@GetMapping("/data-integrity")
 		void dataIntegrity() {
 			throw new DataIntegrityViolationException("SQL [insert into ...]; duplicate key value");
@@ -146,6 +159,18 @@ public class GlobalExceptionHandlerTests extends IntegrationTests {
 
 		@NotBlank(groups = Add.class, message = "不能为空")
 		private String name;
+
+	}
+
+	@Getter
+	@Setter
+	static class Query {
+
+		private Status status;
+
+		enum Status {
+			ENABLED, DISABLED
+		}
 
 	}
 

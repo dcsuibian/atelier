@@ -38,13 +38,18 @@ public class GlobalExceptionHandler {
 		return ResponseWrapper.fail(e.getMessage(), e.getCode());
 	}
 
+	/**
+	 * 请求体校验失败，或查询参数绑定到对象时校验、类型转换失败。
+	 * 类型转换失败的默认消息是 Spring 原文，带完整类名，只进日志，返回给调用方的只说取值无效
+	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseWrapper<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 		StringBuilder message = new StringBuilder("参数校验失败：");
 		for (FieldError error : e.getBindingResult().getFieldErrors()) {
-			message.append(error.getField()).append("：").append(error.getDefaultMessage()).append("；");
+			String reason = error.isBindingFailure() ? "取值无效" : error.getDefaultMessage();
+			message.append(error.getField()).append("：").append(reason).append("；");
 		}
-		log.warn("{}", message);
+		log.warn("{}（原文：{}）", message, e.getMessage());
 		return ResponseWrapper.fail(message.toString(), 400);
 	}
 

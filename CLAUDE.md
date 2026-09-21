@@ -224,7 +224,6 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check` 与 `build` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。
 - **前端尚未对接的部分**：`views/system/{user,role}` 两个页面仍是 ADP 的演示实现，用着 mock 的数据结构与状态值（`status=1`），调用后端会因枚举转换失败返回 400；`apis/system-manage.ts` 是过渡产物，待拆成按资源划分的 `apis/role.ts` 等；`types/art/api/api.d.ts` 里的 `Api.Auth`、`Api.SystemManage` 已作废待删；`views/system/menu` 是 ADP 的菜单管理演示页，依赖不存在的 `/menus` 接口，而前端模式下菜单写在 `router/modules/` 里，这页建议删；注册页与忘记密码页后端没有对应接口，链接目前指向死路。
 - `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。
-- **已知的后端小问题**：参数类型转换失败时，`GlobalExceptionHandler` 把 Spring 的原始异常消息透给了前端，内容里带有 `com.dcsuibian.atelier.domain.User$Status` 这样的包名与内部类名——对使用者无意义，也是不必要的实现细节外泄。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
 ### 待定

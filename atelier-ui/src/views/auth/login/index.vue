@@ -95,7 +95,7 @@ import AppConfig from '@/config'
 import { useUserStore } from '@/stores/user'
 import { useI18n } from 'vue-i18n'
 import { HttpError } from '@/utils/art/http/error'
-import { fetchLogin } from '@/api/auth'
+import { fetchLogin } from '@/apis/auth'
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus'
 import { useSettingStore } from '@/stores/setting'
 

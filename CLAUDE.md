@@ -115,7 +115,9 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 ### atelier-engine
 
-尚未配置数据源，`mvnd` 相关命令暂不可用。
+（在该目录下执行）
+
+- `mvnd test`：运行测试，Testcontainers 自动起 PostgreSQL 与 Redis，需要 Docker
 
 ## 代码约定
 
@@ -127,9 +129,10 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 ## 当前状态
 
 - `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化均已完成。`type-check` 与 `build` 全绿。
-- `atelier-engine/`：仅有 Spring Initializr 骨架，pom 还缺 MapStruct（含 `annotationProcessorPaths`）、jooq-codegen 插件、`spring-security-crypto`；数据源未配置。
+- `atelier-engine/`：依赖已补齐，jOOQ 代码生成尚未配置，数据源按 profile 配置（`development` / `production`）；迁移脚本尚空，业务代码未开始。
+- **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
 ### 待定
 
-- **示例业务域未定。** 模板需要一条从建表到列表页的完整样例支撑典型场景（分页查询、增删改、外键关联、鉴权），但不能借用任何真实项目的业务模型。
+- **种子数据放在哪里。** Flyway 主要管结构，权限点、初始超管账号、开发用的演示数据分别该放哪里还没定。
 - **是否建 `upstream` 分支存放 ADP 原始代码**（借三方合并让 Git 自动处理非冲突部分）取决于魔改深度：魔改越彻底，冲突率越高，越不如人工读 diff 理解意图后自己写。

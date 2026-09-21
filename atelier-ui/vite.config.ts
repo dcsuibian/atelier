@@ -26,7 +26,9 @@ export default ({ mode }: { mode: string }) => {
       proxy: {
         '/api': {
           target: VITE_API_PROXY_URL,
-          changeOrigin: true
+          changeOrigin: true,
+          // 后端没有 context-path，接口路径就是 /session、/users，转发时去掉 /api 前缀
+          rewrite: path => path.replace(/^\/api/, '')
         }
       },
       host: true

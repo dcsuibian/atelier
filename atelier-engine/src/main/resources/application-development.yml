@@ -10,3 +10,6 @@ atelier:
   super-admin:
     # 只在库里还没有任何用户时用来创建超级管理员 admin，之后改这里不影响已有密码
     initial-password: password
+
+server:
+  port: 32733

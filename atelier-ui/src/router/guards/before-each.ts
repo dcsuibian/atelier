@@ -87,7 +87,13 @@ async function resolve(to: RouteLocationNormalized, router: Router): Promise<Nav
   // 5. 首次进入，按权限注册动态路由，再重新走一遍导航
   const registry = DynamicRouteRegistry.getInstance()
   if (!registry?.isRegistered()) {
-    await registerDynamicRoutes(router)
+    const registered = await registerDynamicRoutes(router)
+    // 一个页面都没有，再往下走只会落到 404，还不如直接说清楚
+    if (0 === registered) {
+      ElMessage.warning('当前账号没有任何页面权限，请联系管理员分配')
+      await sessionStore.logout(false)
+      return { name: 'Login' }
+    }
     return to.fullPath
   }
 
@@ -107,8 +113,10 @@ async function resolve(to: RouteLocationNormalized, router: Router): Promise<Nav
  * 按当前用户的权限注册动态路由，并同步菜单数据
  *
  * 先过滤权限再交给菜单处理：被筛空的目录会在 filterEmptyMenus 那步一并清掉
+ *
+ * @returns 实际注册的顶层路由数量，为 0 表示这个账号一个页面都看不到
  */
-async function registerDynamicRoutes(router: Router): Promise<void> {
+async function registerDynamicRoutes(router: Router): Promise<number> {
   const menuList = await menuProcessor.getMenuList(filterByPermission(dynamicRoutes))
   const registry = DynamicRouteRegistry.getInstance()
   registry?.register(menuList)
@@ -119,6 +127,8 @@ async function registerDynamicRoutes(router: Router): Promise<void> {
 
   IframeRouteManager.getInstance().save()
   useWorktabStore().validateWorktabs(router)
+
+  return menuList.length
 }
 
 /**

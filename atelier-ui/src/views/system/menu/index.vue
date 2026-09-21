@@ -14,7 +14,7 @@
       <!-- 表格头部 -->
       <ArtTableHeader :showZebra="false" :loading="loading" v-model:columns="columnChecks" @refresh="handleRefresh">
         <template #left>
-          <ElButton v-auth="'add'" @click="handleAddMenu" v-ripple> 添加菜单 </ElButton>
+          <ElButton @click="handleAddMenu" v-ripple> 添加菜单 </ElButton>
           <ElButton @click="toggleExpand" v-ripple>
             {{ isExpanded ? '收起' : '展开' }}
           </ElButton>

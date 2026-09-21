@@ -24,6 +24,7 @@
 </template>
 
 <script setup lang="ts">
+import type { PermissionExpression } from '@/types'
 import { useAuth } from '@/hooks/core/useAuth'
 
 defineOptions({ name: 'ArtButtonMore' })
@@ -37,8 +38,8 @@ export interface ButtonMoreItem {
   label: string
   /** 是否禁用 */
   disabled?: boolean
-  /** 权限标识 */
-  auth?: string
+  /** 需要的权限，支持 and / or 组合 */
+  auth?: PermissionExpression
   /** 图标组件 */
   icon?: string
   /** 文本颜色 */

@@ -1,4 +1,5 @@
 import type { AppRouteRecord } from '@/types/art/router'
+import { PERMISSIONS } from '@/constants/permission'
 
 export const systemRoutes: AppRouteRecord = {
   path: '/system',
@@ -7,7 +8,7 @@ export const systemRoutes: AppRouteRecord = {
   meta: {
     title: 'menus.system.title',
     icon: 'ri:user-3-line',
-    roles: ['R_SUPER', 'R_ADMIN'],
+    // 目录本身不设限：子项被权限筛光时，这个目录会跟着一起消失
   },
   children: [
     {
@@ -18,7 +19,7 @@ export const systemRoutes: AppRouteRecord = {
         title: 'menus.system.user',
         icon: 'ri:user-line',
         keepAlive: true,
-        roles: ['R_SUPER', 'R_ADMIN'],
+        permission: PERMISSIONS.USER_VIEW,
       },
     },
     {
@@ -29,7 +30,7 @@ export const systemRoutes: AppRouteRecord = {
         title: 'menus.system.role',
         icon: 'ri:user-settings-line',
         keepAlive: true,
-        roles: ['R_SUPER'],
+        permission: PERMISSIONS.ROLE_VIEW,
       },
     },
     {
@@ -42,6 +43,7 @@ export const systemRoutes: AppRouteRecord = {
         isHide: true,
         keepAlive: true,
         isHideTab: true,
+        // 个人中心看的是自己，不设限
       },
     },
     {
@@ -52,12 +54,6 @@ export const systemRoutes: AppRouteRecord = {
         title: 'menus.system.menu',
         icon: 'ri:menu-line',
         keepAlive: true,
-        roles: ['R_SUPER'],
-        authList: [
-          { title: '新增', authMark: 'add' },
-          { title: '编辑', authMark: 'edit' },
-          { title: '删除', authMark: 'delete' },
-        ],
       },
     },
   ],

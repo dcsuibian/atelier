@@ -36,9 +36,9 @@ export const SETTING_DEFAULT_CONFIG = {
   /** 双菜单是否显示文本 */
   dualMenuShowText: false,
   /** 系统主题类型 */
-  systemThemeType: SystemThemeEnum.AUTO,
+  systemThemeType: SystemThemeEnum.LIGHT,
   /** 系统主题模式 */
-  systemThemeMode: SystemThemeEnum.AUTO,
+  systemThemeMode: SystemThemeEnum.LIGHT,
   /** 菜单风格 */
   menuThemeType: MenuThemeEnum.DESIGN,
   /** 系统主题颜色 */
@@ -58,7 +58,7 @@ export const SETTING_DEFAULT_CONFIG = {
   /** 是否显示进度条 */
   showNprogress: false,
   /** 是否显示设置引导 */
-  showSettingGuide: true,
+  showSettingGuide: false,
   /** 是否显示节日文本 */
   showFestivalText: false,
   /** 是否显示水印 */

@@ -27,7 +27,7 @@
  * - 存储键：sys-v{version}-setting
  * - 支持跨版本数据迁移
  *
- * @module store/modules/setting
+ * @module stores/setting
  * @author Art Design Pro Team
  */
 import { defineStore } from 'pinia'

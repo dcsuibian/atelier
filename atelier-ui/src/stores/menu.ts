@@ -25,7 +25,7 @@
  * 3. 注册动态路由并保存移除函数
  * 4. 登出时调用移除函数清理路由
  *
- * @module store/modules/menu
+ * @module stores/menu
  * @author Art Design Pro Team
  */
 import { defineStore } from 'pinia'

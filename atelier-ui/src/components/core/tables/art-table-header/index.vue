@@ -114,7 +114,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { TableSizeEnum } from '@/enums/formEnum'
-import { useTableStore } from '@/store/modules/table'
+import { useTableStore } from '@/stores/table'
 import { VueDraggable } from 'vue-draggable-plus'
 import { useI18n } from 'vue-i18n'
 import type { ColumnOption } from '@/types/art/component'

@@ -36,7 +36,7 @@
  */
 import { upgradeLogList } from '@/mock/upgrade/changeLog'
 import { ElNotification } from 'element-plus'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStore } from '@/stores/user'
 import { StorageConfig } from '@/utils/art/storage/storage-config'
 
 /**

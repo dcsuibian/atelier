@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { nextTick } from 'vue'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
 import { useClipboard } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'

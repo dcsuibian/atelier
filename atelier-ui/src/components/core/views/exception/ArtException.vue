@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { useCommon } from '@/hooks/core/useCommon'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const userStore = useUserStore()

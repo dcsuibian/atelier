@@ -30,7 +30,7 @@
 import { useCommon } from '@/hooks/core/useCommon'
 import { useTheme } from '@/hooks/core/useTheme'
 import { SystemThemeEnum } from '@/enums/appEnum'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 const { LIGHT, DARK } = SystemThemeEnum
 
 /**

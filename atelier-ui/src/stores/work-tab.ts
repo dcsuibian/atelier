@@ -34,7 +34,7 @@
  * - 存储键：sys-v{version}-worktab
  * - 刷新页面保持标签状态
  *
- * @module store/modules/worktab
+ * @module stores/work-tab
  * @author Art Design Pro Team
  */
 import { defineStore } from 'pinia'

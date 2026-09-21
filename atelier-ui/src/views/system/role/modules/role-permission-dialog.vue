@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { useMenuStore } from '@/store/modules/menu'
+import { useMenuStore } from '@/stores/menu'
 import { formatMenuTitle } from '@/utils/art/router'
 
 type RoleListItem = Api.SystemManage.RoleListItem

@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { useElementSize, useRafFn, useElementHover, useDebounceFn, useTimeoutFn } from '@vueuse/core'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 
 type ThemeType = 'theme' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' | 'danger'
 

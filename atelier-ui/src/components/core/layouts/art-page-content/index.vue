@@ -41,8 +41,8 @@
 import type { CSSProperties } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAutoLayoutHeight } from '@/hooks/core/useLayoutHeight'
-import { useSettingStore } from '@/store/modules/setting'
-import { useWorktabStore } from '@/store/modules/worktab'
+import { useSettingStore } from '@/stores/setting'
+import { useWorktabStore } from '@/stores/work-tab'
 
 defineOptions({ name: 'ArtPageContent' })
 

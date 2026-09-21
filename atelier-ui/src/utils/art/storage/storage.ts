@@ -33,7 +33,7 @@
  * @author Art Design Pro Team
  */
 import { router } from '@/router'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStore } from '@/stores/user'
 import { StorageConfig } from '@/utils/art/storage/storage-config'
 
 /**

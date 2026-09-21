@@ -21,10 +21,10 @@
  * @module utils/navigation/worktab
  * @author Art Design Pro Team
  */
-import { useWorktabStore } from '@/store/modules/worktab'
+import { useWorktabStore } from '@/stores/work-tab'
 import type { RouteLocationNormalized } from 'vue-router'
 import { isIframe } from './route'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 import { IframeRouteManager } from '@/router/core'
 import { useCommon } from '@/hooks/core/useCommon'
 

@@ -41,7 +41,7 @@
  * @module utils/ui/colors
  * @author Art Design Pro Team
  */
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 
 /**
  * 颜色转换结果接口

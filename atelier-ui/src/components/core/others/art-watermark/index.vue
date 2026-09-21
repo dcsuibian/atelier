@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import AppConfig from '@/config'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 
 defineOptions({ name: 'ArtWatermark' })
 

@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import SectionTitle from './SectionTitle.vue'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 import { useSettingsConfig } from '../composables/useSettingsConfig'
 import { useSettingsHandlers } from '../composables/useSettingsHandlers'
 import { storeToRefs } from 'pinia'

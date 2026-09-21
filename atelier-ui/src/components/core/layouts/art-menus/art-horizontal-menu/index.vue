@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import type { AppRouteRecord } from '@/types/art/router'
 import HorizontalSubmenu from './widget/HorizontalSubmenu.vue'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 
 defineOptions({ name: 'ArtHorizontalMenu' })
 

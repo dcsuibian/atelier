@@ -28,7 +28,7 @@
  * - 存储键：sys-v{version}-user
  * - 登出时自动清理
  *
- * @module store/modules/user
+ * @module stores/user
  * @author Art Design Pro Team
  */
 import { defineStore } from 'pinia'
@@ -36,7 +36,7 @@ import { ref, computed } from 'vue'
 import { LanguageEnum } from '@/enums/appEnum'
 import { router } from '@/router'
 import { useSettingStore } from './setting'
-import { useWorktabStore } from './worktab'
+import { useWorktabStore } from './work-tab'
 import type { AppRouteRecord } from '@/types/art/router'
 import { setPageTitle } from '@/utils/art/router'
 import { resetRouterState } from '@/router/guards/beforeEach'

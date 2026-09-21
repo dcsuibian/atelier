@@ -92,12 +92,12 @@
 
 <script setup lang="ts">
 import AppConfig from '@/config'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStore } from '@/stores/user'
 import { useI18n } from 'vue-i18n'
 import { HttpError } from '@/utils/art/http/error'
 import { fetchLogin } from '@/api/auth'
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 
 defineOptions({ name: 'Login' })
 

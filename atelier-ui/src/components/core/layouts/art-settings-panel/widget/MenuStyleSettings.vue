@@ -19,7 +19,7 @@
 import AppConfig from '@/config'
 import SectionTitle from './SectionTitle.vue'
 import { MenuTypeEnum, type MenuThemeEnum } from '@/enums/appEnum'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 
 const menuThemeList = AppConfig.themeList
 const settingStore = useSettingStore()

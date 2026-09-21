@@ -31,7 +31,7 @@
  * @author Art Design Pro Team
  */
 
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 import { SystemThemeEnum } from '@/enums/appEnum'
 import AppConfig from '@/config'
 import type { SystemThemeTypes } from '@/types/art/store'

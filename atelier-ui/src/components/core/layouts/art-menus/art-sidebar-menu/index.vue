@@ -112,9 +112,9 @@
 
 <script setup lang="ts">
 import AppConfig from '@/config'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum'
-import { useMenuStore } from '@/store/modules/menu'
+import { useMenuStore } from '@/stores/menu'
 import { isIframe } from '@/utils/art/navigation'
 import { handleMenuJump } from '@/utils/art/navigation'
 import SidebarSubmenu from './widget/SidebarSubmenu.vue'

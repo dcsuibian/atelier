@@ -101,7 +101,7 @@ import { Lock, Unlock } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CryptoJS from 'crypto-js'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStore } from '@/stores/user'
 import { mittBus } from '@/utils/art/sys'
 
 // 国际化

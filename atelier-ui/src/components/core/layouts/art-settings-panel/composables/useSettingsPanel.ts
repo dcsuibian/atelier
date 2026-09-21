@@ -1,5 +1,5 @@
 import { ref, computed, watch } from 'vue'
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 import { storeToRefs } from 'pinia'
 import { useBreakpoints } from '@vueuse/core'
 import AppConfig from '@/config'

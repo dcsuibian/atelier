@@ -22,7 +22,7 @@
  * - 存储键：sys-v{version}-table
  * - 用户配置跨页面保持
  *
- * @module store/modules/table
+ * @module stores/table
  * @author Art Design Pro Team
  */
 import { defineStore } from 'pinia'

@@ -1,4 +1,4 @@
-import { useSettingStore } from '@/store/modules/setting'
+import { useSettingStore } from '@/stores/setting'
 import { storeToRefs } from 'pinia'
 import type { ContainerWidthEnum } from '@/enums/appEnum'
 

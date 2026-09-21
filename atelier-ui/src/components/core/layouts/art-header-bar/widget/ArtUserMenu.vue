@@ -61,7 +61,7 @@
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { useUserStore } from '@/store/modules/user'
+import { useUserStore } from '@/stores/user'
 import { WEB_LINKS } from '@/utils/art/constants'
 import { mittBus } from '@/utils/art/sys'
 

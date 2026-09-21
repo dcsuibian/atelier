@@ -16,8 +16,8 @@
  */
 
 import { computed } from 'vue'
-import { useMenuStore } from '@/store/modules/menu'
-import { useSettingStore } from '@/store/modules/setting'
+import { useMenuStore } from '@/stores/menu'
+import { useSettingStore } from '@/stores/setting'
 
 export function useCommon() {
   const menuStore = useMenuStore()

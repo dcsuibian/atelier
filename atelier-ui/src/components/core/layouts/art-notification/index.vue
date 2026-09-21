@@ -405,7 +405,7 @@ watch(
 </script>
 
 <style scoped>
-@reference '@/assets/styles/core/tailwind.css';
+@reference '@/styles/core/tailwind.css';
 
 .art-notification-panel {
   @apply absolute 

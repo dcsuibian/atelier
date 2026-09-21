@@ -402,7 +402,7 @@ const highlightOnHoverHistory = (index: number) => {
 </style>
 
 <style scoped>
-@reference '@/assets/styles/core/tailwind.css';
+@reference '@/styles/core/tailwind.css';
 
 .keyboard {
   @apply mr-2 

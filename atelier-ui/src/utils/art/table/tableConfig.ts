@@ -40,16 +40,17 @@ export const tableConfig = {
   // 总条数
   totalFields: ['total', 'count'],
   // 当前页码
-  currentFields: ['current', 'page', 'pageNum'],
+  // atelier：加了 pageNumber
+  currentFields: ['current', 'page', 'pageNum', 'pageNumber'],
   // 每页大小
   sizeFields: ['size', 'pageSize', 'limit'],
 
   // 请求参数映射配置，前端发送请求时使用的分页参数名
-  // useTable 组合式函数传递分页参数的时候 用 current 跟 size
+  // atelier：改为后端 PageWrapper 的 pageNumber / pageSize，ADP 原为 current / size
   paginationKey: {
     // 当前页码
-    current: 'current',
+    current: 'pageNumber',
     // 每页大小
-    size: 'size',
+    size: 'pageSize',
   },
 }

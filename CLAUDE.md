@@ -55,7 +55,13 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 - **上游原件连文件名都不改。** `tableCache.ts`、`ComponentLoader.ts` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
 - **改动大到「接管」的模块不留原件。** `stores/`、`router/`、`apis/` 属于重写而非微调，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。在 `art/` 下留一份用不到的副本，只会制造「到底该改哪个」的困惑。
 
-**已知的破例有一处**：`types/art/router/index.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。往 `art/` 里加东西之前先掂量这笔账，别让破例变成常例。
+**已知的破例有三处**，改动处都标了 `atelier：` 注释，ADP 升级整目录替换后搜这个前缀补回：
+
+- `types/art/router/index.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。
+- `hooks/core/useTable.ts` 的 `InferRecordType` 多认一个 `PageWrapper`，否则行类型推导成 `never`，列 formatter 里的 `row` 失去检查。
+- `utils/art/table/tableConfig.ts` 的 `paginationKey` 改为 `pageNumber` / `pageSize`，`currentFields` 加了 `pageNumber`。它本来就是给使用者改的配置，只是恰好放在 `art/` 里；改这一处换来所有表格页零配置。
+
+往 `art/` 与 `core/` 里加东西之前先掂量这笔账，别让破例变成常例。
 
 顺带一提，`RouteMeta` 继承了 `Record<string | number | symbol, unknown>`，**这意味着路由 meta 里写错字段名永远不会报错**——ADP 的 `roles`、`authList` 能在改造后一直残留到被专门清理，就是这么来的。
 
@@ -221,8 +227,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 ## 当前状态
 
-- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check` 与 `build` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。
-- **前端尚未对接的部分**：`views/system/{user,role}` 两个页面仍是 ADP 的演示实现，用着 mock 的数据结构与状态值（`status=1`），调用后端会因枚举转换失败返回 400；`apis/system-manage.ts` 是过渡产物，待拆成按资源划分的 `apis/role.ts` 等；`types/art/api/api.d.ts` 里的 `Api.Auth`、`Api.SystemManage` 已作废待删；`views/system/menu` 是 ADP 的菜单管理演示页，依赖不存在的 `/menus` 接口，而前端模式下菜单写在 `router/modules/` 里，这页建议删；注册页与忘记密码页后端没有对应接口，链接目前指向死路。
+- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check` 与 `build` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。**用户管理页已对接**：列表、搜索、新增、编辑、删除、分配角色均走真实接口。
+- **前端尚未对接的部分**：`views/system/role` 仍是 ADP 的演示实现，用着 mock 的数据结构与状态值，调用后端会因枚举转换失败返回 400；`apis/system-manage.ts` 是过渡产物，只剩角色与菜单的旧接口，角色页对接后即可删除（`apis/role.ts` 已建）；`types/art/api/api.d.ts` 里的 `Api.Auth`、`Api.SystemManage` 已作废待删（`Api.Common` 仍被 `useTable` 等上游代码引用，要留）；`views/system/menu` 是 ADP 的菜单管理演示页，依赖不存在的 `/menus` 接口，而前端模式下菜单写在 `router/modules/` 里，这页建议删；注册页与忘记密码页后端没有对应接口，链接目前指向死路。
 - `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 

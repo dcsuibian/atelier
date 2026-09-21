@@ -31,11 +31,14 @@ import {
   createErrorHandler,
 } from '@/utils/art/table/tableUtils'
 import { tableConfig } from '@/utils/art/table/tableConfig'
+import type { PageWrapper } from '@/types'
 
 // 类型推导工具类型
 type InferApiParams<T> = T extends (params: infer P) => any ? P : never
 type InferApiResponse<T> = T extends (params: any) => Promise<infer R> ? R : never
-type InferRecordType<T> = T extends Api.Common.PaginatedResponse<infer U> ? U : never
+// atelier：先认后端的 PageWrapper，再认 ADP 原有的 PaginatedResponse
+type InferRecordType<T> =
+  T extends PageWrapper<infer U> ? U : T extends Api.Common.PaginatedResponse<infer U> ? U : never
 
 // 优化的配置接口 - 支持自动类型推导
 export interface UseTableConfig<

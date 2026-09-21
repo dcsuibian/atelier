@@ -1,5 +1,6 @@
 export type { ResponseWrapper } from './response-wrapper'
-export type { PageWrapper } from './page-wrapper'
+export type { PageWrapper, PageQuery } from './page-wrapper'
 export type { Permission, PermissionStatus, PermissionExpression } from './permission'
+export type { Role, RoleStatus, RoleQuery } from './role'
 export type { Session } from './session'
-export type { User, UserGender, UserStatus } from './user'
+export type { User, UserGender, UserStatus, UserQuery } from './user'

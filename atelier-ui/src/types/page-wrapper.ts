@@ -8,4 +8,12 @@ interface PageWrapper<T> {
   pageSize: number
 }
 
-export type { PageWrapper }
+/**
+ * 分页查询参数，与 PageWrapper 对应，两个都必填
+ */
+interface PageQuery {
+  pageNumber: number
+  pageSize: number
+}
+
+export type { PageWrapper, PageQuery }

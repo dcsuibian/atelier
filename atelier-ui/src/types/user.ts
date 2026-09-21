@@ -20,4 +20,13 @@ type UserGender = 'MALE' | 'FEMALE' | 'UNKNOWN'
 
 type UserStatus = 'ENABLED' | 'DISABLED'
 
-export type { User, UserGender, UserStatus }
+/**
+ * 用户列表的查询条件，对应后端 UserQo
+ */
+interface UserQuery {
+  status?: UserStatus
+  /** 模糊匹配用户名、真实姓名、手机号，不区分大小写 */
+  searchText?: string
+}
+
+export type { User, UserGender, UserStatus, UserQuery }

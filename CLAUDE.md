@@ -110,7 +110,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 这几样不是演示内容，是 ADP 的实现方式与本项目的设计对不上，对接后端时一并换掉了。
 
-- **ADP 的 HTTP 层**（`utils/art/http/`）：它按 `{ code, msg, data }` 收响应、往 header 注入 token、自带重试与 401 自动登出。响应结构与 `ResponseWrapper` 对不上，token 与 Cookie 会话也不是一回事。换成 `utils/http.ts`：只解包 `result`，不带 token、不重试、不自动登出——重试和登出该由调用方按场景决定，放在这层只会误伤。
+- **ADP 的 HTTP 层**（`utils/art/http/`）：它按 `{ code, msg, data }` 收响应、往 header 注入 token、自带重试与 401 自动登出。响应结构与 `ResponseWrapper` 对不上，token 与 Cookie 会话也不是一回事。换成 `utils/http.ts`：只解包 `result`，不带 token、不重试——重试该由调用方按场景决定，放在这层只会误伤。401 是唯一的例外，见「前端的会话与权限」。
 - **`v-auth` 与 `v-roles` 指令**：理由见「前端的会话与权限」。`src/directives/` 现在只剩 `highlight` 和 `ripple` 两个纯 UI 指令。
 - **userStore 这个杂物袋**：ADP 把登录态、用户信息、语言、搜索历史、锁屏全塞在一个 store 里。语言、搜索历史、锁屏是跟着浏览器走的用户偏好，与登录与否无关，已迁入 `settingStore`；剩下的会话部分由 `stores/session.ts` 接管。
 - **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。`ComponentLoader`、`RouteTransformer`、`RouteValidator`、`IframeRouteManager` 属于机制层，保留在 `core/` 下不动。
@@ -191,7 +191,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **枚举值存 Java 枚举名**（`ENABLED`、`MALE`），库里和 JSON 里都一样。Jackson 与 MapStruct 默认就按枚举名转换，不需要 `@JsonValue` 和成对的转换方法。库里用 `VARCHAR` 加 CHECK 约束限定取值，不用 PostgreSQL 原生 ENUM，因为原生 ENUM 很难删改取值。
 - **不区分大小写的唯一性不用 CITEXT**，用 `LOWER(col)` 唯一索引兜底，接口层先查重并给出具体文案。
 - **密码哈希用 `TEXT`**，不用 `CHAR(60)`：长度由算法保证，不写死，以后才换得了算法。
-- **响应统一用 `ResponseWrapper { code, message, result, timestamp }`**：已处理的情况一律返回 HTTP 200，结果看业务码 `code`（借用 HTTP 状态码的语义）；只有没匹配上接口（404 / 405）时返回真实 HTTP 状态码。分页用 `PageWrapper { data, total, pageNumber, pageSize }`，页码从 1 开始，不带 `totalPages`。
+- **响应统一用 `ResponseWrapper { code, message, result, timestamp }`**：已处理的情况一律返回 HTTP 200，结果看业务码 `code`（借用 HTTP 状态码的语义）。两类例外返回真实 HTTP 状态码：没匹配上接口（404 / 405），以及未登录（401）。401 走真实状态码是为了让前端在 http 层拦一次就够，body 仍按 `ResponseWrapper` 出，调用方不必为它准备另一套解析。分页用 `PageWrapper { data, total, pageNumber, pageSize }`，页码从 1 开始，不带 `totalPages`。
 - **时间在 JSON 里一律是毫秒时间戳**（`JacksonConfig`）。
 - **业务码**：参数错误 400，不存在 404，唯一性冲突 409。
 - **密码明文经 HTTPS 传输**，后端直接 BCrypt，前端不做哈希。领域模型的 `password` 标注 `WRITE_ONLY`，任何响应里都不会出现。BCrypt 上限 72 字节，按字节数校验（字符数没超、字节数超的情况会有），超了返回 400。
@@ -202,12 +202,19 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **超级管理员只在两处特判**：可用权限为全部启用的权限，不走角色；不能被删除或禁用。计算「某人有哪些权限」的逻辑只在 `RbacServiceImpl` 一处。
 - **可用权限码缓存在 Redis**，5 分钟过期。改了用户的角色或状态，就清这个用户的缓存；改了角色的权限或状态、同步了权限，就清全部缓存。清缓存要等事务提交后再做（`TransactionUtil.runAfterCommit`）。
 - **会话**：Spring Session 存在 Redis，会话 id 走 Cookie。会话里只存 `userId` 和 `loginTime`，`GET /session` 每次都现查用户、拼成 `SessionVo`，所以用户被删除或禁用后，会话自然失效。登录时更换会话 id。
+- **认证拦截做，授权拦截不做**。`AuthenticationInterceptor` 只回答「登录了没」：会话里没有 `userId` 就抛 `UnauthenticatedException`，由 `GlobalExceptionHandler` 出 401。「能不能做这件事」留给下游。
+  - 放行的只有 `/session`：GET 是前端判断登录态的依据，POST 是登录本身，DELETE 放行是为了让会话过期后登出仍调得动，不至于卡在页面上。
+  - 拦截器只看会话里有没有 `userId`，**不查库确认用户仍存在且启用**——那是每请求一次查询的成本。代价是用户被删除或禁用后，他手上的会话还能调业务接口，直到前端下次导航走 `GET /session` 才被踢。要堵这个口子就在拦截器里查一次用户状态。
+  - 拦截器先于路由匹配，所以**未登录访问不存在的路径得到 401 而不是 404**。这是有意的，不暴露哪些路径存在。
 - **删除时连带的数据**：删用户时，连同他的角色分配一起删；删角色时，连同它的权限分配一起删；但角色还分配给用户时拒绝删除（409），以免用户的权限悄悄变少。
 - **集成测试继承 `IntegrationTests`**，所有测试共用一个 Spring 上下文和一套容器。新测试不要另加 `@MockitoBean` 之类会改变上下文的注解，否则会多起一套容器。
+  - 基类给 MockMvc 配了 `defaultRequest`，**所有请求默认带一个已登录的会话**，否则会被认证拦截器挡成 401。认证是横切关注点，由 `AuthenticationInterceptorTests` 集中验证一次，其余测试各管各的那件事。要测未登录的行为就加 `.with(anonymous())`。
+  - 默认会话必须**经 `SessionRepository` 真造一个、再按 Cookie 传**：Spring Session 的 filter 接管了 `getSession()`，只认 Cookie 里的会话 id，请求上预设的 `MockHttpSession` 它根本不看。
+  - `SessionControllerTests` 里发起登录的请求要显式 `.with(anonymous())`，否则会复用默认会话，`changeSessionId()` 和登出会把它的 id 和 `userId` 一起改掉，后面的测试全挂。
 
 ## 前端的会话与权限
 
-后端不做授权拦截，前端这套东西的目标不是拦截，而是**别让人看见点不动的入口**。真正的鉴权由下游按自己的场景补在后端。
+后端做认证拦截（未登录一律 401），但**不做授权拦截**。所以前端这套权限的目标不是拦截，而是**别让人看见点不动的入口**。真正的鉴权由下游按自己的场景补在后端。
 
 ### 会话
 
@@ -215,6 +222,10 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **权限由 session 统一编排**，别在其它地方单独去填或清 permission store。两个 store 各自为政的下场是「登出时要记得清七个地方」，漏一个就是 bug。
 - **并发去重用进行中的 Promise，不要用 boolean 标志。** `if (!fetched) { await ...; fetched = true }` 这种写法，两个导航同时进来时会重复打后端。
 - **先把数据取齐再赋值。** 会话拿到了但权限请求失败时，本地状态应当保持原样，不要留下「有 user 却没有权限」的半截状态。
+- **401 在 `utils/http.ts` 这一层统一处理**，不交给调用方。这与「重试和登出该由调用方决定」不矛盾：401 的语义是服务端已经断定没登录，本地登录态必然是错的，不存在按场景判断的余地；让几十个调用点各自处理，漏掉才是常态。处理方式是调 `sessionStore.logout()`——提示、清本地状态、跳登录页并带 `redirect` 都在里面。
+  - 多个请求同时 401 时**只登出一次**，用进行中的 Promise 去重，理由同上。
+  - 取 session store 要用**动态 `import`**：session store 经 `apis/` 绕回 `utils/http.ts`，静态引用会成环。
+  - `GET /session` 未登录时返回 200 而非 401，所以守卫的 `ensureLoaded()` 不受这条影响，走的还是原来那条「user 为 null 就跳登录页」的路。
 
 ### 权限
 
@@ -229,8 +240,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 - `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check` 与 `build` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。**用户、角色管理页已对接**：列表、搜索、增删改、分配角色、分配权限均走真实接口。分配权限的树按权限码冒号前的前缀分组；已分配但被禁用的权限不在树里展示，保存时原样带回，不会被整体替换冲掉。**权限管理页已新增**（`views/system/permission`），只读，权限点的增删改只能改后端 `permissions.yml`。
 - **前端尚未对接的部分**：注册页与忘记密码页后端没有对应接口，链接目前指向死路，**有意留着作参考**，不要顺手删。`apis/system-manage.ts` 只剩 `fetchGetMenuList`，因为 `router/core/MenuProcessor.ts` 的后端菜单模式还引用它，挪走就得改 `core/` 的 import，所以留在原处。
-- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。
-- **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
+- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。**认证拦截已接上**：未登录访问业务接口返回真实 HTTP 401，前端在 `utils/http.ts` 里统一登出并跳登录页。后端已用真实服务跑通（登录 → 访问 → 登出后旧 Cookie → 401），前端那段跳转尚未在浏览器里实走过。
+- **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话、未登录拦截），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
 ### 待办（前端，已评估、暂缓）
 

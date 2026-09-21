@@ -22,7 +22,7 @@
       <ElDialog v-model="visible" :width="370" :show-close="false" @open="handleDialogOpen">
         <div class="flex-c flex-col">
           <img class="w-16 h-16 rounded-full" src="@/assets/images/user/avatar.webp" alt="用户头像" />
-          <div class="mt-7.5 mb-3.5 text-base font-medium">{{ userInfo.userName }}</div>
+          <div class="mt-7.5 mb-3.5 text-base font-medium">{{ user?.realName }}</div>
           <ElForm ref="formRef" :model="formData" :rules="rules" class="w-[90%]" @submit.prevent="handleLock">
             <ElFormItem prop="password">
               <ElInput
@@ -55,7 +55,7 @@
       <div class="flex-c flex-col w-80">
         <img class="w-16 h-16 mt-5 rounded-full" src="@/assets/images/user/avatar.webp" alt="用户头像" />
         <div class="mt-3 mb-3.5 text-base font-medium">
-          {{ userInfo.userName }}
+          {{ user?.realName }}
         </div>
         <ElForm
           ref="unlockFormRef"
@@ -101,7 +101,7 @@ import { Lock, Unlock } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CryptoJS from 'crypto-js'
-import { useUserStore } from '@/stores/user'
+import { useSessionStore } from '@/stores/session'
 import { useSettingStore } from '@/stores/setting'
 import { mittBus } from '@/utils/art/sys'
 
@@ -112,9 +112,9 @@ const { t } = useI18n()
 const ENCRYPT_KEY = import.meta.env.VITE_LOCK_ENCRYPT_KEY
 
 // Store
-const userStore = useUserStore()
+const sessionStore = useSessionStore()
 const settingStore = useSettingStore()
-const { info: userInfo } = storeToRefs(userStore)
+const { user } = storeToRefs(sessionStore)
 const { lockPassword, isLocked } = storeToRefs(settingStore)
 
 // 响应式数据
@@ -386,7 +386,7 @@ const handleUnlock = async () => {
 }
 
 const toLogin = () => {
-  userStore.logOut()
+  void sessionStore.logout()
 }
 
 const openLockScreen = () => {

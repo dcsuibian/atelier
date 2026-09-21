@@ -33,7 +33,7 @@
  * @author Art Design Pro Team
  */
 import { router } from '@/router'
-import { useUserStore } from '@/stores/user'
+import { useSessionStore } from '@/stores/session'
 import { StorageConfig } from '@/utils/art/storage/storage-config'
 
 /**
@@ -110,7 +110,7 @@ class StorageCompatibilityManager {
     setTimeout(() => {
       try {
         localStorage.clear()
-        useUserStore().logOut()
+        void useSessionStore().logout()
         router.push({ name: 'Login' })
         console.info('[Storage] 已执行系统登出')
       } catch (error) {

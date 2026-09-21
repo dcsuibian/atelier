@@ -36,7 +36,7 @@
  */
 import { upgradeLogList } from '@/mock/upgrade/changeLog'
 import { ElNotification } from 'element-plus'
-import { useUserStore } from '@/stores/user'
+import { useSessionStore } from '@/stores/session'
 import { StorageConfig } from '@/utils/art/storage/storage-config'
 
 /**
@@ -175,7 +175,7 @@ class VersionManager {
    */
   private performLogout(): void {
     try {
-      useUserStore().logOut()
+      void useSessionStore().logout()
       console.info('[Upgrade] 已执行升级后登出')
     } catch (error) {
       console.error('[Upgrade] 升级后登出失败:', error)

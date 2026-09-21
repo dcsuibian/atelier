@@ -18,13 +18,6 @@
             @keyup.enter="handleSubmit"
             style="margin-top: 25px"
           >
-            <ElFormItem prop="account">
-              <ElSelect v-model="formData.account" @change="setupAccount">
-                <ElOption v-for="account in accounts" :key="account.key" :label="account.label" :value="account.key">
-                  <span>{{ account.label }}</span>
-                </ElOption>
-              </ElSelect>
-            </ElFormItem>
             <ElFormItem prop="username">
               <ElInput
                 class="custom-height"
@@ -92,10 +85,8 @@
 
 <script setup lang="ts">
 import AppConfig from '@/config'
-import { useUserStore } from '@/stores/user'
+import { useSessionStore } from '@/stores/session'
 import { useI18n } from 'vue-i18n'
-import { HttpError } from '@/utils/art/http/error'
-import { fetchLogin } from '@/apis/auth'
 import { ElNotification, type FormInstance, type FormRules } from 'element-plus'
 import { useSettingStore } from '@/stores/setting'
 
@@ -111,43 +102,9 @@ watch(locale, () => {
   formKey.value++
 })
 
-type AccountKey = 'super' | 'admin' | 'user'
-
-export interface Account {
-  key: AccountKey
-  label: string
-  userName: string
-  password: string
-  roles: string[]
-}
-
-const accounts = computed<Account[]>(() => [
-  {
-    key: 'super',
-    label: t('login.roles.super'),
-    userName: 'Super',
-    password: '123456',
-    roles: ['R_SUPER'],
-  },
-  {
-    key: 'admin',
-    label: t('login.roles.admin'),
-    userName: 'Admin',
-    password: '123456',
-    roles: ['R_ADMIN'],
-  },
-  {
-    key: 'user',
-    label: t('login.roles.user'),
-    userName: 'User',
-    password: '123456',
-    roles: ['R_USER'],
-  },
-])
-
 const dragVerify = ref()
 
-const userStore = useUserStore()
+const sessionStore = useSessionStore()
 const router = useRouter()
 const route = useRoute()
 const isPassing = ref(false)
@@ -157,7 +114,6 @@ const systemName = AppConfig.systemInfo.name
 const formRef = ref<FormInstance>()
 
 const formData = reactive({
-  account: '',
   username: '',
   password: '',
   rememberPassword: true,
@@ -169,18 +125,6 @@ const rules = computed<FormRules>(() => ({
 }))
 
 const loading = ref(false)
-
-onMounted(() => {
-  setupAccount('super')
-})
-
-// 设置账号
-const setupAccount = (key: AccountKey) => {
-  const selectedAccount = accounts.value.find((account: Account) => account.key === key)
-  formData.account = key
-  formData.username = selectedAccount?.userName ?? ''
-  formData.password = selectedAccount?.password ?? ''
-}
 
 // 登录
 const handleSubmit = async () => {
@@ -199,38 +143,18 @@ const handleSubmit = async () => {
 
     loading.value = true
 
-    // 登录请求
+    // 登录态在 Cookie 里，登录成功后会话与权限由 store 一并取回
     const { username, password } = formData
+    await sessionStore.login(username, password)
 
-    const { token, refreshToken } = await fetchLogin({
-      userName: username,
-      password,
-    })
-
-    // 验证token
-    if (!token) {
-      throw new Error('Login failed - no token received')
-    }
-
-    // 存储 token 和登录状态
-    userStore.setToken(token, refreshToken)
-    userStore.setLoginStatus(true)
-
-    // 登录成功处理
     showLoginSuccessNotice()
 
-    // 获取 redirect 参数，如果存在则跳转到指定页面，否则跳转到首页
+    // 带了 redirect 就回到来时的页面，否则去首页
     const redirect = route.query.redirect as string
-    router.push(redirect || '/')
+    await router.push(redirect || '/')
   } catch (error) {
-    // 处理 HttpError
-    if (error instanceof HttpError) {
-      // console.log(error.code)
-    } else {
-      // 处理非 HttpError
-      // ElMessage.error('登录失败，请稍后重试')
-      console.error('[Login] Unexpected error:', error)
-    }
+    // 失败提示已由 http 层统一弹出，这里只留日志便于排查
+    console.error('[Login] 登录失败', error)
   } finally {
     loading.value = false
     resetDragVerify()

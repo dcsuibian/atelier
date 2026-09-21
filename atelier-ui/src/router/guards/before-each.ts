@@ -39,7 +39,7 @@ import type { Router, RouteLocationNormalized, NavigationGuardNext } from 'vue-r
 import { nextTick } from 'vue'
 import NProgress from 'nprogress'
 import { useSettingStore } from '@/stores/setting'
-import { useUserStore } from '@/stores/user'
+import { useSessionStore } from '@/stores/session'
 import { useMenuStore } from '@/stores/menu'
 import { setWorktab } from '@/utils/art/navigation'
 import { setPageTitle } from '@/utils/art/router'
@@ -48,9 +48,6 @@ import { staticRoutes } from '../routes/static-routes'
 import { loadingService } from '@/utils/art/ui'
 import { useCommon } from '@/hooks/core/useCommon'
 import { useWorktabStore } from '@/stores/work-tab'
-import { fetchGetUserInfo } from '@/apis/auth'
-import { ApiStatus } from '@/utils/art/http/status'
-import { isHttpError } from '@/utils/art/http/error'
 import { RouteRegistry, MenuProcessor, IframeRouteManager, RoutePermissionValidator } from '../core'
 
 // 路由注册器实例
@@ -138,15 +135,16 @@ async function handleRouteGuard(
   router: Router,
 ): Promise<void> {
   const settingStore = useSettingStore()
-  const userStore = useUserStore()
+  const sessionStore = useSessionStore()
 
   // 启动进度条
   if (settingStore.showNprogress) {
     NProgress.start()
   }
 
-  // 1. 检查登录状态
-  if (!handleLoginStatus(to, userStore, next)) {
+  // 1. 确认会话状态（服务端才是真相源），再判断登录
+  await sessionStore.ensureLoaded()
+  if (!handleLoginStatus(to, sessionStore, next)) {
     return
   }
 
@@ -163,7 +161,7 @@ async function handleRouteGuard(
   }
 
   // 3. 处理动态路由注册
-  if (!routeRegistry?.isRegistered() && userStore.isLogin) {
+  if (!routeRegistry?.isRegistered() && sessionStore.isLoggedIn) {
     // 防止并发请求（快速连续导航场景）
     if (routeInitInProgress) {
       // 正在初始化中，等待完成后重新导航
@@ -197,16 +195,15 @@ async function handleRouteGuard(
  */
 function handleLoginStatus(
   to: RouteLocationNormalized,
-  userStore: ReturnType<typeof useUserStore>,
+  sessionStore: ReturnType<typeof useSessionStore>,
   next: NavigationGuardNext,
 ): boolean {
   // 已登录或访问登录页或静态路由，直接放行
-  if (userStore.isLogin || to.path === RoutesAlias.Login || isStaticRoute(to.path)) {
+  if (sessionStore.isLoggedIn || to.path === RoutesAlias.Login || isStaticRoute(to.path)) {
     return true
   }
 
   // 未登录且访问需要权限的页面，跳转到登录页并携带 redirect 参数
-  userStore.logOut()
   next({
     name: 'Login',
     query: { redirect: to.fullPath },
@@ -260,10 +257,7 @@ async function handleDynamicRoutes(
   loadingService.showLoading()
 
   try {
-    // 1. 获取用户信息
-    await fetchUserInfo()
-
-    // 2. 获取菜单数据
+    // 1. 获取菜单数据
     const menuList = await menuProcessor.getMenuList()
 
     // 3. 验证菜单数据
@@ -336,37 +330,13 @@ async function handleDynamicRoutes(
     // 关闭 loading
     closeLoading()
 
-    // 401 错误：axios 拦截器已处理退出登录，取消当前导航
-    if (isUnauthorizedError(error)) {
-      // 重置状态，允许重新登录后再次初始化
-      routeInitInProgress = false
-      next(false)
-      return
-    }
-
     // 标记初始化失败，防止死循环
     routeInitFailed = true
     routeInitInProgress = false
 
-    // 输出详细错误信息，便于排查
-    if (isHttpError(error)) {
-      console.error(`[RouteGuard] 错误码: ${error.code}, 消息: ${error.message}`)
-    }
-
     // 跳转到 500 页面，使用 replace 避免产生历史记录
     next({ name: 'Exception500', replace: true })
   }
-}
-
-/**
- * 获取用户信息
- */
-async function fetchUserInfo(): Promise<void> {
-  const userStore = useUserStore()
-  const data = await fetchGetUserInfo()
-  userStore.setUserInfo(data)
-  // 检查并清理工作台标签页（如果是不同用户登录）
-  userStore.checkAndClearWorktabs()
 }
 
 /**
@@ -402,11 +372,4 @@ function handleRootPathRedirect(to: RouteLocationNormalized, next: NavigationGua
   }
 
   return false
-}
-
-/**
- * 判断是否为未授权错误（401）
- */
-function isUnauthorizedError(error: unknown): boolean {
-  return isHttpError(error) && error.code === ApiStatus.unauthorized
 }

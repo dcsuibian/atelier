@@ -1,70 +1,35 @@
 /**
- * useAuth - 权限验证管理
+ * useAuth - 按钮级权限判断
  *
- * 提供统一的权限验证功能，支持前端和后端两种权限模式。
- * 用于控制页面按钮、操作等功能的显示和访问权限。
+ * 判断依据是权限码，不是角色：角色是库里的数据、名字随时可改，权限码写在后端的
+ * permissions.yml 里、发布后不改名，只有它才适合写进前端代码。
  *
- * ## 主要功能
- *
- * 1. 权限检查 - 检查用户是否拥有指定的权限标识
- * 2. 双模式支持 - 自动适配前端模式和后端模式的权限验证
- * 3. 前端模式 - 从用户信息中获取按钮权限列表（如 ['add', 'edit', 'delete']）
- * 4. 后端模式 - 从路由 meta 配置中获取权限列表（如 [{ authMark: 'add' }]）
+ * 权限码集中定义在 `@/constants/permission`，用 PERMISSIONS.XXX 引用，不要写裸字符串。
  *
  * ## 使用示例
  *
- * ```typescript
+ * ```vue
+ * <script setup lang="ts">
  * const { hasAuth } = useAuth()
+ * </script>
  *
- * // 检查是否有新增权限
- * if (hasAuth('add')) {
- *   // 显示新增按钮
- * }
- *
- * // 在模板中使用
- * <el-button v-if="hasAuth('edit')">编辑</el-button>
- * <el-button v-if="hasAuth('delete')">删除</el-button>
+ * <template>
+ *   <ElButton v-if="hasAuth(PERMISSIONS.USER_ADD)">新增</ElButton>
+ *   <!-- 也支持表达式 -->
+ *   <ElButton v-if="hasAuth([PERMISSIONS.USER_EDIT, 'OR', PERMISSIONS.USER_DELETE])">操作</ElButton>
+ * </template>
  * ```
  *
  * @module useAuth
- * @author Art Design Pro Team
  */
 
-import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/user'
-import { useAppMode } from '@/hooks/core/useAppMode'
-import type { AppRouteRecord } from '@/types/art/router'
-
-type AuthItem = NonNullable<AppRouteRecord['meta']['authList']>[number]
-
-const userStore = useUserStore()
+import type { PermissionExpression } from '@/types'
+import { usePermissionStore } from '@/stores/permission'
 
 export const useAuth = () => {
-  const route = useRoute()
-  const { isFrontendMode } = useAppMode()
-  const { info } = storeToRefs(userStore)
+  const permissionStore = usePermissionStore()
 
-  // 前端按钮权限（例如：['add', 'edit']）
-  const frontendAuthList = info.value?.buttons ?? []
-
-  // 后端路由 meta 配置的权限列表（例如：[{ authMark: 'add' }]）
-  const backendAuthList: AuthItem[] = Array.isArray(route.meta.authList) ? (route.meta.authList as AuthItem[]) : []
-
-  /**
-   * 检查是否拥有某权限标识（前后端模式通用）
-   * @param auth 权限标识
-   * @returns 是否有权限
-   */
-  const hasAuth = (auth: string): boolean => {
-    // 前端模式
-    if (isFrontendMode.value) {
-      return frontendAuthList.includes(auth)
-    }
-
-    // 后端模式
-    return backendAuthList.some(item => item?.authMark === auth)
-  }
+  const hasAuth = (expression: PermissionExpression): boolean => permissionStore.check(expression)
 
   return {
     hasAuth,

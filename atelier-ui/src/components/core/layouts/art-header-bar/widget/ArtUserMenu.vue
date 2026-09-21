@@ -26,8 +26,8 @@
             src="@/assets/images/user/avatar.webp"
           />
           <div class="w-[calc(100%-60px)] h-full">
-            <span class="block text-sm font-medium text-g-800 truncate">{{ userInfo.userName }}</span>
-            <span class="block mt-0.5 text-xs text-g-500 truncate">{{ userInfo.email }}</span>
+            <span class="block text-sm font-medium text-g-800 truncate">{{ user?.realName }}</span>
+            <span class="block mt-0.5 text-xs text-g-500 truncate">{{ user?.email }}</span>
           </div>
         </div>
         <ul class="py-4 mt-3 border-t border-g-300/80">
@@ -61,7 +61,7 @@
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { useUserStore } from '@/stores/user'
+import { useSessionStore } from '@/stores/session'
 import { WEB_LINKS } from '@/utils/art/constants'
 import { mittBus } from '@/utils/art/sys'
 
@@ -69,9 +69,9 @@ defineOptions({ name: 'ArtUserMenu' })
 
 const router = useRouter()
 const { t } = useI18n()
-const userStore = useUserStore()
+const sessionStore = useSessionStore()
 
-const { getUserInfo: userInfo } = storeToRefs(userStore)
+const { user } = storeToRefs(sessionStore)
 const userMenuPopover = ref()
 
 /**
@@ -114,7 +114,7 @@ const loginOut = (): void => {
       cancelButtonText: t('common.cancel'),
       customClass: 'login-out-dialog',
     }).then(() => {
-      userStore.logOut()
+      void sessionStore.logout()
     })
   }, 200)
 }

@@ -9,7 +9,7 @@
             class="relative z-10 w-20 h-20 mt-30 mx-auto object-cover border-2 border-white rounded-full"
             src="@/assets/images/user/avatar.webp"
           />
-          <h2 class="mt-5 text-xl font-normal">{{ userInfo.userName }}</h2>
+          <h2 class="mt-5 text-xl font-normal">{{ user?.realName }}</h2>
           <p class="mt-5 text-sm">专注于用户体验跟视觉设计</p>
 
           <div class="w-75 mx-auto mt-7.5 text-left">
@@ -127,13 +127,13 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '@/stores/user'
+import { useSessionStore } from '@/stores/session'
 import type { FormInstance, FormRules } from 'element-plus'
 
 defineOptions({ name: 'UserCenter' })
 
-const userStore = useUserStore()
-const userInfo = computed(() => userStore.getUserInfo)
+const sessionStore = useSessionStore()
+const { user } = storeToRefs(sessionStore)
 
 const isEdit = ref(false)
 const isEditPwd = ref(false)

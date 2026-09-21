@@ -134,11 +134,6 @@
     },
     "title": "Welcome back",
     "subTitle": "Please enter your account and password to login",
-    "roles": {
-      "super": "Super Admin",
-      "admin": "Admin",
-      "user": "User"
-    },
     "placeholder": {
       "username": "Please enter your account",
       "password": "Please enter your password",

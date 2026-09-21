@@ -232,6 +232,35 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
+### 待办（前端，已评估、暂缓）
+
+背后是同一个问题：ADP 的 `core/`、`art/` 接管多少。倾向于大方接管——ADP 值得跟进的是视觉组件（布局、卡片、表格外观），机制层（路由、表格 hook、类型组织）本就与作者偏好不合。定下来后应写进「代码组织」，此后这类改动不必逐个掂量破例。
+
+**不依赖决定，随时可做：**
+
+- **删 `v-highlight`**：零引用（原先只服务于已删的演示页），`highlight.js` 依赖只有它在用，一并删。`v-ripple` 有 15 处引用、是纯视觉效果，保留。
+- **enum 改 `as const` 对象**：`enums/` 下 8 个几乎都是字符串枚举，写成 `const X = {...} as const` 加同名联合类型 `type X = (typeof X)[keyof typeof X]`，19 处使用方的写法与类型标注都不用动，只改 `enums/` 两个文件。之后开 `erasableSyntaxOnly` 杜绝新增。
+- **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/`、`core/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
+- **去掉 `plugins/echarts.ts` 里的 `MapChart` 注册**：地图组件早已删除，纯体积收益。
+- **删 `types/art` 里的死类型**：`store/index.ts` 的 `RootState` 等、`common/response.ts` 的 `BaseResponse` 均无人引用。
+- **`config/` 改 kebab-case**：`fastEnter.ts`、`headerBar.ts` 等是 ADP 原件，但它本就是给使用者改的配置（`setting.ts` 已改过），按接管处理。动手前先列出 `art/`、`core/` 以外所有 camelCase 文件。单复数的原则：唯一的用单数（`router`、`config`），多个的用复数（`stores`、`hooks`）。
+
+**等决定：**
+
+- **`useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游基本不用它，更偏好直接写。模板页面的写法应与下游一致，否则对照失去意义。待定下游表格页的实际写法（`ElTable` + `ElPagination` + 自管 loading 与查询参数？）后，改写用户、角色、权限三页，删 `useTable`，并撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。
+- **去掉后端路由模式与按字符串加载组件**：`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。可连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`，与 `router/` 已属接管的方向一致。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。
+- **`@/mock`**：只剩 `mock/upgrade/changeLog.ts`，被 `utils/art/sys/upgrade.ts` 的「系统升级提示」引用，去留取决于这个功能。倾向连功能一起删。
+- **i18n 立场**：菜单走 i18n，自有页面文案硬编码中文，ADP 页面两种都有。要么明确只做中文（机制保留、自有页面不强求），要么全部走 i18n。Element Plus 的语言已由 `App.vue` 的 `ElConfigProvider` 联动；项目未直接依赖 dayjs，时间格式化用 `@vueuse/core` 的 `formatDate`。日期选择器内部的 dayjs 是否需要另外 `import 'dayjs/locale/zh-cn'` 才能让周起始、月份名跟随语言，未验证。
+
+**放到后面：**
+
+- **ECharts 改用 vue-echarts**：自动 resize、option 响应式、自动 dispose，可替掉 724 行的 `useChart`。但 vue-echarts 同样要 `use([...])` 按需注册，`plugins/echarts.ts` 那 68 行只是换地方。成本在于重写 6 个图表组件与 8 个统计卡片，适合与 dashboard 一起做。
+- **`types/art` 就近归位**：共 1092 行，像嵌套了一个小 src。组件专用的类型（如 `component/chart.ts` 的 313 行图表 props）挪到组件旁边，代价是改 `core/` 组件的 import，等接管策略定了再做。
+- **hooks**：`useFastEnter`、`useHeaderBar`、`useCeremony`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
+- **包体积**：主 chunk 约 1.36 MB，`pnpm build:analyze` 看一次再决定。
+- **前端测试**：`PermissionExpression` 求值、session store 的 Promise 去重是纯逻辑，值得用 vitest 补。
+- **小问题**：在用户管理里编辑当前登录用户后，页头的 `sessionStore.user` 不会刷新；给角色改权限后，当前用户要刷新页面才生效。权限分配树的分组名直接显示权限码前缀（`user`、`role`），要显示中文需前端映射表或在 `permissions.yml` 加分组字段。
+
 ### 待定
 
 - **是否建 `upstream` 分支存放 ADP 原始代码**（借三方合并让 Git 自动处理非冲突部分）取决于魔改深度：魔改越彻底，冲突率越高，越不如人工读 diff 理解意图后自己写。「代码组织」那套隔离做完后，这件事的必要性进一步下降了——`art/` 与 `core/` 本身已经是可直接对照的锚点。

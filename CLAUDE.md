@@ -136,6 +136,9 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **枚举值存 Java 枚举名**（`ENABLED`、`MALE`），库里和 JSON 里都一样。Jackson 与 MapStruct 默认就按枚举名转换，不需要 `@JsonValue` 和成对的转换方法。库里用 `VARCHAR` 加 CHECK 约束限定取值，不用 PostgreSQL 原生 ENUM，因为原生 ENUM 很难删改取值。
 - **不区分大小写的唯一性不用 CITEXT**，用 `LOWER(col)` 唯一索引兜底，接口层先查重并给出具体文案。
 - **密码哈希用 `TEXT`**，不用 `CHAR(60)`：长度由算法保证，不写死，以后才换得了算法。
+- **响应统一用 `ResponseWrapper { code, message, result, timestamp }`**：已处理的情况一律返回 HTTP 200，结果看业务码 `code`（借用 HTTP 状态码的语义）；只有没匹配上接口（404 / 405）时返回真实 HTTP 状态码。分页用 `PageWrapper { data, total, pageNumber, pageSize }`，页码从 1 开始，不带 `totalPages`。
+- **时间在 JSON 里一律是毫秒时间戳**（`JacksonConfig`）。
+- **集成测试继承 `IntegrationTests`**，所有测试共用一个 Spring 上下文和一套容器。新测试不要另加 `@MockitoBean` 之类会改变上下文的注解，否则会多起一套容器。
 
 ## 当前状态
 

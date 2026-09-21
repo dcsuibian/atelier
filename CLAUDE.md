@@ -39,6 +39,37 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 做 atelier 的动机在于：ADP 在视觉和完成度上做得很好，但程序风格与作者偏好不符。前端改动若牵涉接口设计，分歧会一路体现到后端。
 
+## 代码组织：上游与自有分离
+
+**ADP 的原件待在子目录里，自有代码平铺在该目录根上。** 这是 `atelier-ui` 最重要的组织约定，后续所有改动都以它为前提。
+
+子目录叫什么看情况：ADP 本来就分了 `core/` 的（`components/`、`hooks/`、`directives/`）沿用；没分的（`types/`、`utils/`）新建 `art/`。
+
+- `src/types/art/`、`src/utils/art/` 是 ADP 原件；自有类型与工具平铺成 `src/types/session.ts`、`src/utils/http.ts` 这样
+- `src/components/core/`、`src/hooks/core/`、`src/directives/{core,business}/` 已是 ADP 原件，不必另建 `art/`
+
+理由只有一个，但足够：**ADP 升级时 `art/` 与 `core/` 可以整目录对照乃至替换**，不必逐行分辨哪行是上游的、哪行是自己改的。上面第 (1) 段同步的成本直接取决于这件事。
+
+两条配套规则：
+
+- **上游原件连文件名都不改。** `tableCache.ts`、`ComponentLoader.ts` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
+- **改动大到「接管」的模块不留原件。** `stores/`、`router/`、`apis/` 属于重写而非微调，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。在 `art/` 下留一份用不到的副本，只会制造「到底该改哪个」的困惑。
+
+与 ADP 的目录差异，命名向下游看齐以便对照：
+
+| ADP | atelier |
+| --- | --- |
+| `src/api/` | `src/apis/` |
+| `src/store/` + `store/modules/` | `src/stores/`（平铺，无 `modules`） |
+| `src/assets/styles/` | `src/styles/` |
+| `src/types/{api,common,component,...}` | `src/types/art/{...}` |
+| `src/utils/{http,storage,ui,...}` | `src/utils/art/{...}` |
+| `router/routes/asyncRoutes.ts` | `router/routes/dynamic-routes.ts`（导出名一并改为 `dynamicRoutes`） |
+| `router/guards/beforeEach.ts`、`afterEach.ts` | `router/guards/before-each.ts`、`after-each.ts` |
+| `router/routesAlias.ts` | `router/routes-alias.ts` |
+
+`router/core/` 下那几个 PascalCase 文件是 ADP 原件，已在 `core/` 里，按上面的规则不动。
+
 ## 与上游的分歧
 
 这份清单比版本号更有价值——它是设计理念与 ADP 分歧的显性化。**同步 ADP 新版时逐条对照，不要把下面这些东西带回来。**
@@ -63,7 +94,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件——它们各自绑着一个重型 npm 依赖
 - **统计卡片（8 个）与图表组件（6 个）全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
 
-连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`fastEnter` 配置、`changeLog` 数据、`optimizeDeps.include`、`env.d.ts` 的 declare module 和 `utils/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
+连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`fastEnter` 配置、`changeLog` 数据、`optimizeDeps.include`、`env.d.ts` 的 declare module 和 `utils/art/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
 
 ### 已替换为自有配置
 
@@ -71,7 +102,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **tsconfig**：拆成 project references（`tsconfig.app.json` / `tsconfig.node.json`），基础配置取自 `@vue/tsconfig` 与 `@tsconfig/node24`
 - **`.gitignore`**：以 Vite 官方模板为底
 - **`.vscode/`**：与 helix-ui 保持一致
-- **路径别名只保留 `@`**：ADP 的 `@views`/`@imgs`/`@icons`/`@utils`/`@stores`/`@styles` 全部改写为 `@/` 开头的完整路径。其中 `@stores` 指向的是 `src/store`（单复数不一致），`@icons` 指向的目录根本不存在
+- **路径别名只保留 `@`**：ADP 的 `@views`/`@imgs`/`@icons`/`@utils`/`@stores`/`@styles` 全部改写为 `@/` 开头的完整路径。当时 `@stores` 指向的是 `src/store`（别名与目录单复数不一致），`@icons` 指向的目录根本不存在——目录现已改名 `src/stores`，别名则没有恢复的打算
 - **打包配置做减法**：移除等同默认值的 `target`/`outDir`，`minify` 回落到 esbuild（terser 依赖一并删除），gzip 预压缩交给部署层。体积分析改为 `pnpm build:analyze` 按需启用，而非 ADP 那样整段注释掉
 - **自动生成的 `auto-imports.d.ts` / `components.d.ts` 移到项目根目录**：它们是构建产物，不该混在源码里
 - **类型声明优先用 `@types/*` 包**：`env.d.ts` 里只留 `vite/client` 引用和全局变量声明，不手写 `declare module`
@@ -85,7 +116,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 ### 尚未清理的上游痕迹
 
-`src/utils/constants/links.ts` 里 7 个常量全指向 ADP（GitHub 仓库、artd.pro 文档站与社区、作者的 B 站），被 `dashboard/console/modules/about-project.vue` 和 `art-header-bar/widget/ArtUserMenu.vue` 引用着。`index.html` 的 `<title>` 和 description 同样还是上游的。**这些是有意留着的**，等决定好要显示什么内容再一起换。
+`src/utils/art/constants/links.ts` 里 7 个常量全指向 ADP（GitHub 仓库、artd.pro 文档站与社区、作者的 B 站），被 `dashboard/console/modules/about-project.vue` 和 `art-header-bar/widget/ArtUserMenu.vue` 引用着。`index.html` 的 `<title>` 和 description 同样还是上游的。**这些是有意留着的**，等决定好要显示什么内容再一起换。
 
 ## 仓库构成
 
@@ -129,7 +160,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 ### atelier-ui
 
 - **类型导入一律 type-only**（`verbatimModuleSyntax` 已开启）。整条 import 的具名导入都是类型时，整条写成 `import type { X } from '...'`；与值混在一条时用内联形式 `import { type X, y } from '...'`，保持单行不拆分。
-- **路径引用只用 `@`**，不要新增其它别名。
+- **路径引用只用 `@`**，不要新增其它别名。跨目录引用一律 `@/` 开头，不写 `../../` 这种相对路径（同目录内的 `./xxx` 不在此列）。
+- **新文件用 kebab-case**，`art/` 与 `core/` 下的上游原件保持原名，理由见「代码组织」一节。
 
 ### atelier-engine
 
@@ -152,10 +184,10 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 ## 当前状态
 
-- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化均已完成。`type-check` 与 `build` 全绿。
+- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、以及「代码组织」一节所述的目录重组均已完成。`type-check` 与 `build` 全绿。**尚未对接后端**：`apis/` 下仍是 ADP 的演示接口，`utils/art/http` 按的是 ADP 的 `{ code, msg, data }`，与后端的 `ResponseWrapper` 对不上；登录走的是 token + localStorage，与后端的 Cookie + Spring Session 也对不上。
 - `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成，前端尚未对接。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
 ### 待定
 
-- **是否建 `upstream` 分支存放 ADP 原始代码**（借三方合并让 Git 自动处理非冲突部分）取决于魔改深度：魔改越彻底，冲突率越高，越不如人工读 diff 理解意图后自己写。
+- **是否建 `upstream` 分支存放 ADP 原始代码**（借三方合并让 Git 自动处理非冲突部分）取决于魔改深度：魔改越彻底，冲突率越高，越不如人工读 diff 理解意图后自己写。「代码组织」那套隔离做完后，这件事的必要性进一步下降了——`art/` 与 `core/` 本身已经是可直接对照的锚点。

@@ -3,6 +3,7 @@ package com.dcsuibian.atelier.controller;
 import com.dcsuibian.atelier.exception.BusinessException;
 import com.dcsuibian.atelier.vo.ResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,8 +15,11 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import java.util.stream.Collectors;
 
 /**
  * 全局异常处理。
@@ -42,6 +46,18 @@ public class GlobalExceptionHandler {
 		}
 		log.warn("{}", message);
 		return ResponseWrapper.fail(message.toString(), 400);
+	}
+
+	/**
+	 * 直接写在方法参数上的约束（如查询参数上的 @Min）校验失败
+	 */
+	@ExceptionHandler(HandlerMethodValidationException.class)
+	public ResponseWrapper<Void> handleHandlerMethodValidationException(HandlerMethodValidationException e) {
+		String message = "参数校验失败：" + e.getAllErrors().stream()
+				.map(MessageSourceResolvable::getDefaultMessage)
+				.collect(Collectors.joining("；"));
+		log.warn("{}", message);
+		return ResponseWrapper.fail(message, 400);
 	}
 
 	/**

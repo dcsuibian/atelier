@@ -138,12 +138,15 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **密码哈希用 `TEXT`**，不用 `CHAR(60)`：长度由算法保证，不写死，以后才换得了算法。
 - **响应统一用 `ResponseWrapper { code, message, result, timestamp }`**：已处理的情况一律返回 HTTP 200，结果看业务码 `code`（借用 HTTP 状态码的语义）；只有没匹配上接口（404 / 405）时返回真实 HTTP 状态码。分页用 `PageWrapper { data, total, pageNumber, pageSize }`，页码从 1 开始，不带 `totalPages`。
 - **时间在 JSON 里一律是毫秒时间戳**（`JacksonConfig`）。
+- **业务码**：参数错误 400，不存在 404，唯一性冲突 409。
+- **密码明文经 HTTPS 传输**，后端直接 BCrypt，前端不做哈希。领域模型的 `password` 标注 `WRITE_ONLY`，任何响应里都不会出现。BCrypt 上限 72 字节，按字节数校验（字符数没超、字节数超的情况会有），超了返回 400。
+- **PATCH 里 `null` 表示不修改**，所以部分更新无法把可空字段清空。确实需要清空时再另想办法，不要为此改变 `null` 的语义。
 - **集成测试继承 `IntegrationTests`**，所有测试共用一个 Spring 上下文和一套容器。新测试不要另加 `@MockitoBean` 之类会改变上下文的注解，否则会多起一套容器。
 
 ## 当前状态
 
 - `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化均已完成。`type-check` 与 `build` 全绿。
-- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`），业务代码未开始。
+- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户的增删改查已完成，角色、权限、登录未开始。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
 ### 待定

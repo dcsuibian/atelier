@@ -118,6 +118,11 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 （在该目录下执行）
 
 - `mvnd test`：运行测试，Testcontainers 自动起 PostgreSQL 与 Redis，需要 Docker
+- `mvnd test-compile exec:java`：重新生成 jOOQ 代码。起临时 PostgreSQL 容器跑完 Flyway 迁移后读取表结构，输出到 `jooq/generated/`。**改完迁移脚本后执行，生成结果提交进版本库**，普通构建因此不依赖 Docker
+
+`BIGSERIAL` 不是标准 IDENTITY 列，jOOQ 不会自动识别。`JooqCodegen` 把所有表的 `id` 列声明为合成自增列；若某张表的 `id` 由应用层赋值，需要在那里排除。
+
+测试与代码生成共用 `TestcontainersConfiguration.POSTGRES_IMAGE`，用 `postgres:16`。固定大版本，免得 `latest` 悄悄升级导致测试环境与生产不一致。刻意不带扩展，因为示例用不到：下游需要 PostGIS 时换成 `postgis/postgis:16-3.5`，要 TimescaleDB（或两者都要）时换成 `timescale/timescaledb-ha:pg16-oss`。换镜像时要加 `.asCompatibleSubstituteFor("postgres")`。
 
 ## 代码约定
 
@@ -129,7 +134,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 ## 当前状态
 
 - `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化均已完成。`type-check` 与 `build` 全绿。
-- `atelier-engine/`：依赖已补齐，jOOQ 代码生成尚未配置，数据源按 profile 配置（`development` / `production`）；迁移脚本尚空，业务代码未开始。
+- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；迁移脚本尚空，业务代码未开始。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
 ### 待定

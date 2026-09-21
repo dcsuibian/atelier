@@ -115,6 +115,11 @@
 			<artifactId>testcontainers-postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-codegen</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -178,6 +183,17 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.6.4</version>
+				<configuration>
+					<mainClass>com.dcsuibian.atelier.JooqCodegen</mainClass>
+					<classpathScope>test</classpathScope>
+					<!-- Testcontainers 的 Ryuk 线程会在进程退出时自行结束，交给插件清理反而会被中断报错 -->
+					<cleanupDaemonThreads>false</cleanupDaemonThreads>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

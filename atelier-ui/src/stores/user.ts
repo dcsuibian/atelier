@@ -33,12 +33,9 @@
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { LanguageEnum } from '@/enums/appEnum'
 import { router } from '@/router'
 import { useSettingStore } from './setting'
 import { useWorktabStore } from './work-tab'
-import type { AppRouteRecord } from '@/types/art/router'
-import { setPageTitle } from '@/utils/art/router'
 import { resetRouterState } from '@/router/guards/before-each'
 import { useMenuStore } from './menu'
 import { StorageConfig } from '@/utils/art/storage/storage-config'
@@ -50,18 +47,10 @@ import { StorageConfig } from '@/utils/art/storage/storage-config'
 export const useUserStore = defineStore(
   'userStore',
   () => {
-    // 语言设置
-    const language = ref(LanguageEnum.ZH)
     // 登录状态
     const isLogin = ref(false)
-    // 锁屏状态
-    const isLock = ref(false)
-    // 锁屏密码
-    const lockPassword = ref('')
     // 用户信息
     const info = ref<Partial<Api.Auth.UserInfo>>({})
-    // 搜索历史记录
-    const searchHistory = ref<AppRouteRecord[]>([])
     // 访问令牌
     const accessToken = ref('')
     // 刷新令牌
@@ -88,39 +77,6 @@ export const useUserStore = defineStore(
      */
     const setLoginStatus = (status: boolean) => {
       isLogin.value = status
-    }
-
-    /**
-     * 设置语言
-     * @param lang 语言枚举值
-     */
-    const setLanguage = (lang: LanguageEnum) => {
-      setPageTitle(router.currentRoute.value)
-      language.value = lang
-    }
-
-    /**
-     * 设置搜索历史
-     * @param list 搜索历史列表
-     */
-    const setSearchHistory = (list: AppRouteRecord[]) => {
-      searchHistory.value = list
-    }
-
-    /**
-     * 设置锁屏状态
-     * @param status 锁屏状态
-     */
-    const setLockStatus = (status: boolean) => {
-      isLock.value = status
-    }
-
-    /**
-     * 设置锁屏密码
-     * @param password 锁屏密码
-     */
-    const setLockPassword = (password: string) => {
-      lockPassword.value = password
     }
 
     /**
@@ -151,10 +107,6 @@ export const useUserStore = defineStore(
       info.value = {}
       // 重置登录状态
       isLogin.value = false
-      // 重置锁屏状态
-      isLock.value = false
-      // 清空锁屏密码
-      lockPassword.value = ''
       // 清空访问令牌
       accessToken.value = ''
       // 清空刷新令牌
@@ -204,12 +156,8 @@ export const useUserStore = defineStore(
     }
 
     return {
-      language,
       isLogin,
-      isLock,
-      lockPassword,
       info,
-      searchHistory,
       accessToken,
       refreshToken,
       getUserInfo,
@@ -217,10 +165,6 @@ export const useUserStore = defineStore(
       getWorktabState,
       setUserInfo,
       setLoginStatus,
-      setLanguage,
-      setSearchHistory,
-      setLockStatus,
-      setLockPassword,
       setToken,
       logOut,
       checkAndClearWorktabs,

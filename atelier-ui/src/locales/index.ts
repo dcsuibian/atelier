@@ -60,11 +60,11 @@ export const languageOptions = [
 const getDefaultLanguage = (): LanguageEnum => {
   // 尝试从版本化的存储中获取语言设置
   try {
-    const storageKey = storageKeyManager.getStorageKey('user')
-    const userStore = localStorage.getItem(storageKey)
+    const storageKey = storageKeyManager.getStorageKey('setting')
+    const settingStore = localStorage.getItem(storageKey)
 
-    if (userStore) {
-      const { language } = JSON.parse(userStore)
+    if (settingStore) {
+      const { language } = JSON.parse(settingStore)
       if (language && Object.values(LanguageEnum).includes(language)) {
         return language
       }
@@ -77,9 +77,9 @@ const getDefaultLanguage = (): LanguageEnum => {
   try {
     const sys = getSystemStorage()
     if (sys) {
-      const { user } = JSON.parse(sys)
-      if (user?.language && Object.values(LanguageEnum).includes(user.language)) {
-        return user.language
+      const { setting } = JSON.parse(sys)
+      if (setting?.language && Object.values(LanguageEnum).includes(setting.language)) {
+        return setting.language
       }
     }
   } catch (error) {

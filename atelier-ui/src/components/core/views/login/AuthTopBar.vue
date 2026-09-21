@@ -52,7 +52,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useSettingStore } from '@/stores/setting'
-import { useUserStore } from '@/stores/user'
 import { useHeaderBar } from '@/hooks/core/useHeaderBar'
 import { themeAnimation } from '@/utils/art/ui/animation'
 import { languageOptions } from '@/locales'
@@ -62,7 +61,6 @@ import AppConfig from '@/config'
 defineOptions({ name: 'AuthTopBar' })
 
 const settingStore = useSettingStore()
-const userStore = useUserStore()
 const { isDark, systemThemeColor } = storeToRefs(settingStore)
 const { shouldShowThemeToggle, shouldShowLanguage } = useHeaderBar()
 const { locale } = useI18n()
@@ -73,7 +71,7 @@ const color = systemThemeColor // css v-bind 使用
 const changeLanguage = (lang: LanguageEnum) => {
   if (locale.value === lang) return
   locale.value = lang
-  userStore.setLanguage(lang)
+  settingStore.language = lang
 }
 
 const changeThemeColor = (color: string) => {

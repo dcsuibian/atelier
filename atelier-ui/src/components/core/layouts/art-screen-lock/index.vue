@@ -18,7 +18,7 @@
     </div>
 
     <!-- 锁屏弹窗 -->
-    <div v-if="!isLock">
+    <div v-if="!isLocked">
       <ElDialog v-model="visible" :width="370" :show-close="false" @open="handleDialogOpen">
         <div class="flex-c flex-col">
           <img class="w-16 h-16 rounded-full" src="@/assets/images/user/avatar.webp" alt="用户头像" />
@@ -102,6 +102,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CryptoJS from 'crypto-js'
 import { useUserStore } from '@/stores/user'
+import { useSettingStore } from '@/stores/setting'
 import { mittBus } from '@/utils/art/sys'
 
 // 国际化
@@ -112,7 +113,9 @@ const ENCRYPT_KEY = import.meta.env.VITE_LOCK_ENCRYPT_KEY
 
 // Store
 const userStore = useUserStore()
-const { info: userInfo, lockPassword, isLock } = storeToRefs(userStore)
+const settingStore = useSettingStore()
+const { info: userInfo } = storeToRefs(userStore)
+const { lockPassword, isLocked } = storeToRefs(settingStore)
 
 // 响应式数据
 const visible = ref<boolean>(false)
@@ -152,7 +155,7 @@ const isMobile = () => {
 const disableDevTools = () => {
   // 禁用右键菜单
   const handleContextMenu = (e: Event) => {
-    if (isLock.value) {
+    if (isLocked.value) {
       e.preventDefault()
       e.stopPropagation()
       return false
@@ -162,7 +165,7 @@ const disableDevTools = () => {
 
   // 禁用开发者工具相关快捷键
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (!isLock.value) return
+    if (!isLocked.value) return
 
     // 禁用 F12
     if (e.key === 'F12') {
@@ -255,7 +258,7 @@ const disableDevTools = () => {
 
   // 禁用选择文本
   const handleSelectStart = (e: Event) => {
-    if (isLock.value) {
+    if (isLocked.value) {
       e.preventDefault()
       return false
     }
@@ -264,7 +267,7 @@ const disableDevTools = () => {
 
   // 禁用拖拽
   const handleDragStart = (e: Event) => {
-    if (isLock.value) {
+    if (isLocked.value) {
       e.preventDefault()
       return false
     }
@@ -277,7 +280,7 @@ const disableDevTools = () => {
   let devToolsInterval: ReturnType<typeof setInterval> | null = null
 
   const checkDevTools = () => {
-    if (!isLock.value || isMobile()) return
+    if (!isLocked.value || isMobile()) return
 
     const isDevToolsOpen =
       window.outerHeight - window.innerHeight > threshold || window.outerWidth - window.innerWidth > threshold
@@ -339,8 +342,7 @@ const handleLock = async () => {
   await formRef.value.validate((valid, fields) => {
     if (valid) {
       const encryptedPassword = CryptoJS.AES.encrypt(formData.password, ENCRYPT_KEY).toString()
-      userStore.setLockStatus(true)
-      userStore.setLockPassword(encryptedPassword)
+      settingStore.lock(encryptedPassword)
       visible.value = false
       formData.password = ''
     } else {
@@ -358,8 +360,7 @@ const handleUnlock = async () => {
 
       if (isValid) {
         try {
-          userStore.setLockStatus(false)
-          userStore.setLockPassword('')
+          settingStore.unlock()
           unlockForm.password = ''
           visible.value = false
           showDevToolsWarning.value = false
@@ -393,7 +394,7 @@ const openLockScreen = () => {
 }
 
 // 监听锁屏状态变化
-watch(isLock, newValue => {
+watch(isLocked, newValue => {
   if (newValue) {
     document.body.style.overflow = 'hidden'
     setTimeout(() => {
@@ -413,7 +414,7 @@ onMounted(() => {
   mittBus.on('openLockScreen', openLockScreen)
   document.addEventListener('keydown', handleKeydown)
 
-  if (isLock.value) {
+  if (isLocked.value) {
     visible.value = true
     setTimeout(() => {
       unlockInputRef.value?.input?.focus()

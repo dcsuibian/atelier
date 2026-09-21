@@ -151,7 +151,6 @@ import { useRouter } from 'vue-router'
 import { useFullscreen, useWindowSize } from '@vueuse/core'
 import { LanguageEnum, MenuTypeEnum } from '@/enums/appEnum'
 import { useSettingStore } from '@/stores/setting'
-import { useUserStore } from '@/stores/user'
 import { useMenuStore } from '@/stores/menu'
 import AppConfig from '@/config'
 import { languageOptions } from '@/locales'
@@ -171,7 +170,6 @@ const { locale } = useI18n()
 const { width } = useWindowSize()
 
 const settingStore = useSettingStore()
-const userStore = useUserStore()
 const menuStore = useMenuStore()
 
 // 顶部栏功能配置
@@ -192,7 +190,7 @@ const {
 
 const { menuOpen, systemThemeColor, showSettingGuide, menuType, isDark, tabStyle } = storeToRefs(settingStore)
 
-const { language } = storeToRefs(userStore)
+const { language } = storeToRefs(settingStore)
 const { menuList } = storeToRefs(menuStore)
 
 const showNotice = ref(false)
@@ -263,7 +261,7 @@ const initLanguage = (): void => {
 const changeLanguage = (lang: LanguageEnum): void => {
   if (locale.value === lang) return
   locale.value = lang
-  userStore.setLanguage(lang)
+  settingStore.language = lang
   reload(50)
 }
 

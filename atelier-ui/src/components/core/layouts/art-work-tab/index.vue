@@ -84,7 +84,6 @@ import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 
 import { useWorktabStore } from '@/stores/work-tab'
-import { useUserStore } from '@/stores/user'
 import { formatMenuTitle } from '@/utils/art/router'
 import { useSettingStore } from '@/stores/setting'
 import type { MenuItemType } from '../../others/art-menu-right/index.vue'
@@ -109,7 +108,6 @@ type TabCloseType = 'current' | 'left' | 'right' | 'other' | 'all'
 // 基础设置
 const { t } = useI18n()
 const store = useWorktabStore()
-const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
 const { currentRoute } = router
@@ -455,7 +453,7 @@ watch(
 )
 
 watch(
-  () => userStore.language,
+  () => settingStore.language,
   () => {
     scrollState.value.translateX = 0
     nextTick(() => {

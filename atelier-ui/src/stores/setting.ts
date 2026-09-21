@@ -33,8 +33,9 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { MenuThemeType } from '@/types/art/store'
+import type { AppRouteRecord } from '@/types/art/router'
 import AppConfig from '@/config'
-import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from '@/enums/appEnum'
+import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum, LanguageEnum } from '@/enums/appEnum'
 import { setElementThemeColor } from '@/utils/art/ui'
 import { useCeremony } from '@/hooks/core/useCeremony'
 import { StorageConfig } from '@/utils/art'
@@ -47,6 +48,34 @@ import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
 export const useSettingStore = defineStore(
   'settingStore',
   () => {
+    // 用户偏好。这些跟着浏览器走，与登录与否无关，所以不放在会话里
+    /**
+     * 当前语言。调用方切换时直接赋值即可
+     *
+     * 刻意不提供 setLanguage()：下面已经有一个同名函数，管的是语言按钮的显隐，不是语言本身
+     */
+    const language = ref(LanguageEnum.ZH)
+    /** 是否锁屏 */
+    const isLocked = ref(false)
+    /** 锁屏密码（已加密） */
+    const lockPassword = ref('')
+    /** 全局搜索的历史记录 */
+    const searchHistory = ref<AppRouteRecord[]>([])
+
+    const lock = (password: string) => {
+      isLocked.value = true
+      lockPassword.value = password
+    }
+
+    const unlock = () => {
+      isLocked.value = false
+      lockPassword.value = ''
+    }
+
+    const setSearchHistory = (list: AppRouteRecord[]) => {
+      searchHistory.value = list
+    }
+
     // 菜单相关设置
     /** 菜单类型 */
     const menuType = ref(SETTING_DEFAULT_CONFIG.menuType)
@@ -439,6 +468,13 @@ export const useSettingStore = defineStore(
       setShowFestivalText,
       setFestivalDate,
       setDualMenuShowText,
+      language,
+      isLocked,
+      lockPassword,
+      searchHistory,
+      lock,
+      unlock,
+      setSearchHistory,
     }
   },
   {

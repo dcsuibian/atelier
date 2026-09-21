@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useUserStore } from '@/stores/user'
+import { useSettingStore } from '@/stores/setting'
 import type { AppRouteRecord } from '@/types/art/router'
 import { Search } from '@element-plus/icons-vue'
 import { mittBus } from '@/utils/art/sys'
@@ -97,7 +97,7 @@ import { type ScrollbarInstance } from 'element-plus'
 
 defineOptions({ name: 'ArtGlobalSearch' })
 
-const userStore = useUserStore()
+const settingStore = useSettingStore()
 const { menuList } = storeToRefs(useMenuStore())
 
 const showSearchDialog = ref(false)
@@ -105,7 +105,7 @@ const searchVal = ref('')
 const searchResult = ref<AppRouteRecord[]>([])
 const historyMaxLength = 10
 
-const { searchHistory: historyResult } = storeToRefs(userStore)
+const { searchHistory: historyResult } = storeToRefs(settingStore)
 
 const searchInput = ref<HTMLInputElement | null>(null)
 const highlightedIndex = ref(0)
@@ -300,7 +300,7 @@ const searchGoPage = (item: AppRouteRecord) => {
 // 历史记录管理
 const updateHistory = () => {
   if (Array.isArray(historyResult.value)) {
-    userStore.setSearchHistory(historyResult.value)
+    settingStore.setSearchHistory(historyResult.value)
   }
 }
 

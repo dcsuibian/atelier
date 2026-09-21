@@ -131,10 +131,16 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **类型导入一律 type-only**（`verbatimModuleSyntax` 已开启）。整条 import 的具名导入都是类型时，整条写成 `import type { X } from '...'`；与值混在一条时用内联形式 `import { type X, y } from '...'`，保持单行不拆分。
 - **路径引用只用 `@`**，不要新增其它别名。
 
+### atelier-engine
+
+- **枚举值存 Java 枚举名**（`ENABLED`、`MALE`），库里和 JSON 里都一样。Jackson 与 MapStruct 默认就按枚举名转换，不需要 `@JsonValue` 和成对的转换方法。库里用 `VARCHAR` 加 CHECK 约束限定取值，不用 PostgreSQL 原生 ENUM，因为原生 ENUM 很难删改取值。
+- **不区分大小写的唯一性不用 CITEXT**，用 `LOWER(col)` 唯一索引兜底，接口层先查重并给出具体文案。
+- **密码哈希用 `TEXT`**，不用 `CHAR(60)`：长度由算法保证，不写死，以后才换得了算法。
+
 ## 当前状态
 
 - `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化均已完成。`type-check` 与 `build` 全绿。
-- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；迁移脚本尚空，业务代码未开始。
+- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`），业务代码未开始。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
 ### 待定

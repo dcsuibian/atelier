@@ -1,31 +1,10 @@
 /**
  * API 接口类型定义模块
  *
- * 提供所有后端接口的类型定义
- *
- * ## 主要功能
- *
- * - 通用类型（分页参数、响应结构等）
- * - 认证类型（登录、用户信息等）
- * - 系统管理类型（用户、角色等）
- * - 全局命名空间声明
- *
- * ## 使用场景
- *
- * - API 请求参数类型约束
- * - API 响应数据类型定义
- * - 接口文档类型同步
- *
- * ## 注意事项
+ * atelier：只剩 ADP 上游代码（useTable、tableUtils）还在引用的 Api.Common。
+ * 与后端对接的类型不放这里，平铺在 src/types/ 下（User、Role、PageWrapper 等）
  *
  * - 使用全局命名空间，无需导入即可使用
- *
- * ## 使用方式
- *
- * ```typescript
- * const params: Api.Auth.LoginParams = { userName: 'admin', password: '123456' }
- * const response: Api.Auth.UserInfo = await fetchUserInfo()
- * ```
  *
  * @module types/api/api
  * @author Art Design Pro Team
@@ -57,51 +36,5 @@ declare namespace Api {
 
     /** 启用状态 */
     type EnableStatus = '1' | '2'
-  }
-
-  /** 认证类型 */
-  namespace Auth {
-    /** 登录参数 */
-    interface LoginParams {
-      userName: string
-      password: string
-    }
-
-    /** 登录响应 */
-    interface LoginResponse {
-      token: string
-      refreshToken: string
-    }
-
-    /** 用户信息 */
-    interface UserInfo {
-      buttons: string[]
-      roles: string[]
-      userId: number
-      userName: string
-      email: string
-      avatar?: string
-    }
-  }
-
-  /** 系统管理类型 */
-  namespace SystemManage {
-    /** 角色列表 */
-    type RoleList = Api.Common.PaginatedResponse<RoleListItem>
-
-    /** 角色列表项 */
-    interface RoleListItem {
-      roleId: number
-      roleName: string
-      roleCode: string
-      description: string
-      enabled: boolean
-      createTime: string
-    }
-
-    /** 角色搜索参数 */
-    type RoleSearchParams = Partial<
-      Pick<RoleListItem, 'roleId' | 'roleName' | 'roleCode' | 'description' | 'enabled'> & Api.Common.CommonSearchParams
-    >
   }
 }

@@ -101,18 +101,6 @@ export interface WorkTab {
   isActive?: boolean
 }
 
-// 用户Store状态
-export interface UserState {
-  /** 用户信息 */
-  userInfo: Api.Auth.UserInfo | null
-  /** 认证令牌 */
-  token: string | null
-  /** 用户角色列表 */
-  roles: string[]
-  /** 用户权限列表 */
-  permissions: string[]
-}
-
 // 设置Store状态
 export interface SettingStoreState extends SettingState {
   // 额外的设置状态
@@ -146,8 +134,6 @@ export interface MenuState {
 
 // 根Store状态类型
 export interface RootState {
-  /** 用户状态 */
-  user: UserState
   /** 设置状态 */
   setting: SettingStoreState
   /** 工作标签页状态 */

@@ -10,3 +10,18 @@ export function getPermissions(params: PermissionQuery & PageQuery): Promise<Pag
     params,
   })
 }
+
+/**
+ * 取全部权限，给角色分配权限时用。接口只有分页，权限点数量由 permissions.yml 决定、不会多，逐页取完即可
+ */
+export async function getAllPermissions(query: PermissionQuery = {}): Promise<Permission[]> {
+  const pageSize = 100
+  const permissions: Permission[] = []
+  for (let pageNumber = 1; ; pageNumber++) {
+    const page = await getPermissions({ ...query, pageNumber, pageSize })
+    permissions.push(...page.data)
+    if (0 === page.data.length || permissions.length >= page.total) {
+      return permissions
+    }
+  }
+}

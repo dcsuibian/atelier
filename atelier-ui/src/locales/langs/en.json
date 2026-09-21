@@ -235,8 +235,8 @@
       "title": "System Settings",
       "user": "User Manage",
       "role": "Role Manage",
-      "userCenter": "User Center",
-      "menu": "Menu Manage"
+      "permission": "Permission Manage",
+      "userCenter": "User Center"
     }
   },
   "table": {

@@ -100,7 +100,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` 从 367 个文件降到 266 个）。判断标准是：**演示页面用完即弃，去 ADP 仓库看就行；可复用组件要留下**。
 
-- 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested
+- 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested、system/menu（菜单写在 `router/modules/` 里，没有菜单管理的需要；`MenuProcessor` 的后端菜单模式仍会调 `fetchGetMenuList`，那是机制层，没删）
 - 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件——它们各自绑着一个重型 npm 依赖
 - **统计卡片（8 个）与图表组件（6 个）全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
 
@@ -227,8 +227,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 ## 当前状态
 
-- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check` 与 `build` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。**用户管理页已对接**：列表、搜索、新增、编辑、删除、分配角色均走真实接口。
-- **前端尚未对接的部分**：`views/system/role` 仍是 ADP 的演示实现，用着 mock 的数据结构与状态值，调用后端会因枚举转换失败返回 400；`apis/system-manage.ts` 是过渡产物，只剩角色与菜单的旧接口，角色页对接后即可删除（`apis/role.ts` 已建）；`types/art/api/api.d.ts` 里的 `Api.Auth`、`Api.SystemManage` 已作废待删（`Api.Common` 仍被 `useTable` 等上游代码引用，要留）；`views/system/menu` 是 ADP 的菜单管理演示页，依赖不存在的 `/menus` 接口，而前端模式下菜单写在 `router/modules/` 里，这页建议删；注册页与忘记密码页后端没有对应接口，链接目前指向死路。
+- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check` 与 `build` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。**用户管理页已对接**：列表、搜索、新增、编辑、删除、分配角色均走真实接口。**权限管理页已新增**（`views/system/permission`），只读，权限点的增删改只能改后端 `permissions.yml`。
+- **前端尚未对接的部分**：`views/system/role` 仍是 ADP 的演示实现，用着 mock 的数据结构与状态值，调用后端会因枚举转换失败返回 400；`apis/system-manage.ts` 是过渡产物，只剩角色与菜单的旧接口，角色页对接后即可删除（`apis/role.ts` 已建）；`types/art/api/api.d.ts` 里的 `Api.Auth`、`Api.SystemManage` 已作废待删（`Api.Common` 仍被 `useTable` 等上游代码引用，要留）；注册页与忘记密码页后端没有对应接口，链接目前指向死路。
 - `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 

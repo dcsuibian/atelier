@@ -17,6 +17,15 @@ interface Permission {
 type PermissionStatus = 'ENABLED' | 'DISABLED'
 
 /**
+ * 权限列表的查询条件，对应后端 PermissionQo
+ */
+interface PermissionQuery {
+  status?: PermissionStatus
+  /** 模糊匹配权限码、名称、描述，不区分大小写 */
+  searchText?: string
+}
+
+/**
  * 权限表达式：一个权限码，或者若干表达式的 and / or 组合，可以嵌套
  *
  * 刻意只有 and / or。NOT 之类的不要加——「没有某权限才能看见」这种规则一旦出现，
@@ -30,4 +39,4 @@ type PermissionStatus = 'ENABLED' | 'DISABLED'
  */
 type PermissionExpression = string | { and: PermissionExpression[] } | { or: PermissionExpression[] }
 
-export type { Permission, PermissionStatus, PermissionExpression }
+export type { Permission, PermissionStatus, PermissionQuery, PermissionExpression }

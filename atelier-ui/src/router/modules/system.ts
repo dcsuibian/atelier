@@ -34,6 +34,17 @@ export const systemRoutes: AppRouteRecord = {
       },
     },
     {
+      path: 'permission',
+      name: 'Permission',
+      component: '/system/permission',
+      meta: {
+        title: 'menus.system.permission',
+        icon: 'ri:shield-keyhole-line',
+        keepAlive: true,
+        permission: PERMISSIONS.PERMISSION_VIEW,
+      },
+    },
+    {
       path: 'user-center',
       name: 'UserCenter',
       component: '/system/user-center',
@@ -44,16 +55,6 @@ export const systemRoutes: AppRouteRecord = {
         keepAlive: true,
         isHideTab: true,
         // 个人中心看的是自己，不设限
-      },
-    },
-    {
-      path: 'menu',
-      name: 'Menus',
-      component: '/system/menu',
-      meta: {
-        title: 'menus.system.menu',
-        icon: 'ri:menu-line',
-        keepAlive: true,
       },
     },
   ],

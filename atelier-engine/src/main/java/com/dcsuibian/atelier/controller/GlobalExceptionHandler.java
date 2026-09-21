@@ -1,6 +1,7 @@
 package com.dcsuibian.atelier.controller;
 
 import com.dcsuibian.atelier.exception.BusinessException;
+import com.dcsuibian.atelier.exception.UnauthenticatedException;
 import com.dcsuibian.atelier.vo.ResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSourceResolvable;
@@ -24,8 +25,8 @@ import java.util.stream.Collectors;
 /**
  * 全局异常处理。
  * <p>
- * body 里的 code 是业务码，借鉴 HTTP 状态码的语义：被这里捕获的异常都算已处理，返回 HTTP 200 + 业务码；
- * 没匹配上接口（404 / 405）不是业务响应，只返回真实 HTTP 状态码。
+ * body 里的 code 是业务码，借鉴 HTTP 状态码的语义：被这里捕获的异常都算已处理，返回 HTTP 200 + 业务码。
+ * 两类例外不算业务响应，返回真实 HTTP 状态码：没匹配上接口（404 / 405）、未登录（401）。
  * 返回给调用方的 message 不回显异常原文（可能带 SQL），原文只进日志。
  */
 @Slf4j
@@ -87,6 +88,17 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseWrapper<Void> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
 		return ResponseWrapper.fail("参数类型错误：" + e.getName(), 400);
+	}
+
+	/**
+	 * 未登录。同样不是业务响应，给真实 HTTP 401：语义明确、devtools 里一眼可见，
+	 * 前端在 http 层统一拦一次即可，不必每个调用点都去判业务码。body 仍按 ResponseWrapper 出，
+	 * 调用方不需要为它准备另一套解析
+	 */
+	@ExceptionHandler(UnauthenticatedException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ResponseWrapper<Void> handleUnauthenticatedException(UnauthenticatedException e) {
+		return ResponseWrapper.fail(e.getMessage(), 401);
 	}
 
 	/**

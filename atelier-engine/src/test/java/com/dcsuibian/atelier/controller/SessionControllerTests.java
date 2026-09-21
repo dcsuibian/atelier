@@ -24,7 +24,6 @@ public class SessionControllerTests extends IntegrationTests {
 
 	private static final String NAME = "st_user";
 	private static final String PASSWORD = "password123";
-	private static final String SESSION_COOKIE = "SESSION";
 
 	@Autowired
 	MockMvc mockMvc;
@@ -60,6 +59,9 @@ public class SessionControllerTests extends IntegrationTests {
 		MockHttpServletRequestBuilder request = login(NAME, PASSWORD);
 		if (cookies.length > 0) {
 			request = request.cookie(cookies);
+		} else {
+			// 不指定就以未登录的身份登录，否则会复用基类的默认会话，把它的 id 和 userId 一起改掉
+			request = request.with(anonymous());
 		}
 		Cookie cookie = mockMvc.perform(request)
 				.andExpect(jsonPath("$.code").value(200))
@@ -71,7 +73,7 @@ public class SessionControllerTests extends IntegrationTests {
 	@Test
 	@DisplayName("未登录时返回 200，user 为 null")
 	void notLoggedIn() throws Exception {
-		mockMvc.perform(get("/session"))
+		mockMvc.perform(get("/session").with(anonymous()))
 				.andExpect(jsonPath("$.code").value(200))
 				.andExpect(jsonPath("$.result.user").isEmpty());
 	}
@@ -79,7 +81,7 @@ public class SessionControllerTests extends IntegrationTests {
 	@Test
 	@DisplayName("登录后凭 Cookie 取到会话；用户名不区分大小写；响应不带密码")
 	void login() throws Exception {
-		mockMvc.perform(login("ST_USER", PASSWORD))
+		mockMvc.perform(login("ST_USER", PASSWORD).with(anonymous()))
 				.andExpect(jsonPath("$.code").value(200))
 				.andExpect(jsonPath("$.result.user.name").value(NAME))
 				.andExpect(jsonPath("$.result.user.password").doesNotExist())
@@ -94,10 +96,10 @@ public class SessionControllerTests extends IntegrationTests {
 	@Test
 	@DisplayName("用户不存在与密码错误返回同样的错误")
 	void wrongCredentials() throws Exception {
-		mockMvc.perform(login(NAME, "wrong-password"))
+		mockMvc.perform(login(NAME, "wrong-password").with(anonymous()))
 				.andExpect(jsonPath("$.code").value(400))
 				.andExpect(jsonPath("$.message").value("用户名或密码错误"));
-		mockMvc.perform(login("st_nobody", PASSWORD))
+		mockMvc.perform(login("st_nobody", PASSWORD).with(anonymous()))
 				.andExpect(jsonPath("$.code").value(400))
 				.andExpect(jsonPath("$.message").value("用户名或密码错误"));
 	}
@@ -106,7 +108,7 @@ public class SessionControllerTests extends IntegrationTests {
 	@DisplayName("已禁用的账号密码正确时返回 403")
 	void disabledUser() throws Exception {
 		dsl.update(USER).set(USER.STATUS, "DISABLED").where(USER.NAME.eq(NAME)).execute();
-		mockMvc.perform(login(NAME, PASSWORD))
+		mockMvc.perform(login(NAME, PASSWORD).with(anonymous()))
 				.andExpect(jsonPath("$.code").value(403));
 	}
 

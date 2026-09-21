@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.util.Optional;
 
+import static com.dcsuibian.atelier.constant.SessionConstants.LOGIN_TIME;
+import static com.dcsuibian.atelier.constant.SessionConstants.USER_ID;
+
 /**
  * 登录态存在 Spring Session（Redis）里，会话 id 走 Cookie。
  * 会话里只存 userId 和登录时间，都是 JDK 自带类型，不需要为 Redis 另配序列化
@@ -26,9 +29,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/session")
 public class SessionController {
-
-	private static final String USER_ID = "userId";
-	private static final String LOGIN_TIME = "loginTime";
 
 	private final UserService userService;
 

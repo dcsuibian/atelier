@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import type { EChartsOption } from '@/plugins/echarts'
-import { getCssVar } from '@/utils/ui'
+import { getCssVar } from '@/utils/art/ui'
 import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
 import type { ScatterChartProps } from '@/types/art/component/chart'
 

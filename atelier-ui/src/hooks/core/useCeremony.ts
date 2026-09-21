@@ -44,7 +44,7 @@ import { useTimeoutFn, useIntervalFn, useDateFormat } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useSettingStore } from '@/store/modules/setting'
-import { mittBus } from '@/utils/sys'
+import { mittBus } from '@/utils/art/sys'
 import { festivalConfigList } from '@/config/modules/festival'
 
 /**

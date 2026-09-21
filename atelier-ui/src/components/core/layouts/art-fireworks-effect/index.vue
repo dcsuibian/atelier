@@ -5,7 +5,7 @@
 
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core'
-import { mittBus } from '@/utils/sys'
+import { mittBus } from '@/utils/art/sys'
 import type { Handler } from 'mitt'
 import bp from '@/assets/images/ceremony/hb.png'
 import sd from '@/assets/images/ceremony/sd.png'

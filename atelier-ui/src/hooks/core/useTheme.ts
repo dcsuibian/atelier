@@ -35,7 +35,7 @@ import { useSettingStore } from '@/store/modules/setting'
 import { SystemThemeEnum } from '@/enums/appEnum'
 import AppConfig from '@/config'
 import type { SystemThemeTypes } from '@/types/art/store'
-import { getDarkColor, getLightColor, setElementThemeColor } from '@/utils/ui'
+import { getDarkColor, getLightColor, setElementThemeColor } from '@/utils/art/ui'
 import { usePreferredDark } from '@vueuse/core'
 import { watch } from 'vue'
 

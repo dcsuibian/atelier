@@ -52,7 +52,7 @@
 import { echarts, type EChartsOption } from '@/plugins/echarts'
 import { storeToRefs } from 'pinia'
 import { useSettingStore } from '@/store/modules/setting'
-import { getCssVar } from '@/utils/ui'
+import { getCssVar } from '@/utils/art/ui'
 import type { BaseChartProps, ChartThemeConfig, UseChartOptions } from '@/types/art/component/chart'
 
 // 图表主题配置

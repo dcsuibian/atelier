@@ -35,9 +35,9 @@ import { ref, computed } from 'vue'
 import type { MenuThemeType } from '@/types/art/store'
 import AppConfig from '@/config'
 import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from '@/enums/appEnum'
-import { setElementThemeColor } from '@/utils/ui'
+import { setElementThemeColor } from '@/utils/art/ui'
 import { useCeremony } from '@/hooks/core/useCeremony'
-import { StorageConfig } from '@/utils'
+import { StorageConfig } from '@/utils/art'
 import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
 
 /**

@@ -40,7 +40,7 @@
 import type { FormRules } from 'element-plus'
 import { ElIcon, ElTooltip } from 'element-plus'
 import { QuestionFilled } from '@element-plus/icons-vue'
-import { formatMenuTitle } from '@/utils/router'
+import { formatMenuTitle } from '@/utils/art/router'
 import type { AppRouteRecord } from '@/types/art/router'
 import type { FormItem } from '@/components/core/forms/art-form/index.vue'
 import ArtForm from '@/components/core/forms/art-form/index.vue'

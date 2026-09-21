@@ -89,10 +89,10 @@
 import { useUserStore } from '@/store/modules/user'
 import type { AppRouteRecord } from '@/types/art/router'
 import { Search } from '@element-plus/icons-vue'
-import { mittBus } from '@/utils/sys'
+import { mittBus } from '@/utils/art/sys'
 import { useMenuStore } from '@/store/modules/menu'
-import { formatMenuTitle } from '@/utils/router'
-import { handleMenuJump } from '@/utils/navigation'
+import { formatMenuTitle } from '@/utils/art/router'
+import { handleMenuJump } from '@/utils/art/navigation'
 import { type ScrollbarInstance } from 'element-plus'
 
 defineOptions({ name: 'ArtGlobalSearch' })

@@ -1,4 +1,4 @@
-import request from '@/utils/http'
+import request from '@/utils/art/http'
 import type { AppRouteRecord } from '@/types/art/router'
 
 // 获取用户列表

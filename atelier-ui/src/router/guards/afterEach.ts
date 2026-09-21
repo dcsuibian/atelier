@@ -3,7 +3,7 @@ import { useSettingStore } from '@/store/modules/setting'
 import type { Router } from 'vue-router'
 import NProgress from 'nprogress'
 import { useCommon } from '@/hooks/core/useCommon'
-import { loadingService } from '@/utils/ui'
+import { loadingService } from '@/utils/art/ui'
 import { getPendingLoading, resetPendingLoading } from './beforeEach'
 
 /** 路由全局后置守卫 */

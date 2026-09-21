@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 import { Picture, Paperclip, Close } from '@element-plus/icons-vue'
-import { mittBus } from '@/utils/sys'
+import { mittBus } from '@/utils/art/sys'
 import meAvatar from '@/assets/images/avatar/avatar5.webp'
 import aiAvatar from '@/assets/images/avatar/avatar10.webp'
 

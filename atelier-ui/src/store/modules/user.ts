@@ -38,10 +38,10 @@ import { router } from '@/router'
 import { useSettingStore } from './setting'
 import { useWorktabStore } from './worktab'
 import type { AppRouteRecord } from '@/types/art/router'
-import { setPageTitle } from '@/utils/router'
+import { setPageTitle } from '@/utils/art/router'
 import { resetRouterState } from '@/router/guards/beforeEach'
 import { useMenuStore } from './menu'
-import { StorageConfig } from '@/utils/storage/storage-config'
+import { StorageConfig } from '@/utils/art/storage/storage-config'
 
 /**
  * 用户状态管理

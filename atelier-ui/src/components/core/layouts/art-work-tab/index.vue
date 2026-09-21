@@ -85,7 +85,7 @@ import { storeToRefs } from 'pinia'
 
 import { useWorktabStore } from '@/store/modules/worktab'
 import { useUserStore } from '@/store/modules/user'
-import { formatMenuTitle } from '@/utils/router'
+import { formatMenuTitle } from '@/utils/art/router'
 import { useSettingStore } from '@/store/modules/setting'
 import type { MenuItemType } from '../../others/art-menu-right/index.vue'
 import { useCommon } from '@/hooks/core/useCommon'

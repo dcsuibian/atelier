@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import AppConfig from '@/config'
-import { WEB_LINKS } from '@/utils/constants'
+import { WEB_LINKS } from '@/utils/art/constants'
 
 const systemName = AppConfig.systemInfo.name
 

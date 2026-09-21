@@ -21,7 +21,7 @@ import { ref, reactive, computed, onMounted, onUnmounted, nextTick, readonly } f
 import { useWindowSize } from '@vueuse/core'
 import { useTableColumns } from './useTableColumns'
 import type { ColumnOption } from '@/types/art/component'
-import { TableCache, CacheInvalidationStrategy, type ApiResponse } from '../../utils/table/tableCache'
+import { TableCache, CacheInvalidationStrategy, type ApiResponse } from '@/utils/art/table/tableCache'
 import {
   type TableError,
   defaultResponseAdapter,
@@ -29,8 +29,8 @@ import {
   updatePaginationFromResponse,
   createSmartDebounce,
   createErrorHandler,
-} from '../../utils/table/tableUtils'
-import { tableConfig } from '../../utils/table/tableConfig'
+} from '@/utils/art/table/tableUtils'
+import { tableConfig } from '@/utils/art/table/tableConfig'
 
 // 类型推导工具类型
 type InferApiParams<T> = T extends (params: infer P) => any ? P : never
@@ -715,6 +715,6 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(config: UseT
 }
 
 // 重新导出类型和枚举，方便使用
-export { CacheInvalidationStrategy } from '../../utils/table/tableCache'
-export type { ApiResponse, CacheItem } from '../../utils/table/tableCache'
-export type { BaseRequestParams, TableError } from '../../utils/table/tableUtils'
+export { CacheInvalidationStrategy } from '@/utils/art/table/tableCache'
+export type { ApiResponse, CacheItem } from '@/utils/art/table/tableCache'
+export type { BaseRequestParams, TableError } from '@/utils/art/table/tableUtils'

@@ -25,7 +25,7 @@
 import type { App } from 'vue'
 import { createPinia } from 'pinia'
 import { createPersistedState } from 'pinia-plugin-persistedstate'
-import { StorageKeyManager } from '@/utils/storage/storage-key-manager'
+import { StorageKeyManager } from '@/utils/art/storage/storage-key-manager'
 
 export const store = createPinia()
 

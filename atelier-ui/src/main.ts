@@ -5,9 +5,9 @@ import { initRouter } from './router' // Router
 import language from './locales' // 国际化
 import '@/assets/styles/core/tailwind.css' // tailwind
 import '@/assets/styles/index.scss' // 样式
-import '@/utils/sys/console.ts' // 控制台输出内容
+import '@/utils/art/sys/console.ts' // 控制台输出内容
 import { setupGlobDirectives } from './directives'
-import { setupErrorHandle } from './utils/sys/error-handle'
+import { setupErrorHandle } from '@/utils/art/sys/error-handle'
 
 document.addEventListener('touchstart', function () {}, { passive: false })
 

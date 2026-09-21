@@ -13,7 +13,7 @@ import { useAppMode } from '@/hooks/core/useAppMode'
 import { fetchGetMenuList } from '@/api/system-manage'
 import { asyncRoutes } from '../routes/asyncRoutes'
 import { RoutesAlias } from '../routesAlias'
-import { formatMenuTitle } from '@/utils'
+import { formatMenuTitle } from '@/utils/art'
 
 export class MenuProcessor {
   /**

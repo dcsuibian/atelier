@@ -55,11 +55,12 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 - **上游原件连文件名都不改。** `tableCache.ts`、`ComponentLoader.ts` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
 - **改动大到「接管」的模块不留原件。** `stores/`、`router/`、`apis/` 属于重写而非微调，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。在 `art/` 下留一份用不到的副本，只会制造「到底该改哪个」的困惑。
 
-**已知的破例有三处**，改动处都标了 `atelier：` 注释，ADP 升级整目录替换后搜这个前缀补回：
+**已知的破例有四处**，改动处都标了 `atelier：` 注释，ADP 升级整目录替换后搜这个前缀补回：
 
 - `types/art/router/index.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。
 - `hooks/core/useTable.ts` 的 `InferRecordType` 多认一个 `PageWrapper`，否则行类型推导成 `never`，列 formatter 里的 `row` 失去检查。
 - `utils/art/table/tableConfig.ts` 的 `paginationKey` 改为 `pageNumber` / `pageSize`，`currentFields` 加了 `pageNumber`。它本来就是给使用者改的配置，只是恰好放在 `art/` 里；改这一处换来所有表格页零配置。
+- `components/core/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
 
 往 `art/` 与 `core/` 里加东西之前先掂量这笔账，别让破例变成常例。
 

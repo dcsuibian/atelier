@@ -80,7 +80,8 @@
 }
 
 // 去除火狐浏览器滚动条
-:deep(.el-drawer__body) {
+// atelier：原为 :deep(.el-drawer__body)，但本文件非 scoped，Vite 8 的 lightningcss 会报错；限定在设置抽屉内，免得波及所有抽屉
+.setting-modal .el-drawer__body {
   scrollbar-width: none;
 }
 

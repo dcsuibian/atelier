@@ -123,7 +123,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **`.gitignore`**：以 Vite 官方模板为底
 - **`.vscode/`**：与 helix-ui 保持一致
 - **路径别名只保留 `@`**：ADP 的 `@views`/`@imgs`/`@icons`/`@utils`/`@stores`/`@styles` 全部改写为 `@/` 开头的完整路径。当时 `@stores` 指向的是 `src/store`（别名与目录单复数不一致），`@icons` 指向的目录根本不存在——目录现已改名 `src/stores`，别名则没有恢复的打算
-- **打包配置做减法**：移除等同默认值的 `target`/`outDir`，`minify` 回落到 esbuild（terser 依赖一并删除），gzip 预压缩交给部署层。体积分析改为 `pnpm build:analyze` 按需启用，而非 ADP 那样整段注释掉
+- **打包配置做减法**：移除等同默认值的 `target`/`outDir`，`minify` 回落到 esbuild（terser 依赖一并删除），gzip 预压缩交给部署层。体积分析改为 `pnpm build:analyze` 按需启用，而非 ADP 那样整段注释掉。`VITE_DROP_CONSOLE` 也已删除：构建时一刀切去掉 console 太粗糙，会误伤有意保留的日志；不该留的日志在代码里删掉
 - **自动生成的 `auto-imports.d.ts` / `components.d.ts` 移到项目根目录**：它们是构建产物，不该混在源码里
 - **类型声明优先用 `@types/*` 包**：`env.d.ts` 里只留 `vite/client` 引用和全局变量声明，不手写 `declare module`
 

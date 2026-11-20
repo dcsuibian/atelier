@@ -3,6 +3,7 @@ import { getSession, login as loginApi, logout as logoutApi } from '@/apis/sessi
 import { getAvailablePermissionsByUserId } from '@/apis/user'
 import { usePermissionStore } from '@/stores/permission'
 import { useMenuStore } from '@/stores/menu'
+import { useSettingStore } from '@/stores/setting'
 import { DynamicRouteRegistry } from '@/router/guards/route-registry'
 import { router } from '@/router'
 
@@ -92,6 +93,7 @@ export const useSessionStore = defineStore('session', () => {
    * 清空本地状态，回到「未向服务端确认过」的初始态
    *
    * 动态路由是按权限注册的，跟着会话一起注销：否则换个人登录会沿用上一个人的路由表。
+   * 锁屏同理，否则重新登录后仍被锁着，还得输入上一个人设的密码。
    * 工作标签页故意不清，免得误登出丢掉打开中的页面
    */
   function reset(): void {
@@ -99,6 +101,7 @@ export const useSessionStore = defineStore('session', () => {
     loginTime.value = null
     ready.value = false
     usePermissionStore().clear()
+    useSettingStore().unlock()
 
     DynamicRouteRegistry.getInstance()?.unregister()
     const menuStore = useMenuStore()

@@ -166,6 +166,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 **新克隆的仓库首次跑 `pnpm build` 会失败。** `auto-imports.d.ts` / `components.d.ts` 生成在项目根目录且不进版本库，而 `tsconfig.app.json` include 了它们；`build` 又是并行跑 type-check 与构建，type-check 会先撞上缺失的自动导入类型。先跑一次 `pnpm dev` 或 `pnpm build-only` 生成它们即可。
 
+**部署**：`Dockerfile` 两阶段构建，产物交给 nginx。镜像里只跑 `build-only`，不跑 type-check：开发时本来就会跑，镜像构建求快。路由用 history 模式，nginx 把所有路径回落到 `index.html`；`/api` 的反代不在这个 nginx 里，由外层负责。
+
 ### atelier-engine
 
 （在该目录下执行）

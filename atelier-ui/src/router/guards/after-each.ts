@@ -7,8 +7,11 @@ import { useCommon } from '@/hooks/core/useCommon'
 export function setupAfterEachGuard(router: Router) {
   const { scrollToTop } = useCommon()
 
-  router.afterEach(() => {
-    scrollToTop()
+  router.afterEach((to, from) => {
+    // 只改 query 的导航（筛选、分页同步到 URL）不算换页，回到顶部会打断操作
+    if (to.path !== from.path) {
+      scrollToTop()
+    }
 
     // 关闭进度条
     const settingStore = useSettingStore()

@@ -151,6 +151,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 `.gitignore` 在仓库根忽略 `node_modules/`、`dist/`、`target/` 作为防御。**包管理和构建命令一律在对应子项目目录内执行**，不要在仓库根运行 `pnpm` / `mvnd`。
 
+**推 `main` 即上线。** `.github/workflows/` 按子项目路径分别触发，构建镜像推到 GHCR，再通知服务器更新在线 demo（`atelier.dcsuibian.com`）。日常在 `dev` 上开发，上线时把 `main` 快进到 `dev` 再推送。
+
 ## 命令
 
 ### atelier-ui（在该目录下执行）

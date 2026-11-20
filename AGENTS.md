@@ -175,6 +175,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - `mvnd test`：运行测试，Testcontainers 自动起 PostgreSQL 与 Redis，需要 Docker
 - `mvnd test-compile exec:java`：重新生成 jOOQ 代码。起临时 PostgreSQL 容器跑完 Flyway 迁移后读取表结构，输出到 `jooq/generated/`。**改完迁移脚本后执行，生成结果提交进版本库**，普通构建因此不依赖 Docker
 
+**部署**：`Dockerfile` 以 `production` profile 启动，需要的环境变量见 `application-production.yml`。
+
 `BIGSERIAL` 不是标准 IDENTITY 列，jOOQ 不会自动识别。`JooqCodegen` 把所有表的 `id` 列声明为合成自增列；若某张表的 `id` 由应用层赋值，需要在那里排除。
 
 测试与代码生成共用 `TestcontainersConfiguration.POSTGRES_IMAGE`，用 `postgres:16`。固定大版本，免得 `latest` 悄悄升级导致测试环境与生产不一致。刻意不带扩展，因为示例用不到：下游需要 PostGIS 时换成 `postgis/postgis:16-3.5`，要 TimescaleDB（或两者都要）时换成 `timescale/timescaledb-ha:pg16-oss`。换镜像时要加 `.asCompatibleSubstituteFor("postgres")`。

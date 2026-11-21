@@ -27,7 +27,6 @@
  * @module utils/theme/animation
  * @author Art Design Pro Team
  */
-import { useCommon } from '@/hooks/core/useCommon'
 import { useTheme } from '@/hooks/core/useTheme'
 import { SystemThemeEnum } from '@/enums/appEnum'
 import { useSettingStore } from '@/stores/setting'
@@ -59,8 +58,8 @@ export const themeAnimation = (e: any) => {
  * 切换主题
  */
 const toggleTheme = () => {
+  // atelier：ADP 原本在此调用 refresh() 重建页面，会丢掉表单、表格里的数据。图表自己会跟着 isDark 重绘，用不着刷新
   useTheme().switchThemeStyles(useSettingStore().systemThemeType === LIGHT ? DARK : LIGHT)
-  useCommon().refresh()
 }
 
 /**

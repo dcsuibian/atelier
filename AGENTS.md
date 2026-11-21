@@ -283,7 +283,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 - **ECharts 改用 vue-echarts**：自动 resize、option 响应式、自动 dispose，可替掉 724 行的 `useChart`。但 vue-echarts 同样要 `use([...])` 按需注册，`plugins/echarts.ts` 那 68 行只是换地方。成本在于重写 6 个图表组件与 8 个统计卡片，适合与 dashboard 一起做。
 - **`types/art` 就近归位**：共 1092 行，像嵌套了一个小 src。组件专用的类型（如 `component/chart.ts` 的 313 行图表 props）挪到组件旁边，代价是改 `core/` 组件的 import，等接管策略定了再做。
-- **hooks**：`useFastEnter`、`useHeaderBar`、`useCeremony`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
+- **hooks**：`useFastEnter`、`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
 - **包体积**：主 chunk 约 1.36 MB，`pnpm build:analyze` 看一次再决定。
 - **前端测试**：`PermissionExpression` 求值、session store 的 Promise 去重是纯逻辑，值得用 vitest 补。
 - **小问题**：在用户管理里编辑当前登录用户后，页头的 `sessionStore.user` 不会刷新；给角色改权限后，当前用户要刷新页面才生效。权限分配树的分组名直接显示权限码前缀（`user`、`role`），要显示中文需前端映射表或在 `permissions.yml` 加分组字段。

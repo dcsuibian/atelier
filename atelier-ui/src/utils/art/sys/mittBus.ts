@@ -25,14 +25,10 @@
  *
  * // 发布事件
  * mittBus.emit('openSetting')
- *
- * // 带参数的事件
- * mittBus.emit('triggerFireworks', 'image-url')
  * ```
  *
  * ## 已定义的事件
  *
- * - triggerFireworks: 触发烟花效果（可选图片URL）
  * - openSetting: 打开设置面板
  * - openSearchDialog: 打开搜索对话框
  * - openLockScreen: 打开锁屏
@@ -44,8 +40,6 @@ import mitt, { type Emitter } from 'mitt'
 
 // 定义事件类型映射
 type Events = {
-  // 烟花效果事件 - 可选的图片URL参数
-  triggerFireworks: string | undefined
   // 打开设置面板事件 - 无参数
   openSetting: void
   // 打开搜索对话框事件 - 无参数

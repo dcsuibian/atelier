@@ -265,7 +265,6 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 **不依赖决定，随时可做：**
 
-- **删 `v-highlight`**：零引用（原先只服务于已删的演示页），`highlight.js` 依赖只有它在用，一并删。`v-ripple` 有 15 处引用、是纯视觉效果，保留。
 - **enum 改 `as const` 对象**：`enums/` 下 8 个几乎都是字符串枚举，写成 `const X = {...} as const` 加同名联合类型 `type X = (typeof X)[keyof typeof X]`，19 处使用方的写法与类型标注都不用动，只改 `enums/` 两个文件。之后开 `erasableSyntaxOnly` 杜绝新增。
 - **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/`、`core/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
 - **去掉 `plugins/echarts.ts` 里的 `MapChart` 注册**：地图组件早已删除，纯体积收益。

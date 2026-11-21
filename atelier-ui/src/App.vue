@@ -15,7 +15,6 @@
 import { useSettingStore } from '@/stores/setting'
 import zh from 'element-plus/es/locale/lang/zh-cn'
 import en from 'element-plus/es/locale/lang/en'
-import { systemUpgrade } from '@/utils/art/sys'
 import { toggleTransition } from '@/utils/art/ui/animation'
 import { checkStorageCompatibility } from '@/utils/art/storage'
 import { initializeTheme } from './hooks/core/useTheme'
@@ -36,6 +35,5 @@ onBeforeMount(() => {
 onMounted(() => {
   checkStorageCompatibility()
   toggleTransition(false)
-  systemUpgrade()
 })
 </script>

@@ -108,7 +108,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件——它们各自绑着一个重型 npm 依赖
 - **统计卡片（8 个）与图表组件（6 个）全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
 
-连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`fastEnter` 配置、`changeLog` 数据、`optimizeDeps.include`、`env.d.ts` 的 declare module 和 `utils/art/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
+连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`fastEnter` 配置、`optimizeDeps.include`、`env.d.ts` 的 declare module 和 `utils/art/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
 
 ### 已移除的机制
 
@@ -276,7 +276,6 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 - **`useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游基本不用它，更偏好直接写。模板页面的写法应与下游一致，否则对照失去意义。待定下游表格页的实际写法（`ElTable` + `ElPagination` + 自管 loading 与查询参数？）后，改写用户、角色、权限三页，删 `useTable`，并撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。
 - **去掉后端路由模式与按字符串加载组件**：`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。可连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`，与 `router/` 已属接管的方向一致。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。
-- **`@/mock`**：只剩 `mock/upgrade/changeLog.ts`，被 `utils/art/sys/upgrade.ts` 的「系统升级提示」引用，去留取决于这个功能。倾向连功能一起删。
 - **i18n 立场**：菜单走 i18n，自有页面文案硬编码中文，ADP 页面两种都有。要么明确只做中文（机制保留、自有页面不强求），要么全部走 i18n。Element Plus 的语言已由 `App.vue` 的 `ElConfigProvider` 联动；项目未直接依赖 dayjs，时间格式化用 `@vueuse/core` 的 `formatDate`。日期选择器内部的 dayjs 是否需要另外 `import 'dayjs/locale/zh-cn'` 才能让周起始、月份名跟随语言，未验证。
 
 **放到后面：**

@@ -45,12 +45,6 @@ export class StorageConfig {
   /** 响应式布局切换时暂存桌面端菜单类型 */
   static readonly RESPONSIVE_MENU_TYPE_KEY = 'sys-responsive-menu-type'
 
-  /** 跳过升级检查的版本 */
-  static readonly SKIP_UPGRADE_VERSION = '1.0.0'
-
-  /** 升级处理延迟时间（毫秒） */
-  static readonly UPGRADE_DELAY = 1000
-
   /** 登出延迟时间（毫秒） */
   static readonly LOGOUT_DELAY = 1000
 

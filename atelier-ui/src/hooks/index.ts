@@ -16,9 +16,6 @@ export { useTableColumns } from './core/useTableColumns'
 // 主题相关
 export { useTheme } from './core/useTheme'
 
-// 顶栏快速入口
-export { useFastEnter } from './core/useFastEnter'
-
 // 顶栏功能管理
 export { useHeaderBar } from './core/useHeaderBar'
 

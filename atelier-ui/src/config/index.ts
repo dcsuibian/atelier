@@ -22,7 +22,6 @@
  * - themeList: 菜单主题样式列表
  * - darkMenuStyles: 暗黑模式下的菜单样式
  * - systemMainColor: 预设的系统主色列表
- * - fastEnter: 快速入口配置
  * - headerBar: 顶部栏功能配置
  *
  * @module config
@@ -32,7 +31,6 @@
 import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum'
 import type { SystemConfig } from '@/types/art/config'
 import { configImages } from './assets/images'
-import fastEnterConfig from './modules/fastEnter'
 import { headerBarConfig } from './modules/headerBar'
 
 const appConfig: SystemConfig = {
@@ -118,8 +116,6 @@ const appConfig: SystemConfig = {
   ],
   // 系统主色
   systemMainColor: ['#5D87FF', '#B48DF3', '#1D84FF', '#60C041', '#38C0FC', '#F9901F', '#FF80C8'] as const,
-  // 快速入口配置
-  fastEnter: fastEnterConfig,
   // 顶部栏功能配置
   headerBar: headerBarConfig,
 }

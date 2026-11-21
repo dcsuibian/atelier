@@ -32,7 +32,7 @@ export function useHeaderBar() {
   const headerBarConfigRef = computed<HeaderBarFeatureConfig>(() => headerBarConfig)
 
   // 从store中获取相关状态
-  const { showMenuButton, showFastEnter, showRefreshButton, showCrumbs, showLanguage } = storeToRefs(settingStore)
+  const { showMenuButton, showRefreshButton, showCrumbs, showLanguage } = storeToRefs(settingStore)
 
   /**
    * 检查特定功能是否启用
@@ -60,11 +60,6 @@ export function useHeaderBar() {
   // 检查刷新按钮是否显示
   const shouldShowRefreshButton = computed(() => {
     return isFeatureEnabled('refreshButton') && showRefreshButton.value
-  })
-
-  // 检查快速入口是否显示
-  const shouldShowFastEnter = computed(() => {
-    return isFeatureEnabled('fastEnter') && showFastEnter.value
   })
 
   // 检查面包屑是否显示
@@ -95,12 +90,6 @@ export function useHeaderBar() {
   // 检查主题切换是否显示
   const shouldShowThemeToggle = computed(() => {
     return isFeatureEnabled('themeToggle')
-  })
-
-  // 获取快速入口的最小宽度
-  const fastEnterMinWidth = computed(() => {
-    const config = getFeatureConfig('fastEnter')
-    return (config as any)?.minWidth || 1200
   })
 
   /**
@@ -164,16 +153,12 @@ export function useHeaderBar() {
     // 显示状态计算属性
     shouldShowMenuButton, // 是否显示菜单按钮
     shouldShowRefreshButton, // 是否显示刷新按钮
-    shouldShowFastEnter, // 是否显示快速入口
     shouldShowBreadcrumb, // 是否显示面包屑
     shouldShowGlobalSearch, // 是否显示全局搜索
     shouldShowFullscreen, // 是否显示全屏按钮
     shouldShowLanguage, // 是否显示语言切换
     shouldShowSettings, // 是否显示设置面板
     shouldShowThemeToggle, // 是否显示主题切换
-
-    // 配置相关
-    fastEnterMinWidth, // 快速入口最小宽度
 
     // 方法
     isFeatureEnabled, // 检查功能是否启用

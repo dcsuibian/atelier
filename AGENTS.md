@@ -274,7 +274,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 **等决定：**
 
 - **`useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游基本不用它，更偏好直接写。模板页面的写法应与下游一致，否则对照失去意义。待定下游表格页的实际写法（`ElTable` + `ElPagination` + 自管 loading 与查询参数？）后，改写用户、角色、权限三页，删 `useTable`，并撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。
-- **去掉后端路由模式与按字符串加载组件**：`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。可连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`，与 `router/` 已属接管的方向一致。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。
+- **去掉后端路由模式与按字符串加载组件**：`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。可连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`，与 `router/` 已属接管的方向一致。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。顺带把 Layout 从 `views/index/` 挪到 `components/` 下：它是包住页面的外壳，不是页面；`'/index/index'` 魔法字符串、`routes-alias.ts` 的 `Layout` 别名及 `ComponentLoader`、`RouteValidator` 对它的特判一并删掉。
 - **i18n 立场**：菜单走 i18n，自有页面文案硬编码中文，ADP 页面两种都有。要么明确只做中文（机制保留、自有页面不强求），要么全部走 i18n。Element Plus 的语言已由 `App.vue` 的 `ElConfigProvider` 联动；项目未直接依赖 dayjs，时间格式化用 `@vueuse/core` 的 `formatDate`。日期选择器内部的 dayjs 是否需要另外 `import 'dayjs/locale/zh-cn'` 才能让周起始、月份名跟随语言，未验证。
 
 **放到后面：**

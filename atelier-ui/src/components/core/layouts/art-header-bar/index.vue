@@ -133,8 +133,8 @@ import AppConfig from '@/config'
 import { languageOptions } from '@/locales'
 import { mittBus } from '@/utils/art/sys'
 import { themeAnimation } from '@/utils/art/ui/animation'
-import { useCommon } from '@/hooks/core/useCommon'
-import { useHeaderBar } from '@/hooks/core/useHeaderBar'
+import { useCommon } from '@/composables/art/useCommon'
+import { useHeaderBar } from '@/composables/art/useHeaderBar'
 import ArtUserMenu from './widget/ArtUserMenu.vue'
 
 defineOptions({ name: 'ArtHeaderBar' })

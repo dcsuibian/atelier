@@ -17,7 +17,7 @@ import zh from 'element-plus/es/locale/lang/zh-cn'
 import en from 'element-plus/es/locale/lang/en'
 import { toggleTransition } from '@/utils/art/ui/animation'
 import { checkStorageCompatibility } from '@/utils/art/storage'
-import { initializeTheme } from './hooks/core/useTheme'
+import { initializeTheme } from '@/composables/art/useTheme'
 
 const settingStore = useSettingStore()
 const { language } = storeToRefs(settingStore)

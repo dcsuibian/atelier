@@ -6,7 +6,7 @@ import AppConfig from '@/config'
 import { SystemThemeEnum, MenuTypeEnum } from '@/enums/appEnum'
 import { mittBus } from '@/utils/art/sys'
 import { StorageConfig } from '@/utils/art'
-import { useTheme } from '@/hooks/core/useTheme'
+import { useTheme } from '@/composables/art/useTheme'
 import { useSettingsState } from './useSettingsState'
 import { useSettingsHandlers } from './useSettingsHandlers'
 

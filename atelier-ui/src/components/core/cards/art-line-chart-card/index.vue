@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { graphic, type EChartsOption } from '@/plugins/echarts'
 import { getCssVar, hexToRgba } from '@/utils/art/ui'
-import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
+import { useChartOps, useChartComponent } from '@/composables/art/useChart'
 
 defineOptions({ name: 'ArtLineChartCard' })
 

@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import type { PermissionExpression } from '@/types'
-import { useAuth } from '@/hooks/core/useAuth'
+import { useAuth } from '@/composables/useAuth'
 
 defineOptions({ name: 'ArtButtonMore' })
 

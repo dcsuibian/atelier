@@ -43,10 +43,11 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 **ADP 的原件待在子目录里，自有代码平铺在该目录根上。** 这是 `atelier-ui` 最重要的组织约定，后续所有改动都以它为前提。
 
-子目录叫什么看情况：ADP 本来就分了 `core/` 的（`components/`、`hooks/`、`directives/`）沿用；没分的（`types/`、`utils/`）新建 `art/`。
+子目录统一叫 `art/`（正在把 ADP 原有的 `core/` 逐个改过来，`core`、`common` 这类名字不表达任何含义）。
 
 - `src/types/art/`、`src/utils/art/` 是 ADP 原件；自有类型与工具平铺成 `src/types/session.ts`、`src/utils/http.ts` 这样
-- `src/components/core/`、`src/hooks/core/`、`src/directives/{core,business}/` 已是 ADP 原件，不必另建 `art/`
+- `src/composables/art/` 同理，`useAuth.ts` 是重写过的，平铺在 `src/composables/` 下。目录不叫 ADP 的 `hooks`：hooks 是 React 的叫法，Vue 官方叫 composables
+- `src/components/core/`、`src/directives/{core,business}/` 尚未改名
 
 理由只有一个，但足够：**ADP 升级时 `art/` 与 `core/` 可以整目录对照乃至替换**，不必逐行分辨哪行是上游的、哪行是自己改的。上面第 (1) 段同步的成本直接取决于这件事。
 
@@ -61,7 +62,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 - **跟着 store 接管改的引用**：ADP 组件里对 `useUserStore()` 的调用，按内容分别改到了 `settingStore`（语言、搜索历史、锁屏）或 `sessionStore`（登录态、登出）。替换后用 `rg -n 'useUserStore|@/store/' src` 找出来照改。这类也不标注：改法是机械的，标了反而淹没真正的破例。
 - **破例**：除此之外的改动都标了 `atelier：` 注释，替换后用 `rg -n 'atelier：' src` 找全补回。注释里写了改了什么、为什么，下面只记几处需要多解释的：
   - `types/art/router/index.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。
-  - `hooks/core/useTable.ts` 的 `InferRecordType` 多认一个 `PageWrapper`，否则行类型推导成 `never`，列 formatter 里的 `row` 失去检查。
+  - `composables/art/useTable.ts` 的 `InferRecordType` 多认一个 `PageWrapper`，否则行类型推导成 `never`，列 formatter 里的 `row` 失去检查。
   - `utils/art/table/tableConfig.ts` 的 `paginationKey` 改为 `pageNumber` / `pageSize`，`currentFields` 加了 `pageNumber`。它本来就是给使用者改的配置，只是恰好放在 `art/` 里；改这一处换来所有表格页零配置。
   - `components/core/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
 
@@ -269,7 +270,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/`、`core/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
 - **去掉 `plugins/echarts.ts` 里的 `MapChart` 注册**：地图组件早已删除，纯体积收益。
 - **删 `types/art` 里的死类型**：`store/index.ts` 的 `RootState` 等、`common/response.ts` 的 `BaseResponse` 均无人引用。
-- **`config/` 改 kebab-case**：`headerBar.ts` 等是 ADP 原件，但它本就是给使用者改的配置（`setting.ts` 已改过），按接管处理。动手前先列出 `art/`、`core/` 以外所有 camelCase 文件。单复数的原则：唯一的用单数（`router`、`config`），多个的用复数（`stores`、`hooks`）。
+- **`config/` 改 kebab-case**：`headerBar.ts` 等是 ADP 原件，但它本就是给使用者改的配置（`setting.ts` 已改过），按接管处理。动手前先列出 `art/`、`core/` 以外所有 camelCase 文件。单复数的原则：唯一的用单数（`router`、`config`），多个的用复数（`stores`、`composables`）。
 
 **等决定：**
 
@@ -281,7 +282,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 - **ECharts 改用 vue-echarts**：自动 resize、option 响应式、自动 dispose，可替掉 724 行的 `useChart`。但 vue-echarts 同样要 `use([...])` 按需注册，`plugins/echarts.ts` 那 68 行只是换地方。成本在于重写 6 个图表组件与 8 个统计卡片，适合与 dashboard 一起做。
 - **`types/art` 就近归位**：共 1092 行，像嵌套了一个小 src。组件专用的类型（如 `component/chart.ts` 的 313 行图表 props）挪到组件旁边，代价是改 `core/` 组件的 import，等接管策略定了再做。
-- **hooks**：`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
+- **composables**：`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
 - **包体积**：主 chunk 约 1.36 MB，`pnpm build:analyze` 看一次再决定。
 - **前端测试**：`PermissionExpression` 求值、session store 的 Promise 去重是纯逻辑，值得用 vitest 补。
 - **小问题**：在用户管理里编辑当前登录用户后，页头的 `sessionStore.user` 不会刷新；给角色改权限后，当前用户要刷新页面才生效。权限分配树的分组名直接显示权限码前缀（`user`、`role`），要显示中文需前端映射表或在 `permissions.yml` 加分组字段。

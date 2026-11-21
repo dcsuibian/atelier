@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useSettingStore } from '@/stores/setting'
-import { useHeaderBar } from '@/hooks/core/useHeaderBar'
+import { useHeaderBar } from '@/composables/art/useHeaderBar'
 import { themeAnimation } from '@/utils/art/ui/animation'
 import { languageOptions } from '@/locales'
 import { LanguageEnum } from '@/enums/appEnum'

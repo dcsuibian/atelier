@@ -8,7 +8,7 @@
  */
 
 import type { AppRouteRecord } from '@/types/art/router'
-import { useAppMode } from '@/hooks/core/useAppMode'
+import { useAppMode } from '@/composables/art/useAppMode'
 import { fetchGetMenuList } from '@/apis/system-manage'
 import { dynamicRoutes } from '../routes/dynamic-routes'
 import { RoutesAlias } from '../routes-alias'

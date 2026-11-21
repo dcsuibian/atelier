@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAutoLayoutHeight } from '@/hooks/core/useLayoutHeight'
+import { useAutoLayoutHeight } from '@/composables/art/useLayoutHeight'
 import { useSettingStore } from '@/stores/setting'
 import { useWorktabStore } from '@/stores/work-tab'
 

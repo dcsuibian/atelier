@@ -118,7 +118,7 @@ import { useMenuStore } from '@/stores/menu'
 import { isIframe } from '@/utils/art/navigation'
 import { handleMenuJump } from '@/utils/art/navigation'
 import SidebarSubmenu from './widget/SidebarSubmenu.vue'
-import { useCommon } from '@/hooks/core/useCommon'
+import { useCommon } from '@/composables/art/useCommon'
 import { useWindowSize, useTimeoutFn } from '@vueuse/core'
 
 defineOptions({ name: 'ArtSidebarMenu' })

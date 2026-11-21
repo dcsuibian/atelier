@@ -27,7 +27,7 @@
  * @module utils/theme/animation
  * @author Art Design Pro Team
  */
-import { useTheme } from '@/hooks/core/useTheme'
+import { useTheme } from '@/composables/art/useTheme'
 import { SystemThemeEnum } from '@/enums/appEnum'
 import { useSettingStore } from '@/stores/setting'
 const { LIGHT, DARK } = SystemThemeEnum

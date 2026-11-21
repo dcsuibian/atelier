@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { graphic, type EChartsOption } from '@/plugins/echarts'
 import { getCssVar, hexToRgba } from '@/utils/art/ui'
-import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
+import { useChartOps, useChartComponent } from '@/composables/art/useChart'
 import type { LineChartProps, LineDataItem } from '@/types/art/component/chart'
 
 defineOptions({ name: 'ArtLineChart' })

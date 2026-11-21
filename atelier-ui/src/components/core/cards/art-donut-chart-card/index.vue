@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { type EChartsOption } from '@/plugins/echarts'
-import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
+import { useChartOps, useChartComponent } from '@/composables/art/useChart'
 
 defineOptions({ name: 'ArtDonutChartCard' })
 

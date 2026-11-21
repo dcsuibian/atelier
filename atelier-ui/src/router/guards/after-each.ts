@@ -1,7 +1,7 @@
 import { useSettingStore } from '@/stores/setting'
 import type { Router } from 'vue-router'
 import NProgress from 'nprogress'
-import { useCommon } from '@/hooks/core/useCommon'
+import { useCommon } from '@/composables/art/useCommon'
 
 /** 路由全局后置守卫 */
 export function setupAfterEachGuard(router: Router) {

@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCommon } from '@/hooks/core/useCommon'
+import { useCommon } from '@/composables/art/useCommon'
 import { useSessionStore } from '@/stores/session'
 
 const router = useRouter()

@@ -71,7 +71,7 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { type UserForm, addUser, editUserPartially, getRolesByUserId, setRolesByUserId } from '@/apis/user'
 import { getRoles } from '@/apis/role'
-import { useAuth } from '@/hooks/core/useAuth'
+import { useAuth } from '@/composables/useAuth'
 import { PERMISSIONS } from '@/constants/permission'
 import { SUPER_ADMIN_ID } from '@/constants/user'
 import type { Role, User, UserGender, UserStatus } from '@/types'

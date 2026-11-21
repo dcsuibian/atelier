@@ -26,7 +26,7 @@ import type { RouteLocationNormalized } from 'vue-router'
 import { isIframe } from './route'
 import { useSettingStore } from '@/stores/setting'
 import { IframeRouteManager } from '@/router/core'
-import { useCommon } from '@/hooks/core/useCommon'
+import { useCommon } from '@/composables/art/useCommon'
 
 /**
  * 根据当前路由信息设置工作标签页（worktab）

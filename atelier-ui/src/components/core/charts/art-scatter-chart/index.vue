@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import type { EChartsOption } from '@/plugins/echarts'
 import { getCssVar } from '@/utils/art/ui'
-import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
+import { useChartOps, useChartComponent } from '@/composables/art/useChart'
 import type { ScatterChartProps } from '@/types/art/component/chart'
 
 defineOptions({ name: 'ArtScatterChart' })

@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { formatDate } from '@vueuse/core'
 import { ElTag } from 'element-plus'
-import { useTable } from '@/hooks/core/useTable'
+import { useTable } from '@/composables/art/useTable'
 import { getPermissions } from '@/apis/permission'
 import type { PermissionQuery, PermissionStatus } from '@/types'
 import PermissionSearch from './modules/permission-search.vue'

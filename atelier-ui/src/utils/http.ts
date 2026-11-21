@@ -68,7 +68,9 @@ axiosInstance.interceptors.response.use(
     if (200 === code) {
       return response
     }
-    return Promise.reject(new Error(message))
+    // body 不是 ResponseWrapper 时（比如接口地址配错，拿到的是前端的 index.html）message 为空，
+    // 不兜底就会弹一个空白提示
+    return Promise.reject(new Error(message ?? '请求失败：响应格式不正确'))
   },
   error => {
     if (isUnauthorized(error)) {

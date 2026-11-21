@@ -1,3 +1,4 @@
+<!-- 别当演示内容删：它是 ArtResultPage 的用法示例 -->
 <template>
   <ArtResultPage
     type="success"

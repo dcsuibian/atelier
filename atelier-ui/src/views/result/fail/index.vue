@@ -1,3 +1,4 @@
+<!-- 别当演示内容删：它是 ArtResultPage 的用法示例 -->
 <template>
   <ArtResultPage type="fail" title="提交失败" message="请核对并修改以下信息后，再重新提交。" iconCode="ri:close-fill">
     <template #content>

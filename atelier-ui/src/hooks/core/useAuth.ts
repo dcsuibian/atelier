@@ -1,6 +1,8 @@
 /**
  * useAuth - 按钮级权限判断
  *
+ * atelier：整个重写。ADP 原版按路由 meta 的 authList 与 info.buttons 判断，名字和用法保留
+ *
  * 判断依据是权限码，不是角色：角色是库里的数据、名字随时可改，权限码写在后端的
  * permissions.yml 里、发布后不改名，只有它才适合写进前端代码。
  *
@@ -16,7 +18,7 @@
  * <template>
  *   <ElButton v-if="hasAuth(PERMISSIONS.USER_ADD)">新增</ElButton>
  *   <!-- 也支持表达式 -->
- *   <ElButton v-if="hasAuth([PERMISSIONS.USER_EDIT, 'OR', PERMISSIONS.USER_DELETE])">操作</ElButton>
+ *   <ElButton v-if="hasAuth({ or: [PERMISSIONS.USER_EDIT, PERMISSIONS.USER_DELETE] })">操作</ElButton>
  * </template>
  * ```
  *

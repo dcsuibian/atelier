@@ -231,6 +231,7 @@ interface SearchBarEmits {
 
 const emit = defineEmits<SearchBarEmits>()
 
+// atelier：ADP 原为 default: {}。对象默认值要用工厂函数，否则多个实例共用同一个对象
 const modelValue = defineModel<Record<string, any>>({ default: () => ({}) })
 const initialModelValue = ref<Record<string, any>>({})
 

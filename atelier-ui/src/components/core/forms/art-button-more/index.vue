@@ -38,6 +38,7 @@ export interface ButtonMoreItem {
   label: string
   /** 是否禁用 */
   disabled?: boolean
+  // atelier：ADP 原为 string，改为权限表达式
   /** 需要的权限，支持 and / or 组合 */
   auth?: PermissionExpression
   /** 图标组件 */

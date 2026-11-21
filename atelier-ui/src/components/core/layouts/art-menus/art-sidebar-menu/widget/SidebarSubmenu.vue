@@ -20,6 +20,7 @@
       />
     </ElSubMenu>
 
+    <!-- atelier：外链的 index 原为 undefined，跟进 Element Plus 升级后改为链接本身 -->
     <ElMenuItem
       v-else
       :index="isExternalLink(item) ? (item.meta.link ?? '') : item.path || item.meta.title"

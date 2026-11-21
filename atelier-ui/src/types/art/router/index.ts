@@ -53,6 +53,7 @@ export interface RouteMeta extends Record<string | number | symbol, unknown> {
   }>
   /** 是否为一级菜单 */
   isFirstLevel?: boolean
+  // atelier：新增。ADP 原为按角色判断的 roles，已删
   /**
    * 访问这个路由需要的权限。不写表示不设限
    *

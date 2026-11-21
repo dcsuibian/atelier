@@ -84,6 +84,7 @@ import { useResizeObserver, useWindowSize } from '@vueuse/core'
 defineOptions({ name: 'ArtTable' })
 
 const { width } = useWindowSize()
+// atelier：ADP 原为 InstanceType<typeof ElTable>，跟进 Element Plus 升级时改用它导出的 TableInstance
 const elTableRef = ref<TableInstance | null>(null)
 const paginationRef = ref<HTMLElement>()
 const tableHeaderRef = ref<HTMLElement>()

@@ -106,7 +106,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 - 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested、system/menu（菜单写在 `router/modules/` 里，没有菜单管理的需要；`MenuProcessor` 的后端菜单模式仍会调 `fetchGetMenuList`，那是机制层，没删）
 - 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件——它们各自绑着一个重型 npm 依赖
-- **统计卡片（8 个）与图表组件（6 个）全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
+- **统计卡片（8 个）与图表组件（6 个）全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写。`dashboard/console` 演示页同理保留，它是这些组件的用法示例
 
 连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`optimizeDeps.include`、`env.d.ts` 的 declare module 和 `utils/art/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
 

@@ -82,11 +82,6 @@ export function useHeaderBar() {
     return isFeatureEnabled('fullscreen')
   })
 
-  // 检查通知中心是否显示
-  const shouldShowNotification = computed(() => {
-    return isFeatureEnabled('notification')
-  })
-
   // 检查语言切换是否显示
   const shouldShowLanguage = computed(() => {
     return isFeatureEnabled('language') && showLanguage.value
@@ -173,7 +168,6 @@ export function useHeaderBar() {
     shouldShowBreadcrumb, // 是否显示面包屑
     shouldShowGlobalSearch, // 是否显示全局搜索
     shouldShowFullscreen, // 是否显示全屏按钮
-    shouldShowNotification, // 是否显示通知中心
     shouldShowLanguage, // 是否显示语言切换
     shouldShowSettings, // 是否显示设置面板
     shouldShowThemeToggle, // 是否显示主题切换

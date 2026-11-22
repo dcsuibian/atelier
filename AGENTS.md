@@ -262,18 +262,22 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 ### 待办（前端，已评估、暂缓）
 
-背后是同一个问题：ADP 的 `core/`、`art/` 接管多少。倾向于大方接管——ADP 值得跟进的是视觉组件（布局、卡片、表格外观），机制层（路由、表格 hook、类型组织）本就与作者偏好不合。定下来后应写进「代码组织」，此后这类改动不必逐个掂量破例。
+ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码可以大方接管，不必逐个掂量破例。ADP 值得跟进的是视觉组件（布局、卡片、表格外观），机制层（路由、表格 hook、类型组织）本就与作者偏好不合。「代码组织」一节等拍平做完后按新结构重写；设计理由优先写进代码注释，注释放不下的才进 README。
 
 **不依赖决定，随时可做：**
 
+- **拍平目录**（`hooks/` → `composables/` 已做）。原则：ADP 原件放各目录下的 `art/`，不用 `core`、`common` 这类空泛名字；只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外，保留）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」；组件名与 `art-` 前缀不动。顺序：`styles/core` → `styles/art`；`config/` 去掉 `modules/`、`assets/` 并改 kebab-case；`enums/` 并进 `constants/`（即下面 enum 那条）；`types/art`、`utils/art` 去掉单文件目录；`components/core` → `components/art`，保留 `layouts`/`forms`/`cards`/`charts` 等分类，`base`/`others`/`widget`/`theme` 并到别处。
+- **删 `plugins/`**：图表组件各自按需 `import` 并 `use([...])` 用到的 ECharts 模块。现在一个图表就把全部注册过的图表类型带进来。
+- **拆 `useCommon`**：不是真正的 composable。滚动函数挪到 `utils/` 当普通函数，`refresh`、`homePath` 让调用方直接用 store。
 - **enum 改 `as const` 对象**：`enums/` 下 8 个几乎都是字符串枚举，写成 `const X = {...} as const` 加同名联合类型 `type X = (typeof X)[keyof typeof X]`，19 处使用方的写法与类型标注都不用动，只改 `enums/` 两个文件。之后开 `erasableSyntaxOnly` 杜绝新增。
 - **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/`、`core/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
-- **去掉 `plugins/echarts.ts` 里的 `MapChart` 注册**：地图组件早已删除，纯体积收益。
 - **删 `types/art` 里的死类型**：`store/index.ts` 的 `RootState` 等、`common/response.ts` 的 `BaseResponse` 均无人引用。
 - **`config/` 改 kebab-case**：`headerBar.ts` 等是 ADP 原件，但它本就是给使用者改的配置（`setting.ts` 已改过），按接管处理。动手前先列出 `art/`、`core/` 以外所有 camelCase 文件。单复数的原则：唯一的用单数（`router`、`config`），多个的用复数（`stores`、`composables`）。
 
 **等决定：**
 
+- **`useAuth` 去留**：只是 `permissionStore.check()` 的转发。留着模板里 `hasAuth(...)` 短、下游也叫这个名字；去掉少一层。
+- **指令的写法**：`v-ripple` 现在分在三个文件（指令、`setupGlobDirectives`、`types/art/directive`），可合成一个文件导出 `vRipple` 并就地 `declare module 'vue'`，`main.ts` 里一行注册。
 - **`useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游基本不用它，更偏好直接写。模板页面的写法应与下游一致，否则对照失去意义。待定下游表格页的实际写法（`ElTable` + `ElPagination` + 自管 loading 与查询参数？）后，改写用户、角色、权限三页，删 `useTable`，并撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。
 - **去掉后端路由模式与按字符串加载组件**：`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。可连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`，与 `router/` 已属接管的方向一致。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。顺带把 Layout 从 `views/index/` 挪到 `components/` 下：它是包住页面的外壳，不是页面；`'/index/index'` 魔法字符串、`routes-alias.ts` 的 `Layout` 别名及 `ComponentLoader`、`RouteValidator` 对它的特判一并删掉。
 - **i18n 立场**：菜单走 i18n，自有页面文案硬编码中文，ADP 页面两种都有。要么明确只做中文（机制保留、自有页面不强求），要么全部走 i18n。Element Plus 的语言已由 `App.vue` 的 `ElConfigProvider` 联动；项目未直接依赖 dayjs，时间格式化用 `@vueuse/core` 的 `formatDate`。日期选择器内部的 dayjs 是否需要另外 `import 'dayjs/locale/zh-cn'` 才能让周起始、月份名跟随语言，未验证。
@@ -283,7 +287,6 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **ECharts 改用 vue-echarts**：自动 resize、option 响应式、自动 dispose，可替掉 724 行的 `useChart`。但 vue-echarts 同样要 `use([...])` 按需注册，`plugins/echarts.ts` 那 68 行只是换地方。成本在于重写 6 个图表组件与 8 个统计卡片，适合与 dashboard 一起做。
 - **`types/art` 就近归位**：共 1092 行，像嵌套了一个小 src。组件专用的类型（如 `component/chart.ts` 的 313 行图表 props）挪到组件旁边，代价是改 `core/` 组件的 import，等接管策略定了再做。
 - **composables**：`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
-- **包体积**：主 chunk 约 1.36 MB，`pnpm build:analyze` 看一次再决定。
 - **前端测试**：`PermissionExpression` 求值、session store 的 Promise 去重是纯逻辑，值得用 vitest 补。
 - **小问题**：在用户管理里编辑当前登录用户后，页头的 `sessionStore.user` 不会刷新；给角色改权限后，当前用户要刷新页面才生效。权限分配树的分组名直接显示权限码前缀（`user`、`role`），要显示中文需前端映射表或在 `permissions.yml` 加分组字段。
 

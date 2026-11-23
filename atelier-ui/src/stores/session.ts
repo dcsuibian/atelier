@@ -50,6 +50,25 @@ export const useSessionStore = defineStore('session', () => {
   }
 
   /**
+   * 重新取回当前用户与权限。改了自己的资料、角色，或自己所在角色的权限之后调用，让变化立即生效
+   *
+   * 动态路由与菜单是注册时按权限筛出来的，权限变了只更新权限码不够：
+   * 注销后原地重新导航一次，由守卫按新权限重新注册
+   */
+  async function refresh(): Promise<void> {
+    const before = new Set(usePermissionStore().codes)
+    const session = await getSession()
+    await apply(session.user, session.loginTime)
+
+    const after = usePermissionStore().codes
+    if (before.size === after.size && [...before].every(code => after.has(code))) {
+      return
+    }
+    resetRoutes()
+    await router.replace(router.currentRoute.value.fullPath)
+  }
+
+  /**
    * @param toLogin 是否跳转到登录页，并带上当前地址作为 redirect
    */
   async function logout(toLogin = true): Promise<void> {
@@ -102,7 +121,10 @@ export const useSessionStore = defineStore('session', () => {
     ready.value = false
     usePermissionStore().clear()
     useSettingStore().unlock()
+    resetRoutes()
+  }
 
+  function resetRoutes(): void {
     DynamicRouteRegistry.getInstance()?.unregister()
     const menuStore = useMenuStore()
     menuStore.removeAllDynamicRoutes()
@@ -117,6 +139,7 @@ export const useSessionStore = defineStore('session', () => {
     ensureLoaded,
     login,
     logout,
+    refresh,
     reset,
   }
 })

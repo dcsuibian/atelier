@@ -37,6 +37,8 @@
 import type { TreeInstance } from 'element-plus'
 import { getPermissionsByRoleId, setPermissionsByRoleId } from '@/apis/role'
 import { getAllPermissions } from '@/apis/permission'
+import { getRolesByUserId } from '@/apis/user'
+import { useSessionStore } from '@/stores/session'
 import type { Permission, Role } from '@/types'
 
 interface Props {
@@ -113,6 +115,21 @@ const handleOpen = async () => {
 const getCheckedPermissionIds = (): number[] =>
   (treeRef.value?.getCheckedKeys(true) ?? []).filter((key): key is number => 'number' === typeof key)
 
+/**
+ * 当前用户拥有这个角色时，改动立即作用到自己身上，不必重新登录
+ */
+const refreshSessionIfAffected = async (role: Role) => {
+  const sessionStore = useSessionStore()
+  const currentUser = sessionStore.user
+  if (!currentUser) {
+    return
+  }
+  const roles = await getRolesByUserId(currentUser.id)
+  if (roles.some(item => item.id === role.id)) {
+    await sessionStore.refresh()
+  }
+}
+
 const savePermissions = async () => {
   const role = props.role
   if (!role) {
@@ -123,6 +140,7 @@ const savePermissions = async () => {
     await setPermissionsByRoleId(role.id, [...getCheckedPermissionIds(), ...disabledPermissionIds])
     ElMessage.success('权限保存成功')
     visible.value = false
+    await refreshSessionIfAffected(role)
   } catch {
     // 已提示
   } finally {

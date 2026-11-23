@@ -72,6 +72,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { type UserForm, addUser, editUserPartially, getRolesByUserId, setRolesByUserId } from '@/apis/user'
 import { getRoles } from '@/apis/role'
 import { usePermissionStore } from '@/stores/permission'
+import { useSessionStore } from '@/stores/session'
 import { PERMISSIONS } from '@/constants/permission'
 import { SUPER_ADMIN_ID } from '@/constants/user'
 import type { Role, User, UserGender, UserStatus } from '@/types'
@@ -91,6 +92,7 @@ const emit = defineEmits<Emits>()
 const visible = defineModel<boolean>('visible', { required: true })
 
 const permissionStore = usePermissionStore()
+const sessionStore = useSessionStore()
 
 const isSuperAdmin = computed(() => SUPER_ADMIN_ID === props.user?.id)
 /** 只有分配角色权限的人也能打开编辑弹窗，这时资料只读 */
@@ -226,6 +228,10 @@ const handleSubmit = async () => {
     emit('submit')
     if (rolesVisible.value) {
       await setRolesByUserId(user.id, form.roleIds)
+    }
+    // 改的是自己：页头的资料要跟着变，角色变了权限也要跟着变
+    if (user.id === sessionStore.user?.id) {
+      await sessionStore.refresh()
     }
     ElMessage.success(props.user ? '保存成功' : '新增成功')
   } catch {

@@ -61,7 +61,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 - **机械改动**：格式化、`import type`、路径别名（ADP 的 `@styles`、`@imgs` 等已删，见「已替换为自有配置」）。跑一遍 `pnpm format`，再按 type-check 报错和全局搜旧别名改掉即可，不逐处标注。
 - **跟着 store 接管改的引用**：ADP 组件里对 `useUserStore()` 的调用，按内容分别改到了 `settingStore`（语言、搜索历史、锁屏）或 `sessionStore`（登录态、登出）。替换后用 `rg -n 'useUserStore|@/store/' src` 找出来照改。这类也不标注：改法是机械的，标了反而淹没真正的破例。
 - **破例**：除此之外的改动都标了 `atelier：` 注释，替换后用 `rg -n 'atelier：' src` 找全补回。注释里写了改了什么、为什么，下面只记几处需要多解释的：
-  - `types/art/router/index.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。
+  - `types/art/router.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。
   - `components/core/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
 
 往 `art/` 与 `core/` 里加东西之前先掂量这笔账，别让破例变成常例。
@@ -140,7 +140,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 ### 尚未清理的上游痕迹
 
-`src/utils/art/constants/links.ts` 里 7 个常量全指向 ADP（GitHub 仓库、artd.pro 文档站与社区、作者的 B 站），被 `dashboard/console/modules/about-project.vue` 和 `art-header-bar/widget/ArtUserMenu.vue` 引用着。`index.html` 的 `<title>` 和 description 同样还是上游的。**这些是有意留着的**，等决定好要显示什么内容再一起换。
+`src/utils/art/constants.ts` 里 7 个常量全指向 ADP（GitHub 仓库、artd.pro 文档站与社区、作者的 B 站），被 `dashboard/console/modules/about-project.vue` 和 `art-header-bar/widget/ArtUserMenu.vue` 引用着。`index.html` 的 `<title>` 和 description 同样还是上游的。**这些是有意留着的**，等决定好要显示什么内容再一起换。
 
 ## 仓库构成
 
@@ -266,11 +266,10 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 **不依赖决定，随时可做：**
 
-- **拍平目录**（`hooks/` → `composables/`、`styles/core` → `styles/art`、`config/` 去掉子目录并改 kebab-case、`enums/` 并进 `constants/` 已做）。原则：ADP 原件放各目录下的 `art/`，不用 `core`、`common` 这类空泛名字；只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外，保留）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」；组件名与 `art-` 前缀不动。顺序：`types/art`、`utils/art` 去掉单文件目录；`components/core` → `components/art`，保留 `layouts`/`forms`/`cards`/`charts` 等分类，`base`/`others`/`widget`/`theme` 并到别处。
+- **拍平目录**（`hooks/` → `composables/`、`styles/core` → `styles/art`、`config/` 去掉子目录并改 kebab-case、`enums/` 并进 `constants/`、`types/art` 与 `utils/art` 去掉单文件目录已做）。原则：ADP 原件放各目录下的 `art/`，不用 `core`、`common` 这类空泛名字；只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外，保留）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」；组件名与 `art-` 前缀不动。顺序：`components/core` → `components/art`，保留 `layouts`/`forms`/`cards`/`charts` 等分类，`base`/`others`/`widget`/`theme` 并到别处。
 - **删 `plugins/`**：图表组件各自按需 `import` 并 `use([...])` 用到的 ECharts 模块。现在一个图表就把全部注册过的图表类型带进来。
 - **拆 `useCommon`**：不是真正的 composable。滚动函数挪到 `utils/` 当普通函数，`refresh`、`homePath` 让调用方直接用 store。
 - **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/`、`core/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
-- **删 `types/art` 里的死类型**：`store/index.ts` 的 `RootState` 等、`common/response.ts` 的 `BaseResponse` 均无人引用。
 
 **等决定：**
 

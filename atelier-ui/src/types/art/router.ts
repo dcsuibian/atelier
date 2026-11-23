@@ -16,7 +16,7 @@
  * - 菜单生成
  * - 权限控制
  *
- * @module types/router/index
+ * @module types/art/router
  * @author Art Design Pro Team
  */
 

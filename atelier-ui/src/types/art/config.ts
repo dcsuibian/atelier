@@ -20,7 +20,7 @@
  * - 配置项类型定义
  * - 配置数据验证
  *
- * @module types/config/index
+ * @module types/art/config
  * @author Art Design Pro Team
  */
 

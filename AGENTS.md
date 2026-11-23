@@ -274,12 +274,15 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 - **删 `types/art` 里的死类型**：`store/index.ts` 的 `RootState` 等、`common/response.ts` 的 `BaseResponse` 均无人引用。
 - **`config/` 改 kebab-case**：`headerBar.ts` 等是 ADP 原件，但它本就是给使用者改的配置（`setting.ts` 已改过），按接管处理。动手前先列出 `art/`、`core/` 以外所有 camelCase 文件。单复数的原则：唯一的用单数（`router`、`config`），多个的用复数（`stores`、`composables`）。
 
+**已决定，待做（建议按此顺序）：**
+
+- **`v-ripple` 合成一个文件**：现在分在三个文件（指令、`setupGlobDirectives`、`types/art/directive`），合成一个文件导出 `vRipple` 并就地 `declare module 'vue'`，`main.ts` 里一行注册。
+- **删 `useAuth`，直接用 `permissionStore.check()`**：它只是转发，路由守卫本就直接调 `check`，去掉后全项目只剩一种写法。注释里「按权限码不按角色」的理由挪到 `check` 上。
+- **路由改真 import，删后端路由模式**：后端路由模式是凭空设想的需求，没有实际用处。`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。顺带把 Layout 从 `views/index/` 挪到 `components/` 下：它是包住页面的外壳，不是页面；`'/index/index'` 魔法字符串、`routes-alias.ts` 的 `Layout` 别名及 `ComponentLoader`、`RouteValidator` 对它的特判一并删掉。
+- **删 `useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游不用它，模板页面的写法应与下游一致，否则对照失去意义。用户、角色、权限三页改为 `ElTable` + `ElPagination`，loading 与查询参数自己管；撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。
+
 **等决定：**
 
-- **`useAuth` 去留**：只是 `permissionStore.check()` 的转发。留着模板里 `hasAuth(...)` 短、下游也叫这个名字；去掉少一层。
-- **指令的写法**：`v-ripple` 现在分在三个文件（指令、`setupGlobDirectives`、`types/art/directive`），可合成一个文件导出 `vRipple` 并就地 `declare module 'vue'`，`main.ts` 里一行注册。
-- **`useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游基本不用它，更偏好直接写。模板页面的写法应与下游一致，否则对照失去意义。待定下游表格页的实际写法（`ElTable` + `ElPagination` + 自管 loading 与查询参数？）后，改写用户、角色、权限三页，删 `useTable`，并撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。
-- **去掉后端路由模式与按字符串加载组件**：`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。可连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`，与 `router/` 已属接管的方向一致。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。顺带把 Layout 从 `views/index/` 挪到 `components/` 下：它是包住页面的外壳，不是页面；`'/index/index'` 魔法字符串、`routes-alias.ts` 的 `Layout` 别名及 `ComponentLoader`、`RouteValidator` 对它的特判一并删掉。
 - **i18n 立场**：菜单走 i18n，自有页面文案硬编码中文，ADP 页面两种都有。要么明确只做中文（机制保留、自有页面不强求），要么全部走 i18n。Element Plus 的语言已由 `App.vue` 的 `ElConfigProvider` 联动；项目未直接依赖 dayjs，时间格式化用 `@vueuse/core` 的 `formatDate`。日期选择器内部的 dayjs 是否需要另外 `import 'dayjs/locale/zh-cn'` 才能让周起始、月份名跟随语言，未验证。
 
 **放到后面：**

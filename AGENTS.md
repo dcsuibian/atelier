@@ -39,32 +39,26 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 做 atelier 的动机在于：ADP 在视觉和完成度上做得很好，但程序风格与作者偏好不符。前端改动若牵涉接口设计，分歧会一路体现到后端。
 
-## 代码组织：上游与自有分离
+## 代码组织：ADP 原件与自有代码
 
-**ADP 的原件待在子目录里，自有代码平铺在该目录根上。** 这是 `atelier-ui` 最重要的组织约定，后续所有改动都以它为前提。
+**ADP 已从上游降为参考。** 不再整目录替换升级，也不建 `upstream` 分支借三方合并：魔改越彻底冲突越多，不如读 ADP 的版本间 diff、理解意图后自己写。值得跟进的是视觉组件（布局、卡片、表格外观）；机制层（路由、表格、图表、类型组织）与作者偏好不合，已陆续接管。
 
-子目录统一叫 `art/`，不用 `core`、`common` 这类不表达含义的名字。只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」。
+**ADP 的原件放在各目录的 `art/` 子目录里，自有代码平铺在目录根上**，一眼就能分清哪些是 ADP 的、可以拿去和 ADP 仓库逐文件对照：
 
-- `src/types/art/`、`src/utils/art/` 是 ADP 原件；自有类型与工具平铺成 `src/types/session.ts`、`src/utils/http.ts` 这样
-- `src/composables/art/` 同理，目前没有自有的 composable。目录不叫 ADP 的 `hooks`：hooks 是 React 的叫法，Vue 官方叫 composables
-- `src/components/art/` 按用途分类（`layouts`、`forms`、`cards`、`icons` 等），组件名与 `art-` 前缀沿用 ADP。`src/directives/` 已接管：每个指令一个文件，类型声明就地写在文件里
+- `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons`、`tables` 等）、`composables/art/`、`styles/art/`、`utils/art/`、`types/art/`（只剩路由与系统配置的类型）
+- 自有代码平铺：如 `components/app-layout/`、`components/chart-view/`、`composables/use-chart.ts`、`utils/http.ts`、`types/user.ts`（与后端对接的类型都在 `types/` 根上）
+- 整体接管、不再区分原件的目录：`router/`、`stores/`、`apis/`、`directives/`、`config/`、`constants/`、`locales/`
 
-理由只有一个，但足够：**ADP 升级时 `art/` 可以整目录对照乃至替换**，不必逐行分辨哪行是上游的、哪行是自己改的。上面第 (1) 段同步的成本直接取决于这件事。
+几条命名规则：
 
-两条配套规则：
+- 子目录统一叫 `art/`，不用 `core`、`common` 这类不表达含义的名字。只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」。目录不叫 ADP 的 `hooks`：那是 React 的叫法，Vue 官方叫 composables
+- `art/` 下的原件保留原名（`useTheme.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase），改名会让逐文件对照失效。自有文件一律 kebab-case。组件名与 `art-` 前缀沿用 ADP
+- 接管到要重写的程度，就挪出 `art/`、按自有代码的规矩命名，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。留一份用不到的副本，只会制造「到底该改哪个」的困惑
 
-- **上游原件连文件名都不改。** `useTheme.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
-- **改动大到「接管」的模块不留原件。** `stores/`、`router/`、`apis/` 属于重写而非微调，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。在 `art/` 下留一份用不到的副本，只会制造「到底该改哪个」的困惑。
+**`art/` 里的小改动标 `atelier：` 注释**，写清改了什么、为什么；跟进 ADP 新版、对照某个原件时，用 `rg -n 'atelier：' src` 就能找全自己动过的地方。格式化、`import type`、路径别名、`useUserStore()` 按内容改到 `settingStore` / `sessionStore` 这类机械改动不标，标了反而淹没真正的改动。需要多解释的两处：
 
-**`art/` 里的改动分三类**，ADP 升级整目录替换后逐类补回：
-
-- **机械改动**：格式化、`import type`、路径别名（ADP 的 `@styles`、`@imgs` 等已删，见「已替换为自有配置」）。跑一遍 `pnpm format`，再按 type-check 报错和全局搜旧别名改掉即可，不逐处标注。
-- **跟着 store 接管改的引用**：ADP 组件里对 `useUserStore()` 的调用，按内容分别改到了 `settingStore`（语言、搜索历史、锁屏）或 `sessionStore`（登录态、登出）。替换后用 `rg -n 'useUserStore|@/store/' src` 找出来照改。这类也不标注：改法是机械的，标了反而淹没真正的破例。
-- **破例**：除此之外的改动都标了 `atelier：` 注释，替换后用 `rg -n 'atelier：' src` 找全补回。注释里写了改了什么、为什么，下面只记几处需要多解释的：
-  - `types/art/router.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。
-  - `components/art/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
-
-往 `art/` 里加东西之前先掂量这笔账，别让破例变成常例。
+- `types/art/router.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，就地加一个字段比整个挪出来、逼着一堆文件改 import 更省事。
+- `components/art/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
 
 顺带一提，`RouteMeta` 继承了 `Record<string | number | symbol, unknown>`，**这意味着路由 meta 里写错字段名永远不会报错**——ADP 的 `roles`、`authList` 能在改造后一直残留到被专门清理，就是这么来的。
 
@@ -74,14 +68,18 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 | --- | --- |
 | `src/api/` | `src/apis/` |
 | `src/store/` + `store/modules/` | `src/stores/`（平铺，无 `modules`） |
+| `src/hooks/` | `src/composables/` |
+| `src/enums/` | `src/constants/`（枚举写成 `as const` 对象） |
+| `src/plugins/` | 无，图表组件各自按需注册 ECharts 模块 |
 | `src/assets/styles/` | `src/styles/` |
-| `src/types/{api,common,component,...}` | `src/types/art/{...}` |
+| `src/components/core/` | `src/components/art/` |
+| `src/types/{api,common,component,...}` | `src/types/art/`，组件专用的类型挪到了组件旁边 |
 | `src/utils/{http,storage,ui,...}` | `src/utils/art/{...}` |
 | `router/routes/asyncRoutes.ts` | `router/routes/dynamic-routes.ts`（导出名一并改为 `dynamicRoutes`） |
 | `router/guards/beforeEach.ts`、`afterEach.ts` | `router/guards/before-each.ts`、`after-each.ts` |
 | `router/routesAlias.ts` | `router/routes-alias.ts` |
 
-`router/` 整体属于接管，ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名 kebab-case 挪到 `router/` 下，其余随按字符串加载组件一起删了。
+ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名 kebab-case 挪到 `router/` 下，其余随按字符串加载组件一起删了。
 
 ## 与上游的分歧
 
@@ -105,7 +103,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 - 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested、system/menu（菜单写在 `router/modules/` 里，没有菜单管理的需要）
 - 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件——它们各自绑着一个重型 npm 依赖
-- **统计卡片（8 个）与图表组件（6 个）全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
+- **统计卡片与图表组件全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
 
 连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`optimizeDeps.include`、`env.d.ts` 的 declare module 和 `utils/art/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
 
@@ -258,17 +256,14 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 ## 当前状态
 
-- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check` 与 `build` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。**用户、角色管理页已对接**：列表、搜索、增删改、分配角色、分配权限均走真实接口。分配权限的树按权限码冒号前的前缀分组；已分配但被禁用的权限不在树里展示，保存时原样带回，不会被整体替换冲掉。**权限管理页已新增**（`views/system/permission`），只读，权限点的增删改只能改后端 `permissions.yml`。
+- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check`、`build`、`test` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。**用户、角色管理页已对接**：列表、搜索、增删改、分配角色、分配权限均走真实接口。分配权限的树按权限码冒号前的前缀分组；已分配但被禁用的权限不在树里展示，保存时原样带回，不会被整体替换冲掉。**权限管理页已新增**（`views/system/permission`），只读，权限点的增删改只能改后端 `permissions.yml`。
 - **前端尚未对接的部分**：注册页与忘记密码页后端没有对应接口，链接目前指向死路，**有意留着作参考**，不要顺手删。
 - `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。**认证拦截已接上**：未登录访问业务接口返回真实 HTTP 401，前端在 `utils/http.ts` 里统一登出并跳登录页。后端已用真实服务跑通（登录 → 访问 → 登出后旧 Cookie → 401），前端那段跳转尚未在浏览器里实走过。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话、未登录拦截），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
 ### 待办（前端，已评估、暂缓）
 
-ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码可以大方接管，不必逐个掂量破例。ADP 值得跟进的是视觉组件（布局、卡片、表格外观），机制层（路由、表格 hook、类型组织）本就与作者偏好不合。拍平目录已做完，「代码组织」一节待按新结构重写；设计理由优先写进代码注释，注释放不下的才进 README。
-
-**不依赖决定，随时可做：**
-
+设计理由优先写进代码注释，注释放不下的才进 README。
 
 **等决定：**
 
@@ -278,7 +273,3 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 - **composables**：`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
 - **ADP 演示页的文案**：工作台、个人中心的演示数据，以及注册、忘记密码页里仍有写死的中文。它们是 ADP 的示例内容，随这些页面的去留一起处理。
-
-### 待定
-
-- **是否建 `upstream` 分支存放 ADP 原始代码**（借三方合并让 Git 自动处理非冲突部分）取决于魔改深度：魔改越彻底，冲突率越高，越不如人工读 diff 理解意图后自己写。「代码组织」那套隔离做完后，这件事的必要性进一步下降了——`art/` 本身已经是可直接对照的锚点。

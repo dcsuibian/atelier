@@ -161,9 +161,9 @@ const handleSubmit = async () => {
   }
 }
 
-// 重置拖拽验证
+// 重置拖拽验证。登录成功时页面已跳走、组件已卸载，ref 为空
 const resetDragVerify = () => {
-  dragVerify.value.reset()
+  dragVerify.value?.reset()
 }
 
 // 登录成功提示

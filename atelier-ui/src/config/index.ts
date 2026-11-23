@@ -30,8 +30,8 @@
 
 import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum'
 import type { SystemConfig } from '@/types/art/config'
-import { configImages } from './assets/images'
-import { headerBarConfig } from './modules/headerBar'
+import { configImages } from './images'
+import { headerBarConfig } from './header-bar'
 
 const appConfig: SystemConfig = {
   // 系统信息

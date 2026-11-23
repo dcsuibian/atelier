@@ -10,7 +10,7 @@
  * - menuLayouts: 菜单布局预览图（左侧/顶部/混合/双栏）
  * - menuStyles: 菜单风格预览图（设计/暗色/亮色）
  *
- * @module config/assets/images
+ * @module config/images
  * @author Art Design Pro Team
  */
 

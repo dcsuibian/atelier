@@ -1,12 +1,24 @@
 <!-- k线图表 -->
 <template>
-  <div ref="chartRef" class="relative w-full" :style="{ height: props.height }" v-loading="props.loading"></div>
+  <ChartView
+    class="relative w-full"
+    :option="option"
+    :height="props.height"
+    :loading="props.loading"
+    :empty="isEmpty"
+  />
 </template>
 
 <script setup lang="ts">
-import type { EChartsOption } from '@/plugins/echarts'
-import { useChartOps, useChartComponent } from '@/composables/art/useChart'
-import type { KLineChartProps } from '@/types/art/component/chart'
+import { use } from 'echarts/core'
+import { CandlestickChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent, DataZoomComponent } from 'echarts/components'
+import ChartView from '@/components/chart-view/index.vue'
+import type { EChartsOption } from 'echarts'
+import { useChartOps, useChart } from '@/composables/use-chart'
+import type { KLineChartProps } from '../types'
+
+use([CandlestickChart, GridComponent, TooltipComponent, DataZoomComponent])
 
 defineOptions({ name: 'ArtKLineChart' })
 
@@ -37,14 +49,15 @@ const getActualColors = () => {
 
 // 使用新的图表组件抽象
 const {
-  chartRef,
+  option,
+  isEmpty,
   getAxisLineStyle,
   getAxisLabelStyle,
   getAxisTickStyle,
   getSplitLineStyle,
   getAnimationConfig,
   getTooltipStyle,
-} = useChartComponent({
+} = useChart({
   props,
   checkEmpty: () => {
     return (
@@ -52,13 +65,6 @@ const {
       props.data.every(item => item.open === 0 && item.close === 0 && item.high === 0 && item.low === 0)
     )
   },
-  watchSources: [
-    () => props.data,
-    () => props.colors,
-    () => props.showDataZoom,
-    () => props.dataZoomStart,
-    () => props.dataZoomEnd,
-  ],
   generateOptions: (): EChartsOption => {
     const { upColor, downColor } = getActualColors()
 

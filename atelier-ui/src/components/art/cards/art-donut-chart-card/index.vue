@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="flex-c h-full max-w-40 flex-1">
-          <div ref="chartRef" class="h-30 w-full"></div>
+          <ChartView class="h-30 w-full" :option="option" :empty="isEmpty" />
         </div>
       </div>
     </div>
@@ -36,8 +36,13 @@
 </template>
 
 <script setup lang="ts">
-import { type EChartsOption } from '@/plugins/echarts'
-import { useChartOps, useChartComponent } from '@/composables/art/useChart'
+import type { EChartsOption } from 'echarts'
+import { use } from 'echarts/core'
+import { PieChart } from 'echarts/charts'
+import ChartView from '@/components/chart-view/index.vue'
+import { useChartOps, useChart } from '@/composables/use-chart'
+
+use([PieChart])
 
 defineOptions({ name: 'ArtDonutChartCard' })
 
@@ -75,20 +80,8 @@ const formatNumber = (num: number) => {
 }
 
 // 使用新的图表组件抽象
-const { chartRef } = useChartComponent({
-  props: {
-    height: `${props.height}rem`,
-    loading: false,
-    isEmpty: props.data.every(val => val === 0),
-  },
+const { option, isEmpty } = useChart({
   checkEmpty: () => props.data.every(val => val === 0),
-  watchSources: [
-    () => props.data,
-    () => props.color,
-    () => props.radius,
-    () => props.currentValue,
-    () => props.previousValue,
-  ],
   generateOptions: (): EChartsOption => {
     const computedColor = props.color || useChartOps().themeColor
 

@@ -18,19 +18,26 @@
         {{ date }}
       </div>
     </div>
-    <div
-      ref="chartRef"
+    <ChartView
       class="absolute bottom-0 left-0 right-0 box-border w-full"
       :class="isMiniChart ? '!absolute !top-5 !right-5 !bottom-auto !left-auto !h-15 !w-4/10' : ''"
       :style="{ height: isMiniChart ? '60px' : `calc(${height}rem - 5rem)` }"
-    ></div>
+      :option="option"
+      :empty="isEmpty"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { graphic, type EChartsOption } from '@/plugins/echarts'
+import type { EChartsOption } from 'echarts'
+import { graphic, use } from 'echarts/core'
+import { LineChart } from 'echarts/charts'
+import { GridComponent } from 'echarts/components'
+import ChartView from '@/components/chart-view/index.vue'
 import { getCssVar, hexToRgba } from '@/utils/art/ui'
-import { useChartOps, useChartComponent } from '@/composables/art/useChart'
+import { useChartOps, useChart } from '@/composables/use-chart'
+
+use([LineChart, GridComponent])
 
 defineOptions({ name: 'ArtLineChartCard' })
 
@@ -60,14 +67,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用新的图表组件抽象
-const { chartRef } = useChartComponent({
-  props: {
-    height: `${props.height}rem`,
-    loading: false,
-    isEmpty: !props.chartData?.length || props.chartData.every(val => val === 0),
-  },
+const { option, isEmpty } = useChart({
   checkEmpty: () => !props.chartData?.length || props.chartData.every(val => val === 0),
-  watchSources: [() => props.chartData, () => props.color, () => props.showAreaColor],
   generateOptions: (): EChartsOption => {
     const computedColor = props.color || useChartOps().themeColor
 

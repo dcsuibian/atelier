@@ -1,18 +1,25 @@
 <!-- 折线图，支持多组数据，支持阶梯式动画效果 -->
 <template>
-  <div
-    ref="chartRef"
-    class="relative w-[calc(100%+10px)]"
-    :style="{ height: props.height }"
-    v-loading="props.loading"
-  ></div>
+  <ChartView
+    class="w-[calc(100%+10px)]"
+    :option="option"
+    :height="props.height"
+    :loading="props.loading"
+    :empty="isEmpty"
+  />
 </template>
 
 <script setup lang="ts">
-import { graphic, type EChartsOption } from '@/plugins/echarts'
+import type { EChartsOption } from 'echarts'
+import { graphic, use } from 'echarts/core'
+import { LineChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components'
+import ChartView from '@/components/chart-view/index.vue'
 import { getCssVar, hexToRgba } from '@/utils/art/ui'
-import { useChartOps, useChartComponent } from '@/composables/art/useChart'
-import type { LineChartProps, LineDataItem } from '@/types/art/component/chart'
+import { useChartOps, useChart } from '@/composables/use-chart'
+import type { LineChartProps, LineDataItem } from '../types'
+
+use([LineChart, GridComponent, TooltipComponent, LegendComponent])
 
 defineOptions({ name: 'ArtLineChart' })
 
@@ -48,6 +55,8 @@ const props = withDefaults(defineProps<LineChartProps>(), {
 const isAnimating = ref(false)
 const animationTimers = ref<number[]>([])
 const animatedData = ref<number[] | LineDataItem[]>([])
+// 入场动画的第一帧：数据全为 0 且不带过渡，下一帧换成真实数据，曲线就从底部长出来
+const isInitialFrame = ref(false)
 
 // 清理所有定时器
 const clearAnimationTimers = () => {
@@ -253,11 +262,6 @@ const generateChartOptions = (isInitial = false): EChartsOption => {
   return options
 }
 
-// 更新图表
-const updateChartOptions = (options: EChartsOption) => {
-  initChart(options)
-}
-
 // 初始化动画函数（优化：统一定时器管理，减少内存泄漏风险）
 const initChartWithAnimation = () => {
   clearAnimationTimers()
@@ -265,7 +269,7 @@ const initChartWithAnimation = () => {
 
   // 初始化为0值数据
   animatedData.value = initAnimationData()
-  updateChartOptions(generateChartOptions(true))
+  isInitialFrame.value = true
 
   if (isMultipleData.value) {
     // 多数据阶梯式动画
@@ -277,7 +281,7 @@ const initChartWithAnimation = () => {
         () => {
           currentAnimatedData[index] = { ...item, data: [...item.data] }
           animatedData.value = [...currentAnimatedData]
-          updateChartOptions(generateChartOptions(false))
+          isInitialFrame.value = false
         },
         index * props.animationDelay + 100,
       )
@@ -293,9 +297,10 @@ const initChartWithAnimation = () => {
     animationTimers.value.push(finishTimer)
   } else {
     // 单数据简单动画 - 使用 nextTick 确保初始状态已渲染
+    // nextTick 排在全 0 那一帧应用之后，两次改动才不会合并成一次
     nextTick(() => {
       animatedData.value = copyRealData()
-      updateChartOptions(generateChartOptions(false))
+      isInitialFrame.value = false
       isAnimating.value = false
     })
   }
@@ -318,10 +323,9 @@ const checkIsEmpty = () => {
   return true
 }
 
-// 使用新的图表组件抽象
 const {
-  chartRef,
-  initChart,
+  option,
+  isEmpty,
   getAxisLineStyle,
   getAxisLabelStyle,
   getAxisTickStyle,
@@ -329,18 +333,10 @@ const {
   getTooltipStyle,
   getLegendStyle,
   getGridWithLegend,
-  isEmpty,
-} = useChartComponent({
+} = useChart({
   props,
   checkEmpty: checkIsEmpty,
-  watchSources: [() => props.data, () => props.xAxisData, () => props.colors],
-  onVisible: () => {
-    // 当图表变为可见时，检查是否为空数据
-    if (!isEmpty.value) {
-      initChartWithAnimation()
-    }
-  },
-  generateOptions: () => generateChartOptions(false),
+  generateOptions: () => generateChartOptions(isInitialFrame.value),
 })
 
 // 图表渲染函数（优化：防止动画期间重复触发）

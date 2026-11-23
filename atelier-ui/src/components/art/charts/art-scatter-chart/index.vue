@@ -1,13 +1,25 @@
 <!-- 散点图 -->
 <template>
-  <div ref="chartRef" class="relative w-full" :style="{ height: props.height }" v-loading="props.loading"></div>
+  <ChartView
+    class="relative w-full"
+    :option="option"
+    :height="props.height"
+    :loading="props.loading"
+    :empty="isEmpty"
+  />
 </template>
 
 <script setup lang="ts">
-import type { EChartsOption } from '@/plugins/echarts'
+import { use } from 'echarts/core'
+import { ScatterChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent } from 'echarts/components'
+import ChartView from '@/components/chart-view/index.vue'
+import type { EChartsOption } from 'echarts'
 import { getCssVar } from '@/utils/art/ui'
-import { useChartOps, useChartComponent } from '@/composables/art/useChart'
-import type { ScatterChartProps } from '@/types/art/component/chart'
+import { useChartOps, useChart } from '@/composables/use-chart'
+import type { ScatterChartProps } from '../types'
+
+use([ScatterChart, GridComponent, TooltipComponent])
 
 defineOptions({ name: 'ArtScatterChart' })
 
@@ -35,7 +47,8 @@ const props = withDefaults(defineProps<ScatterChartProps>(), {
 
 // 使用新的图表组件抽象
 const {
-  chartRef,
+  option,
+  isEmpty,
   isDark,
   getAxisLineStyle,
   getAxisLabelStyle,
@@ -43,12 +56,11 @@ const {
   getSplitLineStyle,
   getAnimationConfig,
   getTooltipStyle,
-} = useChartComponent({
+} = useChart({
   props,
   checkEmpty: () => {
     return !props.data?.length || props.data.every(item => item.value.every(val => val === 0))
   },
-  watchSources: [() => props.data, () => props.colors, () => props.symbolSize],
   generateOptions: (): EChartsOption => {
     const computedColor = props.colors[0] || getCssVar('--el-color-primary')
 

@@ -1,12 +1,24 @@
 <!-- 雷达图 -->
 <template>
-  <div ref="chartRef" class="relative w-full" :style="{ height: props.height }" v-loading="props.loading"></div>
+  <ChartView
+    class="relative w-full"
+    :option="option"
+    :height="props.height"
+    :loading="props.loading"
+    :empty="isEmpty"
+  />
 </template>
 
 <script setup lang="ts">
-import type { EChartsOption } from '@/plugins/echarts'
-import { useChartOps, useChartComponent } from '@/composables/art/useChart'
-import type { RadarChartProps } from '@/types/art/component/chart'
+import { use } from 'echarts/core'
+import { RadarChart } from 'echarts/charts'
+import { RadarComponent, TooltipComponent } from 'echarts/components'
+import ChartView from '@/components/chart-view/index.vue'
+import type { EChartsOption } from 'echarts'
+import { useChartOps, useChart } from '@/composables/use-chart'
+import type { RadarChartProps } from '../types'
+
+use([RadarChart, RadarComponent, TooltipComponent])
 
 defineOptions({ name: 'ArtRadarChart' })
 
@@ -28,12 +40,11 @@ const props = withDefaults(defineProps<RadarChartProps>(), {
 })
 
 // 使用新的图表组件抽象
-const { chartRef, isDark, getAnimationConfig, getTooltipStyle } = useChartComponent({
+const { option, isEmpty, isDark, getAnimationConfig, getTooltipStyle } = useChart({
   props,
   checkEmpty: () => {
     return !props.data?.length || props.data.every(item => item.value.every(val => val === 0))
   },
-  watchSources: [() => props.data, () => props.indicator, () => props.colors],
   generateOptions: (): EChartsOption => {
     return {
       tooltip: props.showTooltip ? getTooltipStyle('item') : undefined,

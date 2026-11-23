@@ -1,64 +1,11 @@
 /**
- * 图表组件类型定义模块
- *
- * 提供 ECharts 图表组件的完整类型定义
- *
- * ## 主要功能
- *
- * - 基础图表配置类型
- * - 柱状图类型定义
- * - 折线图类型定义
- * - 饼图/环形图类型定义
- * - 雷达图类型定义
- * - K线图类型定义
- * - 散点图类型定义
- * - 地图图表类型定义
- * - 双向堆叠柱状图类型定义
- * - 图表主题配置类型
- * - 图表事件回调类型
- *
- * ## 使用场景
- *
- * - 图表组件 Props 类型约束
- * - 图表配置类型定义
- * - 图表数据结构定义
- * - 图表事件处理
- *
- * @module types/component/chart
- * @author Art Design Pro Team
+ * 图表组件的 props 与数据项类型
  */
-import type { EChartsOption } from '@/plugins/echarts'
 
 // 图例位置类型
 export type LegendPosition = 'bottom' | 'top' | 'left' | 'right'
 
 export type SymbolType = 'circle' | 'rect' | 'roundRect' | 'triangle' | 'diamond' | 'pin' | 'arrow' | 'none'
-
-// 图表主题配置
-export interface ChartThemeConfig {
-  /** 图表高度 */
-  chartHeight: string
-  /** 字体大小 */
-  fontSize: number
-  /** 字体颜色 */
-  fontColor: string
-  /** 主题颜色 */
-  themeColor: string
-  /** 颜色组 */
-  colors: string[]
-}
-
-// 图表初始化选项
-export interface UseChartOptions {
-  /** 初始化选项 */
-  initOptions?: EChartsOption
-  /** 延迟初始化时间(ms) */
-  initDelay?: number
-  /** IntersectionObserver阈值 */
-  threshold?: number
-  /** 是否自动响应主题变化 */
-  autoTheme?: boolean
-}
 
 // 基础图表 Props 接口 - 统一所有图表的基础属性
 export interface BaseChartProps {
@@ -242,34 +189,6 @@ export interface ScatterChartProps extends BaseChartProps, AxisDisplayProps, Int
   symbolSize?: number
 }
 
-// 双柱对比图 Props 接口 - 统一双柱对比图配置
-export interface DualBarCompareChartProps extends BaseChartProps {
-  /** 上方数据 */
-  topData: number[]
-  /** 下方数据 */
-  bottomData: number[]
-  /** X轴标签数据 */
-  xAxisData: string[]
-  /** 上方柱子颜色 */
-  topColor?: string
-  /** 下方柱子颜色 */
-  bottomColor?: string
-  /** 柱状图宽度 */
-  barWidth?: number
-}
-
-// 地图图表 Props 接口 - 统一地图图表配置
-export interface MapChartProps extends BaseChartProps {
-  /** 地图数据 */
-  mapData?: any[]
-  /** 选中区域 */
-  selectedRegion?: string
-  /** 是否显示标签 */
-  showLabels?: boolean
-  /** 是否显示散点 */
-  showScatter?: boolean
-}
-
 // 双向堆叠柱状图 Props 接口（人口金字塔样式）
 export interface BidirectionalBarChartProps extends BaseChartProps, AxisDisplayProps, InteractionProps {
   /** 正向数据（向上显示） */
@@ -294,20 +213,4 @@ export interface BidirectionalBarChartProps extends BaseChartProps, AxisDisplayP
   positiveBorderRadius?: number | number[]
   /** 负向数据圆角配置 */
   negativeBorderRadius?: number | number[]
-}
-
-// 图表配置生成器函数类型
-export type ChartOptionGenerator = () => EChartsOption
-
-// 图表事件回调类型
-export type ChartEventCallback = (params: any) => void
-
-// 图表错误信息接口
-export interface ChartError {
-  /** 错误码 */
-  code: string
-  /** 错误信息 */
-  message: string
-  /** 错误详情 */
-  details?: any
 }

@@ -53,7 +53,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 两条配套规则：
 
-- **上游原件连文件名都不改。** `useChart.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
+- **上游原件连文件名都不改。** `useTheme.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
 - **改动大到「接管」的模块不留原件。** `stores/`、`router/`、`apis/` 属于重写而非微调，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。在 `art/` 下留一份用不到的副本，只会制造「到底该改哪个」的困惑。
 
 **`art/` 里的改动分三类**，ADP 升级整目录替换后逐类补回：
@@ -119,6 +119,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。
 - **后端路由模式与按字符串加载组件**：ADP 可以从接口拉菜单，路由里写 `component: '/system/user'` 由 `ComponentLoader` 按名加载。后端路由模式是凭空设想的需求，没有实际用处；字符串路径写错要到运行时才发现。现在路由配置一律写 `() => import(...)`，`AppRouteRecord.component` 的类型也不再接受字符串。布局外壳从 `views/index/` 挪到 `components/app-layout/`：它包住页面，本身不是页面。
 - **`useTable` 及其配套**（`useTableColumns`、`utils/art/table/`、`Api.Common`）：带缓存、防抖、三种刷新策略，下游不用它，模板页面的写法要与下游一致才有对照价值。表格页改为 `ElTable` + `ElTableColumn` 插槽 + `ElPagination`，数据、loading、分页参数在页面里用 `ref` 自己管，以用户管理页为准。`ArtTableHeader` 的列显示设置依赖它，组件一并删了。
+- **`useChart` 与 `plugins/echarts.ts`**：ADP 自己管图表的初始化、resize、主题切换、销毁与延迟加载，724 行；`plugins/` 一次注册全部图表类型，用一个图表就把全部打进包。换成 vue-echarts：图表组件把配置写成 computed 交给自有的 `ChartView`（`autoresize`、空数据提示、加载态），各自 `use([...])` 注册用到的模块；`composables/use-chart.ts` 只剩按明暗主题生成样式的那组函数。不再等图表滚进可视区才初始化，首屏外的图表在进入页面时就画好。
 
 ### 已替换为自有配置
 
@@ -267,7 +268,6 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 **不依赖决定，随时可做：**
 
-- **删 `plugins/`**：图表组件各自按需 `import` 并 `use([...])` 用到的 ECharts 模块。现在一个图表就把全部注册过的图表类型带进来。
 
 **等决定：**
 
@@ -275,8 +275,7 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 **放到后面：**
 
-- **ECharts 改用 vue-echarts**：自动 resize、option 响应式、自动 dispose，可替掉 724 行的 `useChart`。但 vue-echarts 同样要 `use([...])` 按需注册，`plugins/echarts.ts` 那 68 行只是换地方。成本在于重写 6 个图表组件与 8 个统计卡片，适合与 dashboard 一起做。
-- **`types/art` 就近归位**：共 1092 行，像嵌套了一个小 src。组件专用的类型（如 `component/chart.ts` 的 313 行图表 props）挪到组件旁边，代价是改 `art/` 组件的 import，等接管策略定了再做。
+- **`types/art` 就近归位**：共 1092 行，像嵌套了一个小 src。组件专用的类型挪到组件旁边（图表 props 已挪到 `components/art/charts/types.ts`），代价是改 `art/` 组件的 import，等接管策略定了再做。
 - **composables**：`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
 
 ### 待定

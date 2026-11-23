@@ -1,12 +1,18 @@
 <!-- 双向堆叠柱状图 -->
 <template>
-  <div ref="chartRef" :style="{ height: props.height }" v-loading="props.loading"></div>
+  <ChartView :option="option" :height="props.height" :loading="props.loading" :empty="isEmpty" />
 </template>
 
 <script setup lang="ts">
-import { useChartOps, useChartComponent } from '@/composables/art/useChart'
-import type { EChartsOption, BarSeriesOption } from '@/plugins/echarts'
-import type { BidirectionalBarChartProps } from '@/types/art/component/chart'
+import { use } from 'echarts/core'
+import { BarChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components'
+import ChartView from '@/components/chart-view/index.vue'
+import { useChartOps, useChart } from '@/composables/use-chart'
+import type { EChartsOption, BarSeriesOption } from 'echarts'
+import type { BidirectionalBarChartProps } from '../types'
+
+use([BarChart, GridComponent, TooltipComponent, LegendComponent])
 
 defineOptions({ name: 'ArtDualBarCompareChart' })
 
@@ -79,7 +85,8 @@ const createSeriesConfig = (config: {
 
 // 使用图表组件抽象
 const {
-  chartRef,
+  option,
+  isEmpty,
   getAxisLineStyle,
   getAxisLabelStyle,
   getAxisTickStyle,
@@ -88,7 +95,7 @@ const {
   getTooltipStyle,
   getLegendStyle,
   getGridWithLegend,
-} = useChartComponent({
+} = useChart({
   props,
   checkEmpty: () => {
     return (
@@ -98,7 +105,6 @@ const {
       (props.positiveData.every(val => val === 0) && props.negativeData.every(val => val === 0))
     )
   },
-  watchSources: [() => props.positiveData, () => props.negativeData, () => props.xAxisData, () => props.colors],
   generateOptions: (): EChartsOption => {
     // 处理负向数据，确保为负值
     const processedNegativeData = props.negativeData.map(val => (val > 0 ? -val : val))

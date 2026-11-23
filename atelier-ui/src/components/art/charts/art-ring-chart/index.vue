@@ -1,12 +1,24 @@
 <!-- 环形图 -->
 <template>
-  <div ref="chartRef" class="relative w-full" :style="{ height: props.height }" v-loading="props.loading"></div>
+  <ChartView
+    class="relative w-full"
+    :option="option"
+    :height="props.height"
+    :loading="props.loading"
+    :empty="isEmpty"
+  />
 </template>
 
 <script setup lang="ts">
-import type { EChartsOption } from '@/plugins/echarts'
-import { useChartOps, useChartComponent } from '@/composables/art/useChart'
-import type { RingChartProps } from '@/types/art/component/chart'
+import { use } from 'echarts/core'
+import { PieChart } from 'echarts/charts'
+import { TooltipComponent, LegendComponent, TitleComponent } from 'echarts/components'
+import ChartView from '@/components/chart-view/index.vue'
+import type { EChartsOption } from 'echarts'
+import { useChartOps, useChart } from '@/composables/use-chart'
+import type { RingChartProps } from '../types'
+
+use([PieChart, TooltipComponent, LegendComponent, TitleComponent])
 
 defineOptions({ name: 'ArtRingChart' })
 
@@ -31,12 +43,11 @@ const props = withDefaults(defineProps<RingChartProps>(), {
 })
 
 // 使用新的图表组件抽象
-const { chartRef, isDark, getAnimationConfig, getTooltipStyle, getLegendStyle } = useChartComponent({
+const { option, isEmpty, isDark, getAnimationConfig, getTooltipStyle, getLegendStyle } = useChart({
   props,
   checkEmpty: () => {
     return !props.data?.length || props.data.every(item => item.value === 0)
   },
-  watchSources: [() => props.data, () => props.centerText],
   generateOptions: (): EChartsOption => {
     // 根据图例位置计算环形图中心位置
     const getCenterPosition = (): [string, string] => {

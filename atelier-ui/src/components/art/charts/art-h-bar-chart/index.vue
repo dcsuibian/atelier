@@ -1,13 +1,25 @@
 <!-- 水平柱状图 -->
 <template>
-  <div ref="chartRef" class="relative w-full" :style="{ height: props.height }" v-loading="props.loading"></div>
+  <ChartView
+    class="relative w-full"
+    :option="option"
+    :height="props.height"
+    :loading="props.loading"
+    :empty="isEmpty"
+  />
 </template>
 
 <script setup lang="ts">
-import { useChartOps, useChartComponent } from '@/composables/art/useChart'
+import { graphic, use } from 'echarts/core'
+import { BarChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components'
+import ChartView from '@/components/chart-view/index.vue'
+import { useChartOps, useChart } from '@/composables/use-chart'
 import { getCssVar } from '@/utils/art/ui'
-import { graphic, type EChartsOption } from '@/plugins/echarts'
-import type { BarChartProps, BarDataItem } from '@/types/art/component/chart'
+import type { EChartsOption } from 'echarts'
+import type { BarChartProps, BarDataItem } from '../types'
+
+use([BarChart, GridComponent, TooltipComponent, LegendComponent])
 
 defineOptions({ name: 'ArtHBarChart' })
 
@@ -106,7 +118,8 @@ const createSeriesItem = (config: {
 
 // 使用新的图表组件抽象
 const {
-  chartRef,
+  option,
+  isEmpty,
   getAxisLineStyle,
   getAxisLabelStyle,
   getAxisTickStyle,
@@ -115,7 +128,7 @@ const {
   getTooltipStyle,
   getLegendStyle,
   getGridWithLegend,
-} = useChartComponent({
+} = useChart({
   props,
   checkEmpty: () => {
     // 检查单数据情况
@@ -132,7 +145,6 @@ const {
 
     return true
   },
-  watchSources: [() => props.data, () => props.xAxisData, () => props.colors],
   generateOptions: (): EChartsOption => {
     const options: EChartsOption = {
       grid: getGridWithLegend(props.showLegend && isMultipleData.value, props.legendPosition, {

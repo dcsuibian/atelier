@@ -23,7 +23,7 @@
  * @author Art Design Pro Team
  */
 
-import { MenuThemeEnum, SystemThemeEnum } from '@/enums/appEnum'
+import { MenuThemeEnum, SystemThemeEnum } from '@/constants/app'
 import type { LocationQueryRaw } from 'vue-router'
 
 // 系统主题样式（light | dark）
@@ -34,7 +34,7 @@ export interface SystemThemeType {
 
 // 定义包含多个主题的类型
 export type SystemThemeTypes = {
-  [key in Exclude<SystemThemeEnum, SystemThemeEnum.AUTO>]: SystemThemeType
+  [key in Exclude<SystemThemeEnum, typeof SystemThemeEnum.AUTO>]: SystemThemeType
 }
 
 // 菜单主题样式

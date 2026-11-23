@@ -33,11 +33,12 @@
 /**
  * 密码强度级别枚举
  */
-export enum PasswordStrength {
-  WEAK = '弱',
-  MEDIUM = '中',
-  STRONG = '强',
-}
+export const PasswordStrength = {
+  WEAK: '弱',
+  MEDIUM: '中',
+  STRONG: '强',
+} as const
+export type PasswordStrength = (typeof PasswordStrength)[keyof typeof PasswordStrength]
 
 /**
  * 去除字符串首尾空格

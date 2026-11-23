@@ -23,7 +23,7 @@
 
 import { createI18n } from 'vue-i18n'
 import type { I18n, I18nOptions } from 'vue-i18n'
-import { LanguageEnum } from '@/enums/appEnum'
+import { LanguageEnum } from '@/constants/app'
 import { getSystemStorage } from '@/utils/art/storage'
 import { StorageKeyManager } from '@/utils/art/storage/storage-key-manager'
 

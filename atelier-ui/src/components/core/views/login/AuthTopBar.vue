@@ -55,7 +55,7 @@ import { useSettingStore } from '@/stores/setting'
 import { useHeaderBar } from '@/composables/art/useHeaderBar'
 import { themeAnimation } from '@/utils/art/ui/animation'
 import { languageOptions } from '@/locales'
-import { LanguageEnum } from '@/enums/appEnum'
+import { LanguageEnum } from '@/constants/app'
 import AppConfig from '@/config'
 
 defineOptions({ name: 'AuthTopBar' })

@@ -27,14 +27,14 @@
  */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { TableSizeEnum } from '@/enums/formEnum'
+import { TableSizeEnum } from '@/constants/table'
 
 // 表格
 export const useTableStore = defineStore(
   'tableStore',
   () => {
     // 表格大小
-    const tableSize = ref(TableSizeEnum.DEFAULT)
+    const tableSize = ref<TableSizeEnum>(TableSizeEnum.DEFAULT)
     // 斑马纹
     const isZebra = ref(false)
     // 边框

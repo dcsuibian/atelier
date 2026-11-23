@@ -16,7 +16,7 @@ import { useSettingStore } from '@/stores/setting'
 import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
 import { useClipboard } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
-import { MenuThemeEnum } from '@/enums/appEnum'
+import { MenuThemeEnum } from '@/constants/app'
 import { useTheme } from '@/composables/art/useTheme'
 
 defineOptions({ name: 'SettingActions' })

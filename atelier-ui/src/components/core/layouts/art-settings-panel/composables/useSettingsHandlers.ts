@@ -1,6 +1,6 @@
 import { useSettingStore } from '@/stores/setting'
 import { storeToRefs } from 'pinia'
-import type { ContainerWidthEnum } from '@/enums/appEnum'
+import type { ContainerWidthEnum } from '@/constants/app'
 
 /**
  * 设置项通用处理逻辑

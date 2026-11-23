@@ -4,6 +4,8 @@
   "compilerOptions": {
     "noUncheckedIndexedAccess": false,
     "resolveJsonModule": true,
+    // 不许 enum、namespace、参数属性这类要编译产出代码的语法，常量一律写成 as const 对象
+    "erasableSyntaxOnly": true,
 
     "types": ["vite/client", "node", "element-plus/global"],
 

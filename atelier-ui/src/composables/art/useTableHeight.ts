@@ -39,7 +39,11 @@ class TableHeightCalculator {
   private static readonly DEFAULT_TABLE_HEADER_HEIGHT = 44
   private static readonly TABLE_HEADER_SPACING = 12
 
-  constructor(private options: TableHeightOptions) {}
+  private options: TableHeightOptions
+
+  constructor(options: TableHeightOptions) {
+    this.options = options
+  }
 
   /**
    * 计算容器高度

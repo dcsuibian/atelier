@@ -126,7 +126,7 @@
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useFullscreen, useWindowSize } from '@vueuse/core'
-import { LanguageEnum, MenuTypeEnum } from '@/enums/appEnum'
+import { LanguageEnum, MenuTypeEnum } from '@/constants/app'
 import { useSettingStore } from '@/stores/setting'
 import { useMenuStore } from '@/stores/menu'
 import AppConfig from '@/config'

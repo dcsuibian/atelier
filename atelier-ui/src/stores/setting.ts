@@ -35,7 +35,7 @@ import { ref, computed } from 'vue'
 import type { MenuThemeType } from '@/types/art/store'
 import type { AppRouteRecord } from '@/types/art/router'
 import AppConfig from '@/config'
-import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum, LanguageEnum } from '@/enums/appEnum'
+import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum, LanguageEnum } from '@/constants/app'
 import { setElementThemeColor } from '@/utils/art/ui'
 import { StorageConfig } from '@/utils/art'
 import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
@@ -53,7 +53,7 @@ export const useSettingStore = defineStore(
      *
      * 刻意不提供 setLanguage()：下面已经有一个同名函数，管的是语言按钮的显隐，不是语言本身
      */
-    const language = ref(LanguageEnum.ZH)
+    const language = ref<LanguageEnum>(LanguageEnum.ZH)
     /** 是否锁屏 */
     const isLocked = ref(false)
     /** 锁屏密码（已加密） */
@@ -77,7 +77,7 @@ export const useSettingStore = defineStore(
 
     // 菜单相关设置
     /** 菜单类型 */
-    const menuType = ref(SETTING_DEFAULT_CONFIG.menuType)
+    const menuType = ref<MenuTypeEnum>(SETTING_DEFAULT_CONFIG.menuType)
     /** 菜单展开宽度 */
     const menuOpenWidth = ref(SETTING_DEFAULT_CONFIG.menuOpenWidth)
     /** 菜单是否展开 */
@@ -87,11 +87,11 @@ export const useSettingStore = defineStore(
 
     // 主题相关设置
     /** 系统主题类型 */
-    const systemThemeType = ref(SETTING_DEFAULT_CONFIG.systemThemeType)
+    const systemThemeType = ref<SystemThemeEnum>(SETTING_DEFAULT_CONFIG.systemThemeType)
     /** 系统主题模式 */
-    const systemThemeMode = ref(SETTING_DEFAULT_CONFIG.systemThemeMode)
+    const systemThemeMode = ref<SystemThemeEnum>(SETTING_DEFAULT_CONFIG.systemThemeMode)
     /** 菜单主题类型 */
-    const menuThemeType = ref(SETTING_DEFAULT_CONFIG.menuThemeType)
+    const menuThemeType = ref<MenuThemeEnum>(SETTING_DEFAULT_CONFIG.menuThemeType)
     /** 系统主题颜色 */
     const systemThemeColor = ref(SETTING_DEFAULT_CONFIG.systemThemeColor)
 
@@ -133,7 +133,7 @@ export const useSettingStore = defineStore(
     /** 自定义圆角 */
     const customRadius = ref(SETTING_DEFAULT_CONFIG.customRadius)
     /** 容器宽度 */
-    const containerWidth = ref(SETTING_DEFAULT_CONFIG.containerWidth)
+    const containerWidth = ref<ContainerWidthEnum>(SETTING_DEFAULT_CONFIG.containerWidth)
 
     /**
      * 获取菜单主题

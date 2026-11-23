@@ -101,7 +101,7 @@ interface StateType {
 }
 
 // 响应式状态定义
-const state = reactive(<StateType>{
+const state = reactive<StateType>({
   isMoving: false,
   x: 0,
   isOk: false,

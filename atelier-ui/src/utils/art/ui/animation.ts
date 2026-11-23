@@ -28,7 +28,7 @@
  * @author Art Design Pro Team
  */
 import { useTheme } from '@/composables/art/useTheme'
-import { SystemThemeEnum } from '@/enums/appEnum'
+import { SystemThemeEnum } from '@/constants/app'
 import { useSettingStore } from '@/stores/setting'
 const { LIGHT, DARK } = SystemThemeEnum
 

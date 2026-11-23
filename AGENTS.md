@@ -266,10 +266,9 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 **不依赖决定，随时可做：**
 
-- **拍平目录**（`hooks/` → `composables/`、`styles/core` → `styles/art`、`config/` 去掉子目录并改 kebab-case 已做）。原则：ADP 原件放各目录下的 `art/`，不用 `core`、`common` 这类空泛名字；只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外，保留）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」；组件名与 `art-` 前缀不动。顺序：`enums/` 并进 `constants/`（即下面 enum 那条）；`types/art`、`utils/art` 去掉单文件目录；`components/core` → `components/art`，保留 `layouts`/`forms`/`cards`/`charts` 等分类，`base`/`others`/`widget`/`theme` 并到别处。
+- **拍平目录**（`hooks/` → `composables/`、`styles/core` → `styles/art`、`config/` 去掉子目录并改 kebab-case、`enums/` 并进 `constants/` 已做）。原则：ADP 原件放各目录下的 `art/`，不用 `core`、`common` 这类空泛名字；只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外，保留）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」；组件名与 `art-` 前缀不动。顺序：`types/art`、`utils/art` 去掉单文件目录；`components/core` → `components/art`，保留 `layouts`/`forms`/`cards`/`charts` 等分类，`base`/`others`/`widget`/`theme` 并到别处。
 - **删 `plugins/`**：图表组件各自按需 `import` 并 `use([...])` 用到的 ECharts 模块。现在一个图表就把全部注册过的图表类型带进来。
 - **拆 `useCommon`**：不是真正的 composable。滚动函数挪到 `utils/` 当普通函数，`refresh`、`homePath` 让调用方直接用 store。
-- **enum 改 `as const` 对象**：`enums/` 下 8 个几乎都是字符串枚举，写成 `const X = {...} as const` 加同名联合类型 `type X = (typeof X)[keyof typeof X]`，19 处使用方的写法与类型标注都不用动，只改 `enums/` 两个文件。之后开 `erasableSyntaxOnly` 杜绝新增。
 - **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/`、`core/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
 - **删 `types/art` 里的死类型**：`store/index.ts` 的 `RootState` 等、`common/response.ts` 的 `BaseResponse` 均无人引用。
 

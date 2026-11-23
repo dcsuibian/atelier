@@ -32,7 +32,7 @@
  */
 
 import { useSettingStore } from '@/stores/setting'
-import { SystemThemeEnum } from '@/enums/appEnum'
+import { SystemThemeEnum } from '@/constants/app'
 import AppConfig from '@/config'
 import type { SystemThemeTypes } from '@/types/art/store'
 import { getDarkColor, getLightColor, setElementThemeColor } from '@/utils/art/ui'

@@ -113,7 +113,7 @@
 <script lang="ts" setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { TableSizeEnum } from '@/enums/formEnum'
+import { TableSizeEnum } from '@/constants/table'
 import { useTableStore } from '@/stores/table'
 import { VueDraggable } from 'vue-draggable-plus'
 import { useI18n } from 'vue-i18n'

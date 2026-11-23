@@ -1,38 +1,51 @@
 <!-- 角色管理页面 -->
 <template>
   <div class="art-full-height">
-    <RoleSearch
-      v-show="showSearchBar"
-      v-model="searchForm"
-      @search="handleSearch"
-      @reset="resetSearchParams"
-    ></RoleSearch>
+    <RoleSearch v-model="searchForm" @search="handleSearch" @reset="handleSearch"></RoleSearch>
 
-    <ElCard class="art-table-card" :style="{ 'margin-top': showSearchBar ? '12px' : '0' }">
-      <ArtTableHeader
-        v-model:columns="columnChecks"
-        v-model:showSearchBar="showSearchBar"
-        :loading="loading"
-        @refresh="refreshData"
-      >
-        <template #left>
-          <ElSpace wrap>
-            <ElButton v-if="permissionStore.check(PERMISSIONS.ROLE_ADD)" @click="showDialog()" v-ripple
-              >新增角色</ElButton
-            >
-          </ElSpace>
-        </template>
-      </ArtTableHeader>
+    <ElCard class="art-table-card">
+      <div class="flex h-full flex-col">
+        <div v-if="permissionStore.check(PERMISSIONS.ROLE_ADD)" class="mb-3">
+          <ElButton @click="showDialog()" v-ripple>新增角色</ElButton>
+        </div>
 
-      <ArtTable
-        :loading="loading"
-        :data="data"
-        :columns="columns"
-        :pagination="pagination"
-        @pagination:size-change="handleSizeChange"
-        @pagination:current-change="handleCurrentChange"
-      >
-      </ArtTable>
+        <div class="min-h-0 flex-1">
+          <ElTable v-loading="loading" :data="roles" height="100%">
+            <ElTableColumn type="index" label="序号" width="60" />
+            <ElTableColumn prop="name" label="角色名称" min-width="120" />
+            <ElTableColumn prop="description" label="角色描述" min-width="150" show-overflow-tooltip />
+            <ElTableColumn label="角色状态" width="100">
+              <template #default="{ row }">
+                <ElTag :type="STATUS_TAG[row.status as RoleStatus].type">
+                  {{ STATUS_TAG[row.status as RoleStatus].text }}
+                </ElTag>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn label="创建时间" width="180">
+              <template #default="{ row }">{{ formatTime(row.createTime) }}</template>
+            </ElTableColumn>
+            <ElTableColumn label="操作" width="80" fixed="right">
+              <template #default="{ row }">
+                <ArtButtonMore
+                  :list="OPERATIONS"
+                  @click="(item: ButtonMoreItem) => handleOperation(item, row as Role)"
+                />
+              </template>
+            </ElTableColumn>
+          </ElTable>
+        </div>
+
+        <ElPagination
+          v-model:current-page="pageNumber"
+          v-model:page-size="pageSize"
+          class="mt-3 justify-end"
+          :total="total"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+          @change="load"
+        />
+      </div>
     </ElCard>
 
     <RoleEditDialog v-model:visible="dialogVisible" :role="currentRole" @submit="handleDialogSubmit" />
@@ -43,10 +56,9 @@
 
 <script setup lang="ts">
 import { formatDate } from '@vueuse/core'
-import { ElMessageBox, ElTag } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
 import type { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
 import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
-import { useTable } from '@/composables/art/useTable'
 import { usePermissionStore } from '@/stores/permission'
 import { deleteRoleById, getRoles } from '@/apis/role'
 import { PERMISSIONS } from '@/constants/permission'
@@ -64,93 +76,58 @@ const STATUS_TAG: Record<RoleStatus, { type: 'success' | 'danger'; text: string 
   DISABLED: { type: 'danger', text: '禁用' },
 }
 
+const OPERATIONS: ButtonMoreItem[] = [
+  {
+    key: 'permission',
+    label: '分配权限',
+    icon: 'ri:shield-keyhole-line',
+    auth: PERMISSIONS.ROLE_ASSIGN_PERMISSION,
+  },
+  {
+    key: 'edit',
+    label: '编辑角色',
+    icon: 'ri:edit-2-line',
+    auth: PERMISSIONS.ROLE_EDIT,
+  },
+  {
+    key: 'delete',
+    label: '删除角色',
+    icon: 'ri:delete-bin-4-line',
+    color: '#f56c6c',
+    auth: PERMISSIONS.ROLE_DELETE,
+  },
+]
+
+const formatTime = (time: number) => formatDate(new Date(time), 'YYYY-MM-DD HH:mm:ss')
+
 const searchForm = ref<RoleQuery>({
   searchText: undefined,
   status: undefined,
 })
+const pageNumber = ref(1)
+const pageSize = ref(20)
+const total = ref(0)
+const roles = ref<Role[]>([])
+const loading = ref(false)
 
-const showSearchBar = ref(false)
-
-const {
-  columns,
-  columnChecks,
-  data,
-  loading,
-  pagination,
-  getData,
-  searchParams,
-  resetSearchParams,
-  handleSizeChange,
-  handleCurrentChange,
-  refreshData,
-  refreshCreate,
-  refreshUpdate,
-  refreshRemove,
-} = useTable({
-  core: {
-    apiFn: getRoles,
-    apiParams: {
-      pageNumber: 1,
-      pageSize: 20,
-      ...searchForm.value,
-    },
-    columnsFactory: () => [
-      { type: 'index', width: 60, label: '序号' },
-      { prop: 'name', label: '角色名称', minWidth: 120 },
-      { prop: 'description', label: '角色描述', minWidth: 150, showOverflowTooltip: true },
-      {
-        prop: 'status',
-        label: '角色状态',
-        width: 100,
-        formatter: row => h(ElTag, { type: STATUS_TAG[row.status].type }, () => STATUS_TAG[row.status].text),
-      },
-      {
-        prop: 'createTime',
-        label: '创建时间',
-        width: 180,
-        formatter: row => formatDate(new Date(row.createTime), 'YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        prop: 'operation',
-        label: '操作',
-        width: 80,
-        fixed: 'right',
-        formatter: row =>
-          h('div', [
-            h(ArtButtonMore, {
-              list: [
-                {
-                  key: 'permission',
-                  label: '分配权限',
-                  icon: 'ri:shield-keyhole-line',
-                  auth: PERMISSIONS.ROLE_ASSIGN_PERMISSION,
-                },
-                {
-                  key: 'edit',
-                  label: '编辑角色',
-                  icon: 'ri:edit-2-line',
-                  auth: PERMISSIONS.ROLE_EDIT,
-                },
-                {
-                  key: 'delete',
-                  label: '删除角色',
-                  icon: 'ri:delete-bin-4-line',
-                  color: '#f56c6c',
-                  auth: PERMISSIONS.ROLE_DELETE,
-                },
-              ],
-              onClick: (item: ButtonMoreItem) => buttonMoreClick(item, row),
-            }),
-          ]),
-      },
-    ],
-  },
-})
-
-const handleSearch = () => {
-  Object.assign(searchParams, searchForm.value)
-  getData()
+const load = async () => {
+  loading.value = true
+  try {
+    const page = await getRoles({ ...searchForm.value, pageNumber: pageNumber.value, pageSize: pageSize.value })
+    roles.value = page.data
+    total.value = page.total
+  } finally {
+    loading.value = false
+  }
 }
+
+// 重置时搜索栏已自行把表单恢复成初始值，同样回到第一页重新查
+const handleSearch = () => {
+  pageNumber.value = 1
+  load()
+}
+
+onMounted(load)
 
 const dialogVisible = ref(false)
 const permissionDialogVisible = ref(false)
@@ -162,12 +139,12 @@ const showDialog = (role?: Role) => {
   dialogVisible.value = true
 }
 
+// 新增的记录排在哪一页说不准，回第一页；编辑留在当前页
 const handleDialogSubmit = () => {
-  if (currentRole.value) {
-    refreshUpdate()
-  } else {
-    refreshCreate()
+  if (!currentRole.value) {
+    pageNumber.value = 1
   }
+  load()
 }
 
 const showPermissionDialog = (role: Role) => {
@@ -175,7 +152,7 @@ const showPermissionDialog = (role: Role) => {
   permissionDialogVisible.value = true
 }
 
-const buttonMoreClick = (item: ButtonMoreItem, row: Role) => {
+const handleOperation = (item: ButtonMoreItem, row: Role) => {
   switch (item.key) {
     case 'permission':
       showPermissionDialog(row)
@@ -202,6 +179,10 @@ const deleteRole = async (role: Role) => {
   // 仍分配给用户时后端返回 409，提示由 http 层弹出
   await deleteRoleById(role.id)
   ElMessage.success('删除成功')
-  refreshRemove()
+  // 删掉的是当前页最后一条时，当前页已经不存在了，退回上一页
+  if (1 === roles.value.length && pageNumber.value > 1) {
+    pageNumber.value--
+  }
+  load()
 }
 </script>

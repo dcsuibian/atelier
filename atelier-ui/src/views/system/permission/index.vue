@@ -1,31 +1,53 @@
 <!-- 权限管理页面 -->
 <!-- 权限点由后端的 permissions.yml 定义、启动时同步进库，这里只读：没有新增、编辑、删除 -->
 <template>
-  <div class="permission-page art-full-height">
-    <PermissionSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams"></PermissionSearch>
+  <div class="art-full-height">
+    <PermissionSearch v-model="searchForm" @search="handleSearch" @reset="handleSearch"></PermissionSearch>
 
     <ElCard class="art-table-card">
-      <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData"></ArtTableHeader>
+      <div class="flex h-full flex-col">
+        <div class="min-h-0 flex-1">
+          <ElTable v-loading="loading" :data="permissions" height="100%">
+            <ElTableColumn type="index" label="序号" width="60" />
+            <ElTableColumn label="权限码" min-width="200">
+              <template #default="{ row }">
+                <code>{{ row.code }}</code>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="name" label="名称" min-width="120" />
+            <ElTableColumn prop="description" label="描述" min-width="240" />
+            <ElTableColumn label="状态">
+              <template #default="{ row }">
+                <ElTag :type="STATUS_TAG[row.status as PermissionStatus].type">
+                  {{ STATUS_TAG[row.status as PermissionStatus].text }}
+                </ElTag>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn label="更新时间" width="180">
+              <template #default="{ row }">{{ formatTime(row.updateTime) }}</template>
+            </ElTableColumn>
+          </ElTable>
+        </div>
 
-      <ArtTable
-        :loading="loading"
-        :data="data"
-        :columns="columns"
-        :pagination="pagination"
-        @pagination:size-change="handleSizeChange"
-        @pagination:current-change="handleCurrentChange"
-      >
-      </ArtTable>
+        <ElPagination
+          v-model:current-page="pageNumber"
+          v-model:page-size="pageSize"
+          class="mt-3 justify-end"
+          :total="total"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+          @change="load"
+        />
+      </div>
     </ElCard>
   </div>
 </template>
 
 <script setup lang="ts">
 import { formatDate } from '@vueuse/core'
-import { ElTag } from 'element-plus'
-import { useTable } from '@/composables/art/useTable'
 import { getPermissions } from '@/apis/permission'
-import type { PermissionQuery, PermissionStatus } from '@/types'
+import type { Permission, PermissionQuery, PermissionStatus } from '@/types'
 import PermissionSearch from './modules/permission-search.vue'
 
 defineOptions({ name: 'Permission' })
@@ -36,58 +58,34 @@ const STATUS_TAG: Record<PermissionStatus, { type: 'success' | 'info'; text: str
   DISABLED: { type: 'info', text: '禁用' },
 }
 
+const formatTime = (time: number) => formatDate(new Date(time), 'YYYY-MM-DD HH:mm:ss')
+
 const searchForm = ref<PermissionQuery>({
   searchText: undefined,
   status: undefined,
 })
+const pageNumber = ref(1)
+const pageSize = ref(20)
+const total = ref(0)
+const permissions = ref<Permission[]>([])
+const loading = ref(false)
 
-const {
-  columns,
-  columnChecks,
-  data,
-  loading,
-  pagination,
-  getData,
-  searchParams,
-  resetSearchParams,
-  handleSizeChange,
-  handleCurrentChange,
-  refreshData,
-} = useTable({
-  core: {
-    apiFn: getPermissions,
-    apiParams: {
-      pageNumber: 1,
-      pageSize: 20,
-      ...searchForm.value,
-    },
-    columnsFactory: () => [
-      { type: 'index', width: 60, label: '序号' },
-      {
-        prop: 'code',
-        label: '权限码',
-        minWidth: 200,
-        formatter: row => h('code', row.code),
-      },
-      { prop: 'name', label: '名称', minWidth: 120 },
-      { prop: 'description', label: '描述', minWidth: 240 },
-      {
-        prop: 'status',
-        label: '状态',
-        formatter: row => h(ElTag, { type: STATUS_TAG[row.status].type }, () => STATUS_TAG[row.status].text),
-      },
-      {
-        prop: 'updateTime',
-        label: '更新时间',
-        width: 180,
-        formatter: row => formatDate(new Date(row.updateTime), 'YYYY-MM-DD HH:mm:ss'),
-      },
-    ],
-  },
-})
-
-const handleSearch = () => {
-  Object.assign(searchParams, searchForm.value)
-  getData()
+const load = async () => {
+  loading.value = true
+  try {
+    const page = await getPermissions({ ...searchForm.value, pageNumber: pageNumber.value, pageSize: pageSize.value })
+    permissions.value = page.data
+    total.value = page.total
+  } finally {
+    loading.value = false
+  }
 }
+
+// 重置时搜索栏已自行把表单恢复成初始值，同样回到第一页重新查
+const handleSearch = () => {
+  pageNumber.value = 1
+  load()
+}
+
+onMounted(load)
 </script>

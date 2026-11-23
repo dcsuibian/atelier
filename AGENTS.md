@@ -53,7 +53,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 两条配套规则：
 
-- **上游原件连文件名都不改。** `tableCache.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
+- **上游原件连文件名都不改。** `useChart.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
 - **改动大到「接管」的模块不留原件。** `stores/`、`router/`、`apis/` 属于重写而非微调，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。在 `art/` 下留一份用不到的副本，只会制造「到底该改哪个」的困惑。
 
 **`art/` 与 `core/` 里的改动分三类**，ADP 升级整目录替换后逐类补回：
@@ -62,8 +62,6 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 - **跟着 store 接管改的引用**：ADP 组件里对 `useUserStore()` 的调用，按内容分别改到了 `settingStore`（语言、搜索历史、锁屏）或 `sessionStore`（登录态、登出）。替换后用 `rg -n 'useUserStore|@/store/' src` 找出来照改。这类也不标注：改法是机械的，标了反而淹没真正的破例。
 - **破例**：除此之外的改动都标了 `atelier：` 注释，替换后用 `rg -n 'atelier：' src` 找全补回。注释里写了改了什么、为什么，下面只记几处需要多解释的：
   - `types/art/router/index.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。
-  - `composables/art/useTable.ts` 的 `InferRecordType` 多认一个 `PageWrapper`，否则行类型推导成 `never`，列 formatter 里的 `row` 失去检查。
-  - `utils/art/table/tableConfig.ts` 的 `paginationKey` 改为 `pageNumber` / `pageSize`，`currentFields` 加了 `pageNumber`。它本来就是给使用者改的配置，只是恰好放在 `art/` 里；改这一处换来所有表格页零配置。
   - `components/core/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
 
 往 `art/` 与 `core/` 里加东西之前先掂量这笔账，别让破例变成常例。
@@ -120,6 +118,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **userStore 这个杂物袋**：ADP 把登录态、用户信息、语言、搜索历史、锁屏全塞在一个 store 里。语言、搜索历史、锁屏是跟着浏览器走的用户偏好，与登录与否无关，已迁入 `settingStore`；剩下的会话部分由 `stores/session.ts` 接管。锁屏是例外：存在偏好里，生命周期却跟着会话，登出时由 `session.reset()` 一并解除。ADP 的 `logOut()` 本来会清它，拆分时容易漏掉。
 - **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。
 - **后端路由模式与按字符串加载组件**：ADP 可以从接口拉菜单，路由里写 `component: '/system/user'` 由 `ComponentLoader` 按名加载。后端路由模式是凭空设想的需求，没有实际用处；字符串路径写错要到运行时才发现。现在路由配置一律写 `() => import(...)`，`AppRouteRecord.component` 的类型也不再接受字符串。布局外壳从 `views/index/` 挪到 `components/app-layout/`：它包住页面，本身不是页面。
+- **`useTable` 及其配套**（`useTableColumns`、`utils/art/table/`、`Api.Common`）：带缓存、防抖、三种刷新策略，下游不用它，模板页面的写法要与下游一致才有对照价值。表格页改为 `ElTable` + `ElTableColumn` 插槽 + `ElPagination`，数据、loading、分页参数在页面里用 `ref` 自己管，以用户管理页为准。`ArtTableHeader` 的列显示设置依赖它，随之不再使用；组件本身还在。
 
 ### 已替换为自有配置
 
@@ -274,10 +273,6 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 - **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/`、`core/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
 - **删 `types/art` 里的死类型**：`store/index.ts` 的 `RootState` 等、`common/response.ts` 的 `BaseResponse` 均无人引用。
 - **`config/` 改 kebab-case**：`headerBar.ts` 等是 ADP 原件，但它本就是给使用者改的配置（`setting.ts` 已改过），按接管处理。动手前先列出 `art/`、`core/` 以外所有 camelCase 文件。单复数的原则：唯一的用单数（`router`、`config`），多个的用复数（`stores`、`composables`）。
-
-**已决定，待做（建议按此顺序）：**
-
-- **删 `useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游不用它，模板页面的写法应与下游一致，否则对照失去意义。用户、角色、权限三页改为 `ElTable` + `ElPagination`，loading 与查询参数自己管；撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。
 
 **等决定：**
 

@@ -2,29 +2,81 @@
 <!-- art-full-height 自动计算出页面剩余高度 -->
 <!-- art-table-card 一个符合系统样式的 class，同时自动撑满剩余高度 -->
 <template>
-  <div class="user-page art-full-height">
-    <UserSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams"></UserSearch>
+  <div class="art-full-height">
+    <UserSearch v-model="searchForm" @search="handleSearch" @reset="handleSearch"></UserSearch>
 
     <ElCard class="art-table-card">
-      <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
-        <template #left>
-          <ElSpace wrap>
-            <ElButton v-if="permissionStore.check(PERMISSIONS.USER_ADD)" @click="showDialog()" v-ripple
-              >新增用户</ElButton
-            >
-          </ElSpace>
-        </template>
-      </ArtTableHeader>
+      <div class="flex h-full flex-col">
+        <div v-if="permissionStore.check(PERMISSIONS.USER_ADD)" class="mb-3">
+          <ElButton @click="showDialog()" v-ripple>新增用户</ElButton>
+        </div>
 
-      <ArtTable
-        :loading="loading"
-        :data="data"
-        :columns="columns"
-        :pagination="pagination"
-        @pagination:size-change="handleSizeChange"
-        @pagination:current-change="handleCurrentChange"
-      >
-      </ArtTable>
+        <div class="min-h-0 flex-1">
+          <ElTable v-loading="loading" :data="users" height="100%">
+            <ElTableColumn type="index" label="序号" width="60" />
+            <ElTableColumn label="用户名" min-width="240">
+              <template #default="{ row }">
+                <div class="flex-c">
+                  <!-- 预览插入到 body 上，否则在表格内部样式会错乱 -->
+                  <ElImage
+                    class="size-9.5 rounded-md"
+                    :src="row.avatar ?? defaultAvatar"
+                    :preview-src-list="[row.avatar ?? defaultAvatar]"
+                    preview-teleported
+                  />
+                  <div class="ml-2">
+                    <p>{{ row.name }}</p>
+                    <p>{{ row.email ?? '' }}</p>
+                  </div>
+                </div>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="realName" label="真实姓名" />
+            <ElTableColumn label="性别">
+              <template #default="{ row }">{{ GENDER_TEXT[row.gender as UserGender] }}</template>
+            </ElTableColumn>
+            <ElTableColumn label="手机号">
+              <template #default="{ row }">{{ row.phoneNumber ?? '-' }}</template>
+            </ElTableColumn>
+            <ElTableColumn label="状态">
+              <template #default="{ row }">
+                <ElTag :type="STATUS_TAG[row.status as UserStatus].type">
+                  {{ STATUS_TAG[row.status as UserStatus].text }}
+                </ElTag>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn label="创建时间" width="180">
+              <template #default="{ row }">{{ formatTime(row.createTime) }}</template>
+            </ElTableColumn>
+            <ElTableColumn label="操作" width="120" fixed="right">
+              <template #default="{ row }">
+                <!-- 编辑弹窗里既改资料也分配角色，有其一就给入口 -->
+                <ArtButtonTable
+                  v-if="permissionStore.check({ or: [PERMISSIONS.USER_EDIT, PERMISSIONS.USER_ASSIGN_ROLE] })"
+                  type="edit"
+                  @click="showDialog(row as User)"
+                />
+                <ArtButtonTable
+                  v-if="permissionStore.check(PERMISSIONS.USER_DELETE) && SUPER_ADMIN_ID !== row.id"
+                  type="delete"
+                  @click="deleteUser(row as User)"
+                />
+              </template>
+            </ElTableColumn>
+          </ElTable>
+        </div>
+
+        <ElPagination
+          v-model:current-page="pageNumber"
+          v-model:page-size="pageSize"
+          class="mt-3 justify-end"
+          :total="total"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+          @change="load"
+        />
+      </div>
 
       <UserDialog v-model:visible="dialogVisible" :user="currentUser" @submit="handleDialogSubmit" />
     </ElCard>
@@ -33,9 +85,8 @@
 
 <script setup lang="ts">
 import { formatDate } from '@vueuse/core'
-import { ElImage, ElMessageBox, ElTag } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
 import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
-import { useTable } from '@/composables/art/useTable'
 import { usePermissionStore } from '@/stores/permission'
 import { deleteUserById, getUsers } from '@/apis/user'
 import { PERMISSIONS } from '@/constants/permission'
@@ -60,93 +111,36 @@ const STATUS_TAG: Record<UserStatus, { type: 'success' | 'danger'; text: string 
   DISABLED: { type: 'danger', text: '禁用' },
 }
 
+const formatTime = (time: number) => formatDate(new Date(time), 'YYYY-MM-DD HH:mm:ss')
+
 const searchForm = ref<UserQuery>({
   searchText: undefined,
   status: undefined,
 })
+const pageNumber = ref(1)
+const pageSize = ref(20)
+const total = ref(0)
+const users = ref<User[]>([])
+const loading = ref(false)
 
-const {
-  columns,
-  columnChecks,
-  data,
-  loading,
-  pagination,
-  getData,
-  searchParams,
-  resetSearchParams,
-  handleSizeChange,
-  handleCurrentChange,
-  refreshData,
-  refreshCreate,
-  refreshUpdate,
-  refreshRemove,
-} = useTable({
-  core: {
-    apiFn: getUsers,
-    apiParams: {
-      pageNumber: 1,
-      pageSize: 20,
-      ...searchForm.value,
-    },
-    columnsFactory: () => [
-      { type: 'index', width: 60, label: '序号' },
-      {
-        prop: 'name',
-        label: '用户名',
-        minWidth: 240,
-        formatter: row =>
-          h('div', { class: 'user flex-c' }, [
-            h(ElImage, {
-              class: 'size-9.5 rounded-md',
-              src: row.avatar ?? defaultAvatar,
-              previewSrcList: [row.avatar ?? defaultAvatar],
-              // 图片预览是否插入至 body 元素上，用于解决表格内部图片预览样式异常
-              previewTeleported: true,
-            }),
-            h('div', { class: 'ml-2' }, [
-              h('p', { class: 'user-name' }, row.name),
-              h('p', { class: 'email' }, row.email ?? ''),
-            ]),
-          ]),
-      },
-      { prop: 'realName', label: '真实姓名' },
-      { prop: 'gender', label: '性别', formatter: row => GENDER_TEXT[row.gender] },
-      { prop: 'phoneNumber', label: '手机号', formatter: row => row.phoneNumber ?? '-' },
-      {
-        prop: 'status',
-        label: '状态',
-        formatter: row => h(ElTag, { type: STATUS_TAG[row.status].type }, () => STATUS_TAG[row.status].text),
-      },
-      {
-        prop: 'createTime',
-        label: '创建时间',
-        width: 180,
-        formatter: row => formatDate(new Date(row.createTime), 'YYYY-MM-DD HH:mm:ss'),
-      },
-      {
-        prop: 'operation',
-        label: '操作',
-        width: 120,
-        fixed: 'right',
-        formatter: row =>
-          h('div', [
-            // 编辑弹窗里既改资料也分配角色，有其一就给入口
-            permissionStore.check({ or: [PERMISSIONS.USER_EDIT, PERMISSIONS.USER_ASSIGN_ROLE] })
-              ? h(ArtButtonTable, { type: 'edit', onClick: () => showDialog(row) })
-              : null,
-            permissionStore.check(PERMISSIONS.USER_DELETE) && SUPER_ADMIN_ID !== row.id
-              ? h(ArtButtonTable, { type: 'delete', onClick: () => deleteUser(row) })
-              : null,
-          ]),
-      },
-    ],
-  },
-})
-
-const handleSearch = () => {
-  Object.assign(searchParams, searchForm.value)
-  getData()
+const load = async () => {
+  loading.value = true
+  try {
+    const page = await getUsers({ ...searchForm.value, pageNumber: pageNumber.value, pageSize: pageSize.value })
+    users.value = page.data
+    total.value = page.total
+  } finally {
+    loading.value = false
+  }
 }
+
+// 重置时搜索栏已自行把表单恢复成初始值，同样回到第一页重新查
+const handleSearch = () => {
+  pageNumber.value = 1
+  load()
+}
+
+onMounted(load)
 
 const dialogVisible = ref(false)
 /** 为 undefined 时是新增 */
@@ -157,12 +151,12 @@ const showDialog = (user?: User) => {
   dialogVisible.value = true
 }
 
+// 新增的记录排在哪一页说不准，回第一页；编辑留在当前页
 const handleDialogSubmit = () => {
-  if (currentUser.value) {
-    refreshUpdate()
-  } else {
-    refreshCreate()
+  if (!currentUser.value) {
+    pageNumber.value = 1
   }
+  load()
 }
 
 const deleteUser = async (user: User) => {
@@ -177,6 +171,10 @@ const deleteUser = async (user: User) => {
   }
   await deleteUserById(user.id)
   ElMessage.success('删除成功')
-  refreshRemove()
+  // 删掉的是当前页最后一条时，当前页已经不存在了，退回上一页
+  if (1 === users.value.length && pageNumber.value > 1) {
+    pageNumber.value--
+  }
+  load()
 }
 </script>

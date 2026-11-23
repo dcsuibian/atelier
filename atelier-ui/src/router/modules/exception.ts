@@ -8,10 +8,11 @@ export const exceptionRoutes: AppRouteRecord = {
     title: 'menus.exception.title',
     icon: 'ri:error-warning-line',
   },
+  // 子路由名不能与静态路由重名：addRoute 遇到同名会先删掉已有的那条，404 兜底就会失效
   children: [
     {
       path: '403',
-      name: 'Exception403',
+      name: 'ExceptionDemo403',
       component: () => import('@/views/exception/403/index.vue'),
       meta: {
         title: 'menus.exception.forbidden',
@@ -22,7 +23,7 @@ export const exceptionRoutes: AppRouteRecord = {
     },
     {
       path: '404',
-      name: 'Exception404',
+      name: 'ExceptionDemo404',
       component: () => import('@/views/exception/404/index.vue'),
       meta: {
         title: 'menus.exception.notFound',
@@ -33,7 +34,7 @@ export const exceptionRoutes: AppRouteRecord = {
     },
     {
       path: '500',
-      name: 'Exception500',
+      name: 'ExceptionDemo500',
       component: () => import('@/views/exception/500/index.vue'),
       meta: {
         title: 'menus.exception.serverError',

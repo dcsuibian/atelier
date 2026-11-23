@@ -130,7 +130,7 @@ const closeUserMenu = (): void => {
 </script>
 
 <style scoped>
-@reference '@/styles/core/tailwind.css';
+@reference '@/styles/art/tailwind.css';
 
 @layer components {
   .btn-item {

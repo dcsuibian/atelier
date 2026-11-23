@@ -307,7 +307,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@reference '@/styles/core/tailwind.css';
+@reference '@/styles/art/tailwind.css';
 
 .button {
   @apply ml-2 

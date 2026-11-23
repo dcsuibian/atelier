@@ -92,8 +92,8 @@ export default ({ mode }: { mode: string }) => {
         // sass variable and mixin
         scss: {
           additionalData: `
-            @use "@/styles/core/el-light.scss" as *;
-            @use "@/styles/core/mixin.scss" as *;
+            @use "@/styles/art/el-light.scss" as *;
+            @use "@/styles/art/mixin.scss" as *;
           `
         }
       }

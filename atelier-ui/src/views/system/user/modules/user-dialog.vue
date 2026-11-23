@@ -71,7 +71,7 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import { type UserForm, addUser, editUserPartially, getRolesByUserId, setRolesByUserId } from '@/apis/user'
 import { getRoles } from '@/apis/role'
-import { useAuth } from '@/composables/useAuth'
+import { usePermissionStore } from '@/stores/permission'
 import { PERMISSIONS } from '@/constants/permission'
 import { SUPER_ADMIN_ID } from '@/constants/user'
 import type { Role, User, UserGender, UserStatus } from '@/types'
@@ -90,12 +90,12 @@ const emit = defineEmits<Emits>()
 
 const visible = defineModel<boolean>('visible', { required: true })
 
-const { hasAuth } = useAuth()
+const permissionStore = usePermissionStore()
 
 const isSuperAdmin = computed(() => SUPER_ADMIN_ID === props.user?.id)
 /** 只有分配角色权限的人也能打开编辑弹窗，这时资料只读 */
-const infoDisabled = computed(() => undefined !== props.user && !hasAuth(PERMISSIONS.USER_EDIT))
-const rolesVisible = computed(() => hasAuth(PERMISSIONS.USER_ASSIGN_ROLE) && !isSuperAdmin.value)
+const infoDisabled = computed(() => undefined !== props.user && !permissionStore.check(PERMISSIONS.USER_EDIT))
+const rolesVisible = computed(() => permissionStore.check(PERMISSIONS.USER_ASSIGN_ROLE) && !isSuperAdmin.value)
 
 interface Form {
   name: string

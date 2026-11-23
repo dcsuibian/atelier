@@ -18,6 +18,12 @@ export const usePermissionStore = defineStore('permission', () => {
 
   /**
    * 求值权限表达式。传 undefined / null 视为不设限，返回 true
+   *
+   * 判断依据是权限码，不是角色：角色是库里的数据、名字随时可改，权限码写在后端的
+   * permissions.yml 里、发布后不改名，只有它才适合写进前端代码。
+   * 权限码用 `@/constants/permission` 的 PERMISSIONS.XXX 引用，不要写裸字符串。
+   *
+   * 按钮级判断直接在模板里调：`v-if="permissionStore.check(PERMISSIONS.USER_ADD)"`
    */
   function check(expression: PermissionExpression | undefined | null): boolean {
     if (undefined === expression || null === expression) {

@@ -7,7 +7,7 @@
         <ElDropdownMenu>
           <template v-for="item in list" :key="item.key">
             <ElDropdownItem
-              v-if="!item.auth || hasAuth(item.auth)"
+              v-if="!item.auth || permissionStore.check(item.auth)"
               :disabled="item.disabled"
               @click="handleClick(item)"
             >
@@ -25,11 +25,12 @@
 
 <script setup lang="ts">
 import type { PermissionExpression } from '@/types'
-import { useAuth } from '@/composables/useAuth'
+import { usePermissionStore } from '@/stores/permission'
 
 defineOptions({ name: 'ArtButtonMore' })
 
-const { hasAuth } = useAuth()
+// atelier：ADP 用 useAuth().hasAuth，改为直接调 permissionStore.check
+const permissionStore = usePermissionStore()
 
 export interface ButtonMoreItem {
   /** 按钮标识，可用于点击事件 */
@@ -60,7 +61,7 @@ const props = withDefaults(defineProps<Props>(), {})
 
 // 检查是否有任何有权限的 item
 const hasAnyAuthItem = computed(() => {
-  return props.list.some(item => !item.auth || hasAuth(item.auth))
+  return props.list.some(item => !item.auth || permissionStore.check(item.auth))
 })
 
 const emit = defineEmits<{

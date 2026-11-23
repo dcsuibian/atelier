@@ -9,7 +9,9 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton v-if="hasAuth(PERMISSIONS.USER_ADD)" @click="showDialog()" v-ripple>新增用户</ElButton>
+            <ElButton v-if="permissionStore.check(PERMISSIONS.USER_ADD)" @click="showDialog()" v-ripple
+              >新增用户</ElButton
+            >
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -34,7 +36,7 @@ import { formatDate } from '@vueuse/core'
 import { ElImage, ElMessageBox, ElTag } from 'element-plus'
 import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
 import { useTable } from '@/composables/art/useTable'
-import { useAuth } from '@/composables/useAuth'
+import { usePermissionStore } from '@/stores/permission'
 import { deleteUserById, getUsers } from '@/apis/user'
 import { PERMISSIONS } from '@/constants/permission'
 import { SUPER_ADMIN_ID } from '@/constants/user'
@@ -45,7 +47,7 @@ import UserDialog from './modules/user-dialog.vue'
 
 defineOptions({ name: 'User' })
 
-const { hasAuth } = useAuth()
+const permissionStore = usePermissionStore()
 
 const GENDER_TEXT: Record<UserGender, string> = {
   MALE: '男',
@@ -129,10 +131,10 @@ const {
         formatter: row =>
           h('div', [
             // 编辑弹窗里既改资料也分配角色，有其一就给入口
-            hasAuth({ or: [PERMISSIONS.USER_EDIT, PERMISSIONS.USER_ASSIGN_ROLE] })
+            permissionStore.check({ or: [PERMISSIONS.USER_EDIT, PERMISSIONS.USER_ASSIGN_ROLE] })
               ? h(ArtButtonTable, { type: 'edit', onClick: () => showDialog(row) })
               : null,
-            hasAuth(PERMISSIONS.USER_DELETE) && SUPER_ADMIN_ID !== row.id
+            permissionStore.check(PERMISSIONS.USER_DELETE) && SUPER_ADMIN_ID !== row.id
               ? h(ArtButtonTable, { type: 'delete', onClick: () => deleteUser(row) })
               : null,
           ]),

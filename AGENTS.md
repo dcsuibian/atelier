@@ -46,7 +46,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 子目录统一叫 `art/`（正在把 ADP 原有的 `core/` 逐个改过来，`core`、`common` 这类名字不表达任何含义）。
 
 - `src/types/art/`、`src/utils/art/` 是 ADP 原件；自有类型与工具平铺成 `src/types/session.ts`、`src/utils/http.ts` 这样
-- `src/composables/art/` 同理，`useAuth.ts` 是重写过的，平铺在 `src/composables/` 下。目录不叫 ADP 的 `hooks`：hooks 是 React 的叫法，Vue 官方叫 composables
+- `src/composables/art/` 同理，目前没有自有的 composable。目录不叫 ADP 的 `hooks`：hooks 是 React 的叫法，Vue 官方叫 composables
 - `src/components/core/` 尚未改名。`src/directives/` 已接管：每个指令一个文件，类型声明就地写在文件里
 
 理由只有一个，但足够：**ADP 升级时 `art/` 与 `core/` 可以整目录对照乃至替换**，不必逐行分辨哪行是上游的、哪行是自己改的。上面第 (1) 段同步的成本直接取决于这件事。
@@ -250,7 +250,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **权限码集中在 `constants/permission.ts`**，一律引用 `PERMISSIONS.XXX`，不写裸字符串——后端增删权限时，靠这张表就能找全前端的引用点。
 - **`PermissionExpression` 只有 and / or。** 不要加 NOT：一旦出现「没有某权限才能看见」，权限就不再是单调递增的，加权限反而可能让人少看见东西，排查起来极难。
 - **权限在路由注册这一步落地。** `filterByPermission(dynamicRoutes)` 筛完才注册，没权限的路由压根不进路由表，于是菜单、可访问路径、路由表三者天然同源，不必再单独做一遍路径权限校验。子项被筛光的目录会一并消失，所以目录本身不用重复声明权限。
-- **按钮级判断只有 `useAuth().hasAuth()` 一条路径**，写成 `v-if="hasAuth(...)"`。`v-auth` 指令已删：它在 `mounted` 之后用 `removeChild` 摘 DOM，绕过虚拟 DOM、不响应权限变化，而且下游真实项目里两年没人用过一次。
+- **按钮级判断与路由守卫共用 `permissionStore.check()`**，写成 `v-if="permissionStore.check(...)"`。ADP 的 `useAuth` 只是对它的转发，已删。`v-auth` 指令已删：它在 `mounted` 之后用 `removeChild` 摘 DOM，绕过虚拟 DOM、不响应权限变化，而且下游真实项目里两年没人用过一次。
 - **一个页面都没有时要兜底。** 路由注册结果为空，说明这个账号什么都看不到，应当提示并登出，而不是让他掉进 404。
 
 ## 当前状态
@@ -276,7 +276,6 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 **已决定，待做（建议按此顺序）：**
 
-- **删 `useAuth`，直接用 `permissionStore.check()`**：它只是转发，路由守卫本就直接调 `check`，去掉后全项目只剩一种写法。注释里「按权限码不按角色」的理由挪到 `check` 上。
 - **路由改真 import，删后端路由模式**：后端路由模式是凭空设想的需求，没有实际用处。`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。顺带把 Layout 从 `views/index/` 挪到 `components/` 下：它是包住页面的外壳，不是页面；`'/index/index'` 魔法字符串、`routes-alias.ts` 的 `Layout` 别名及 `ComponentLoader`、`RouteValidator` 对它的特判一并删掉。
 - **删 `useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游不用它，模板页面的写法应与下游一致，否则对照失去意义。用户、角色、权限三页改为 `ElTable` + `ElPagination`，loading 与查询参数自己管；撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。
 

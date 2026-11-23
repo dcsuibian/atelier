@@ -17,7 +17,9 @@
       >
         <template #left>
           <ElSpace wrap>
-            <ElButton v-if="hasAuth(PERMISSIONS.ROLE_ADD)" @click="showDialog()" v-ripple>新增角色</ElButton>
+            <ElButton v-if="permissionStore.check(PERMISSIONS.ROLE_ADD)" @click="showDialog()" v-ripple
+              >新增角色</ElButton
+            >
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -45,7 +47,7 @@ import { ElMessageBox, ElTag } from 'element-plus'
 import type { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
 import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
 import { useTable } from '@/composables/art/useTable'
-import { useAuth } from '@/composables/useAuth'
+import { usePermissionStore } from '@/stores/permission'
 import { deleteRoleById, getRoles } from '@/apis/role'
 import { PERMISSIONS } from '@/constants/permission'
 import type { Role, RoleQuery, RoleStatus } from '@/types'
@@ -55,7 +57,7 @@ import RolePermissionDialog from './modules/role-permission-dialog.vue'
 
 defineOptions({ name: 'Role' })
 
-const { hasAuth } = useAuth()
+const permissionStore = usePermissionStore()
 
 const STATUS_TAG: Record<RoleStatus, { type: 'success' | 'danger'; text: string }> = {
   ENABLED: { type: 'success', text: '启用' },

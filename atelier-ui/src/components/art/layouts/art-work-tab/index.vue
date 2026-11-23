@@ -87,7 +87,6 @@ import { useWorkTabStore } from '@/stores/work-tab'
 import { formatMenuTitle } from '@/utils/art/router'
 import { useSettingStore } from '@/stores/setting'
 import type { MenuItemType } from '../art-menu-right/index.vue'
-import { useCommon } from '@/composables/art/useCommon'
 import type { WorkTab } from '@/types/art'
 
 defineOptions({ name: 'ArtWorkTab' })
@@ -392,7 +391,7 @@ const useTabOperations = (adjustPositionAfterClose: () => void) => {
     const { key } = item
 
     if (key === 'refresh') {
-      useCommon().refresh()
+      settingStore.reload()
       return
     }
 

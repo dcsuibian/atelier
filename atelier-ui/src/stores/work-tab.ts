@@ -42,7 +42,7 @@ import { ref, computed } from 'vue'
 import { router } from '@/router'
 import type { LocationQueryRaw, Router } from 'vue-router'
 import type { WorkTab } from '@/types/art'
-import { useCommon } from '@/composables/art/useCommon'
+import { useMenuStore } from '@/stores/menu'
 
 interface WorktabState {
   current: Partial<WorkTab>
@@ -203,13 +203,13 @@ export const useWorkTabStore = defineStore(
         addKeepAliveExclude(targetTab)
       }
 
-      const { homePath } = useCommon()
+      const homePath = useMenuStore().getHomePath()
 
       // 如果关闭后无标签页，跳转首页
       if (!hasOpenedTabs.value) {
-        if (path !== homePath.value) {
+        if (path !== homePath) {
           current.value = {}
-          safeRouterPush({ path: homePath.value })
+          safeRouterPush({ path: homePath })
         }
         return
       }
@@ -322,14 +322,14 @@ export const useWorkTabStore = defineStore(
      * 关闭所有可关闭的标签页
      */
     const removeAll = (): void => {
-      const { homePath } = useCommon()
+      const homePath = useMenuStore().getHomePath()
       const hasFixedTabs = opened.value.some(tab => tab.fixedTab)
 
       // 获取可关闭的标签页
       const closableTabs = opened.value.filter(tab => {
         if (!isTabClosable(tab)) return false
         // 如果有固定标签，则所有可关闭的都可以关闭；否则保留首页
-        return hasFixedTabs || tab.path !== homePath.value
+        return hasFixedTabs || tab.path !== homePath
       })
 
       if (closableTabs.length === 0) {
@@ -342,18 +342,18 @@ export const useWorkTabStore = defineStore(
 
       // 保留不可关闭的标签页和首页（当没有固定标签时）
       opened.value = opened.value.filter(tab => {
-        return !isTabClosable(tab) || (!hasFixedTabs && tab.path === homePath.value)
+        return !isTabClosable(tab) || (!hasFixedTabs && tab.path === homePath)
       })
 
       // 处理激活状态
       if (!hasOpenedTabs.value) {
         current.value = {}
-        safeRouterPush({ path: homePath.value })
+        safeRouterPush({ path: homePath })
         return
       }
 
       // 选择激活的标签页：优先首页，其次第一个可用标签
-      const homeTab = opened.value.find(tab => tab.path === homePath.value)
+      const homeTab = opened.value.find(tab => tab.path === homePath)
       const targetTab = homeTab || opened.value[0]
 
       current.value = targetTab

@@ -267,7 +267,6 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 **不依赖决定，随时可做：**
 
 - **删 `plugins/`**：图表组件各自按需 `import` 并 `use([...])` 用到的 ECharts 模块。现在一个图表就把全部注册过的图表类型带进来。
-- **拆 `useCommon`**：不是真正的 composable。滚动函数挪到 `utils/` 当普通函数，`refresh`、`homePath` 让调用方直接用 store。
 
 **等决定：**
 

@@ -26,7 +26,7 @@ import type { RouteLocationNormalized } from 'vue-router'
 import { isIframe } from './route'
 import { useSettingStore } from '@/stores/setting'
 import { IframeRouteManager } from '@/router/iframe-route-manager'
-import { useCommon } from '@/composables/art/useCommon'
+import { useMenuStore } from '@/stores/menu'
 
 /**
  * 根据当前路由信息设置工作标签页（worktab）
@@ -51,7 +51,7 @@ export const setWorktab = (to: RouteLocationNormalized): void => {
           query,
         })
       }
-    } else if (useSettingStore().showWorkTab || path === useCommon().homePath.value) {
+    } else if (useSettingStore().showWorkTab || path === useMenuStore().getHomePath()) {
       worktabStore.openTab({
         title: meta.title as string,
         icon: meta.icon as string,

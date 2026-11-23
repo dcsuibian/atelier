@@ -1,3 +1,4 @@
+useMenuStore().getHomePath() || '/'
 <template>
   <div class="page-content !border-0 !bg-transparent min-h-screen flex-cc">
     <div class="flex-cc max-md:!block max-md:text-center">
@@ -11,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { useCommon } from '@/composables/art/useCommon'
+import { useMenuStore } from '@/stores/menu'
 import { useSessionStore } from '@/stores/session'
 
 const router = useRouter()
@@ -35,10 +36,8 @@ withDefaults(
   {},
 )
 
-const { homePath } = useCommon()
-
 const backHome = () => {
-  const targetHomePath = homePath.value || '/'
+  const targetHomePath = useMenuStore().getHomePath() || '/'
 
   if (!sessionStore.isLoggedIn) {
     router.push({

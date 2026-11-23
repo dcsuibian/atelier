@@ -77,7 +77,7 @@ import type { TableInstance, TableProps } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import type { ColumnOption } from '@/types/art'
 import { useTableStore } from '@/stores/table'
-import { useCommon } from '@/composables/art/useCommon'
+import { scrollToTop as scrollPageToTop } from '@/utils/scroll'
 import { useTableHeight } from '@/composables/art/useTableHeight'
 import { useResizeObserver, useWindowSize } from '@vueuse/core'
 
@@ -297,13 +297,11 @@ const handleCurrentChange = (val: number) => {
   scrollToTop() // 页码改变后滚动到表格顶部
 }
 
-const { scrollToTop: scrollPageToTop } = useCommon()
-
 // 滚动表格内容到顶部，并可以联动页面滚动到顶部
 const scrollToTop = () => {
   nextTick(() => {
     elTableRef.value?.setScrollTop(0) // 滚动 ElTable 内部滚动条到顶部
-    scrollPageToTop() // 调用公共 composable 滚动页面到顶部
+    scrollPageToTop() // 页面本身也滚回顶部
   })
 }
 

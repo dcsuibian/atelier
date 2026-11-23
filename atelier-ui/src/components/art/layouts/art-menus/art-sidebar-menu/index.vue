@@ -118,7 +118,6 @@ import { useMenuStore } from '@/stores/menu'
 import { isIframe } from '@/utils/art/navigation'
 import { handleMenuJump } from '@/utils/art/navigation'
 import SidebarSubmenu from './widget/SidebarSubmenu.vue'
-import { useCommon } from '@/composables/art/useCommon'
 import { useWindowSize, useTimeoutFn } from '@vueuse/core'
 
 defineOptions({ name: 'ArtSidebarMenu' })
@@ -234,13 +233,11 @@ const findIframeMenuList = (currentPath: string, menuList: any[]) => {
   return []
 }
 
-const { homePath } = useCommon()
-
 /**
  * 导航到首页
  */
 const navigateToHome = (): void => {
-  router.push(homePath.value)
+  router.push(useMenuStore().getHomePath())
 }
 
 /**

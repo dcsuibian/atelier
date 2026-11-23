@@ -133,7 +133,6 @@ import AppConfig from '@/config'
 import { languageOptions } from '@/locales'
 import { mittBus } from '@/utils/art/sys'
 import { themeAnimation } from '@/utils/art/ui/animation'
-import { useCommon } from '@/composables/art/useCommon'
 import { useHeaderBar } from '@/composables/art/useHeaderBar'
 import ArtUserMenu from './widget/ArtUserMenu.vue'
 
@@ -192,14 +191,11 @@ const visibleMenu = (): void => {
   settingStore.setMenuOpen(!menuOpen.value)
 }
 
-const { homePath } = useCommon()
-const { refresh } = useCommon()
-
 /**
  * 跳转到首页
  */
 const toHome = (): void => {
-  router.push(homePath.value)
+  router.push(menuStore.getHomePath())
 }
 
 /**
@@ -208,7 +204,7 @@ const toHome = (): void => {
  */
 const reload = (time: number = 0): void => {
   setTimeout(() => {
-    refresh()
+    settingStore.reload()
   }, time)
 }
 

@@ -43,28 +43,28 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 **ADP 的原件待在子目录里，自有代码平铺在该目录根上。** 这是 `atelier-ui` 最重要的组织约定，后续所有改动都以它为前提。
 
-子目录统一叫 `art/`（正在把 ADP 原有的 `core/` 逐个改过来，`core`、`common` 这类名字不表达任何含义）。
+子目录统一叫 `art/`，不用 `core`、`common` 这类不表达含义的名字。只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」。
 
 - `src/types/art/`、`src/utils/art/` 是 ADP 原件；自有类型与工具平铺成 `src/types/session.ts`、`src/utils/http.ts` 这样
 - `src/composables/art/` 同理，目前没有自有的 composable。目录不叫 ADP 的 `hooks`：hooks 是 React 的叫法，Vue 官方叫 composables
-- `src/components/core/` 尚未改名。`src/directives/` 已接管：每个指令一个文件，类型声明就地写在文件里
+- `src/components/art/` 按用途分类（`layouts`、`forms`、`cards`、`icons` 等），组件名与 `art-` 前缀沿用 ADP。`src/directives/` 已接管：每个指令一个文件，类型声明就地写在文件里
 
-理由只有一个，但足够：**ADP 升级时 `art/` 与 `core/` 可以整目录对照乃至替换**，不必逐行分辨哪行是上游的、哪行是自己改的。上面第 (1) 段同步的成本直接取决于这件事。
+理由只有一个，但足够：**ADP 升级时 `art/` 可以整目录对照乃至替换**，不必逐行分辨哪行是上游的、哪行是自己改的。上面第 (1) 段同步的成本直接取决于这件事。
 
 两条配套规则：
 
 - **上游原件连文件名都不改。** `useChart.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
 - **改动大到「接管」的模块不留原件。** `stores/`、`router/`、`apis/` 属于重写而非微调，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。在 `art/` 下留一份用不到的副本，只会制造「到底该改哪个」的困惑。
 
-**`art/` 与 `core/` 里的改动分三类**，ADP 升级整目录替换后逐类补回：
+**`art/` 里的改动分三类**，ADP 升级整目录替换后逐类补回：
 
 - **机械改动**：格式化、`import type`、路径别名（ADP 的 `@styles`、`@imgs` 等已删，见「已替换为自有配置」）。跑一遍 `pnpm format`，再按 type-check 报错和全局搜旧别名改掉即可，不逐处标注。
 - **跟着 store 接管改的引用**：ADP 组件里对 `useUserStore()` 的调用，按内容分别改到了 `settingStore`（语言、搜索历史、锁屏）或 `sessionStore`（登录态、登出）。替换后用 `rg -n 'useUserStore|@/store/' src` 找出来照改。这类也不标注：改法是机械的，标了反而淹没真正的破例。
 - **破例**：除此之外的改动都标了 `atelier：` 注释，替换后用 `rg -n 'atelier：' src` 找全补回。注释里写了改了什么、为什么，下面只记几处需要多解释的：
   - `types/art/router.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，把它整个接管出来会逼着一堆 art 文件改 import，污染比就地加一个字段更大。
-  - `components/core/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
+  - `components/art/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
 
-往 `art/` 与 `core/` 里加东西之前先掂量这笔账，别让破例变成常例。
+往 `art/` 里加东西之前先掂量这笔账，别让破例变成常例。
 
 顺带一提，`RouteMeta` 继承了 `Record<string | number | symbol, unknown>`，**这意味着路由 meta 里写错字段名永远不会报错**——ADP 的 `roles`、`authList` 能在改造后一直残留到被专门清理，就是这么来的。
 
@@ -118,7 +118,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **userStore 这个杂物袋**：ADP 把登录态、用户信息、语言、搜索历史、锁屏全塞在一个 store 里。语言、搜索历史、锁屏是跟着浏览器走的用户偏好，与登录与否无关，已迁入 `settingStore`；剩下的会话部分由 `stores/session.ts` 接管。锁屏是例外：存在偏好里，生命周期却跟着会话，登出时由 `session.reset()` 一并解除。ADP 的 `logOut()` 本来会清它，拆分时容易漏掉。
 - **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。
 - **后端路由模式与按字符串加载组件**：ADP 可以从接口拉菜单，路由里写 `component: '/system/user'` 由 `ComponentLoader` 按名加载。后端路由模式是凭空设想的需求，没有实际用处；字符串路径写错要到运行时才发现。现在路由配置一律写 `() => import(...)`，`AppRouteRecord.component` 的类型也不再接受字符串。布局外壳从 `views/index/` 挪到 `components/app-layout/`：它包住页面，本身不是页面。
-- **`useTable` 及其配套**（`useTableColumns`、`utils/art/table/`、`Api.Common`）：带缓存、防抖、三种刷新策略，下游不用它，模板页面的写法要与下游一致才有对照价值。表格页改为 `ElTable` + `ElTableColumn` 插槽 + `ElPagination`，数据、loading、分页参数在页面里用 `ref` 自己管，以用户管理页为准。`ArtTableHeader` 的列显示设置依赖它，随之不再使用；组件本身还在。
+- **`useTable` 及其配套**（`useTableColumns`、`utils/art/table/`、`Api.Common`）：带缓存、防抖、三种刷新策略，下游不用它，模板页面的写法要与下游一致才有对照价值。表格页改为 `ElTable` + `ElTableColumn` 插槽 + `ElPagination`，数据、loading、分页参数在页面里用 `ref` 自己管，以用户管理页为准。`ArtTableHeader` 的列显示设置依赖它，组件一并删了。
 
 ### 已替换为自有配置
 
@@ -193,7 +193,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 - **类型导入一律 type-only**（`verbatimModuleSyntax` 已开启）。整条 import 的具名导入都是类型时，整条写成 `import type { X } from '...'`；与值混在一条时用内联形式 `import { type X, y } from '...'`，保持单行不拆分。
 - **路径引用只用 `@`**，不要新增其它别名。跨目录引用一律 `@/` 开头，不写 `../../` 这种相对路径（同目录内的 `./xxx` 不在此列）。
-- **新文件用 kebab-case**，`art/` 与 `core/` 下的上游原件保持原名，理由见「代码组织」一节。
+- **新文件用 kebab-case**，`art/` 下的上游原件保持原名，理由见「代码组织」一节。
 - **递归类型用对象，别用元组。** 自引用的元组（`type X = string | [X, 'AND' | 'OR', X]`）一旦进了 `RouteMeta`，Vue 模板推导路由对象时会撞上 `TS2589: Type instantiation is excessively deep`；对象的自引用是惰性解析的，不会触发。同一份代码在 TS 5.9 + vue-tsc 3.2 下不报错，所以这是工具链版本差异而非写法错误——但对象写法在新旧两边都成立，没有理由赌旧版本。
 - **别用 `<!-- @vue-ignore -->` 压 TS2589。** 它能让 type-check 过，代价是那个元素上所有表达式一起失去检查，而且随着使用面扩大要到处补；治本的办法是让类型推导得动。
 
@@ -262,14 +262,13 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 ### 待办（前端，已评估、暂缓）
 
-ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码可以大方接管，不必逐个掂量破例。ADP 值得跟进的是视觉组件（布局、卡片、表格外观），机制层（路由、表格 hook、类型组织）本就与作者偏好不合。「代码组织」一节等拍平做完后按新结构重写；设计理由优先写进代码注释，注释放不下的才进 README。
+ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码可以大方接管，不必逐个掂量破例。ADP 值得跟进的是视觉组件（布局、卡片、表格外观），机制层（路由、表格 hook、类型组织）本就与作者偏好不合。拍平目录已做完，「代码组织」一节待按新结构重写；设计理由优先写进代码注释，注释放不下的才进 README。
 
 **不依赖决定，随时可做：**
 
-- **拍平目录**（`hooks/` → `composables/`、`styles/core` → `styles/art`、`config/` 去掉子目录并改 kebab-case、`enums/` 并进 `constants/`、`types/art` 与 `utils/art` 去掉单文件目录已做）。原则：ADP 原件放各目录下的 `art/`，不用 `core`、`common` 这类空泛名字；只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外，保留）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」；组件名与 `art-` 前缀不动。顺序：`components/core` → `components/art`，保留 `layouts`/`forms`/`cards`/`charts` 等分类，`base`/`others`/`widget`/`theme` 并到别处。
 - **删 `plugins/`**：图表组件各自按需 `import` 并 `use([...])` 用到的 ECharts 模块。现在一个图表就把全部注册过的图表类型带进来。
 - **拆 `useCommon`**：不是真正的 composable。滚动函数挪到 `utils/` 当普通函数，`refresh`、`homePath` 让调用方直接用 store。
-- **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/`、`core/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
+- **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
 
 **等决定：**
 
@@ -278,11 +277,11 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 **放到后面：**
 
 - **ECharts 改用 vue-echarts**：自动 resize、option 响应式、自动 dispose，可替掉 724 行的 `useChart`。但 vue-echarts 同样要 `use([...])` 按需注册，`plugins/echarts.ts` 那 68 行只是换地方。成本在于重写 6 个图表组件与 8 个统计卡片，适合与 dashboard 一起做。
-- **`types/art` 就近归位**：共 1092 行，像嵌套了一个小 src。组件专用的类型（如 `component/chart.ts` 的 313 行图表 props）挪到组件旁边，代价是改 `core/` 组件的 import，等接管策略定了再做。
+- **`types/art` 就近归位**：共 1092 行，像嵌套了一个小 src。组件专用的类型（如 `component/chart.ts` 的 313 行图表 props）挪到组件旁边，代价是改 `art/` 组件的 import，等接管策略定了再做。
 - **composables**：`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
 - **前端测试**：`PermissionExpression` 求值、session store 的 Promise 去重是纯逻辑，值得用 vitest 补。
 - **小问题**：在用户管理里编辑当前登录用户后，页头的 `sessionStore.user` 不会刷新；给角色改权限后，当前用户要刷新页面才生效。权限分配树的分组名直接显示权限码前缀（`user`、`role`），要显示中文需前端映射表或在 `permissions.yml` 加分组字段。
 
 ### 待定
 
-- **是否建 `upstream` 分支存放 ADP 原始代码**（借三方合并让 Git 自动处理非冲突部分）取决于魔改深度：魔改越彻底，冲突率越高，越不如人工读 diff 理解意图后自己写。「代码组织」那套隔离做完后，这件事的必要性进一步下降了——`art/` 与 `core/` 本身已经是可直接对照的锚点。
+- **是否建 `upstream` 分支存放 ADP 原始代码**（借三方合并让 Git 自动处理非冲突部分）取决于魔改深度：魔改越彻底，冲突率越高，越不如人工读 diff 理解意图后自己写。「代码组织」那套隔离做完后，这件事的必要性进一步下降了——`art/` 本身已经是可直接对照的锚点。

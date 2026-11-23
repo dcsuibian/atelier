@@ -57,8 +57,8 @@
 <script setup lang="ts">
 import { formatDate } from '@vueuse/core'
 import { ElMessageBox } from 'element-plus'
-import type { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
-import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
+import type { ButtonMoreItem } from '@/components/art/forms/art-button-more/index.vue'
+import ArtButtonMore from '@/components/art/forms/art-button-more/index.vue'
 import { usePermissionStore } from '@/stores/permission'
 import { deleteRoleById, getRoles } from '@/apis/role'
 import { PERMISSIONS } from '@/constants/permission'

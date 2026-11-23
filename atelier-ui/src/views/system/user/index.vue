@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import { formatDate } from '@vueuse/core'
 import { ElMessageBox } from 'element-plus'
-import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+import ArtButtonTable from '@/components/art/forms/art-button-table/index.vue'
 import { usePermissionStore } from '@/stores/permission'
 import { deleteUserById, getUsers } from '@/apis/user'
 import { PERMISSIONS } from '@/constants/permission'

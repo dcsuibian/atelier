@@ -268,7 +268,6 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 - **删 `plugins/`**：图表组件各自按需 `import` 并 `use([...])` 用到的 ECharts 模块。现在一个图表就把全部注册过的图表类型带进来。
 - **拆 `useCommon`**：不是真正的 composable。滚动函数挪到 `utils/` 当普通函数，`refresh`、`homePath` 让调用方直接用 store。
-- **`useWorktabStore` 改名 `useWorkTabStore`**：文件已是 `work-tab.ts`，只是导出名没跟上。13 处引用，部分在 `art/` 下，但那些文件在 store 目录改名时已改过 import，不额外增加对照成本。
 
 **等决定：**
 

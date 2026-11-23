@@ -21,7 +21,7 @@
  * @module utils/navigation/worktab
  * @author Art Design Pro Team
  */
-import { useWorktabStore } from '@/stores/work-tab'
+import { useWorkTabStore } from '@/stores/work-tab'
 import type { RouteLocationNormalized } from 'vue-router'
 import { isIframe } from './route'
 import { useSettingStore } from '@/stores/setting'
@@ -33,7 +33,7 @@ import { useCommon } from '@/composables/art/useCommon'
  * @param to 当前路由对象
  */
 export const setWorktab = (to: RouteLocationNormalized): void => {
-  const worktabStore = useWorktabStore()
+  const worktabStore = useWorkTabStore()
   const { meta, path, name, params, query } = to
   if (!meta.isHideTab) {
     // 如果是 iframe 页面，则特殊处理工作标签页

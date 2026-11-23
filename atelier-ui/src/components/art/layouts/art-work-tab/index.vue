@@ -83,7 +83,7 @@ import { type LocationQueryRaw, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 
-import { useWorktabStore } from '@/stores/work-tab'
+import { useWorkTabStore } from '@/stores/work-tab'
 import { formatMenuTitle } from '@/utils/art/router'
 import { useSettingStore } from '@/stores/setting'
 import type { MenuItemType } from '../art-menu-right/index.vue'
@@ -107,7 +107,7 @@ type TabCloseType = 'current' | 'left' | 'right' | 'other' | 'all'
 
 // 基础设置
 const { t } = useI18n()
-const store = useWorktabStore()
+const store = useWorkTabStore()
 const route = useRoute()
 const router = useRouter()
 const { currentRoute } = router
@@ -397,7 +397,7 @@ const useTabOperations = (adjustPositionAfterClose: () => void) => {
     }
 
     if (key === 'fixed') {
-      useWorktabStore().toggleFixedTab(clickedPath.value)
+      useWorkTabStore().toggleFixedTab(clickedPath.value)
       return
     }
 

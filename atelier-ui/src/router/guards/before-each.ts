@@ -21,7 +21,7 @@ import NProgress from 'nprogress'
 import { useSettingStore } from '@/stores/setting'
 import { useSessionStore } from '@/stores/session'
 import { useMenuStore } from '@/stores/menu'
-import { useWorktabStore } from '@/stores/work-tab'
+import { useWorkTabStore } from '@/stores/work-tab'
 import { setWorktab } from '@/utils/art/navigation'
 import { setPageTitle } from '@/utils/art/router'
 import { loadingService } from '@/utils/art/ui'
@@ -127,7 +127,7 @@ async function registerDynamicRoutes(router: Router): Promise<number> {
   menuStore.addRemoveRouteFns(registry?.getRemoveRouteFns() ?? [])
 
   IframeRouteManager.getInstance().save()
-  useWorktabStore().validateWorktabs(router)
+  useWorkTabStore().validateWorktabs(router)
 
   return menuList.length
 }

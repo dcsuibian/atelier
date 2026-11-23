@@ -53,7 +53,7 @@ interface WorktabState {
 /**
  * 工作台标签页管理 Store
  */
-export const useWorktabStore = defineStore(
+export const useWorkTabStore = defineStore(
   'worktabStore',
   () => {
     // 状态定义

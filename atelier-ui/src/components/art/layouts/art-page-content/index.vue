@@ -39,14 +39,14 @@ import type { CSSProperties } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAutoLayoutHeight } from '@/composables/art/useLayoutHeight'
 import { useSettingStore } from '@/stores/setting'
-import { useWorktabStore } from '@/stores/work-tab'
+import { useWorkTabStore } from '@/stores/work-tab'
 
 defineOptions({ name: 'ArtPageContent' })
 
 const route = useRoute()
 const { containerMinHeight } = useAutoLayoutHeight()
 const { pageTransition, containerWidth, refresh } = storeToRefs(useSettingStore())
-const { keepAliveExclude } = storeToRefs(useWorktabStore())
+const { keepAliveExclude } = storeToRefs(useWorkTabStore())
 
 const isRefresh = shallowRef(true)
 const isOpenRouteInfo = import.meta.env.VITE_OPEN_ROUTE_INFO

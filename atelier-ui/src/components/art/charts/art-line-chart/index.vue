@@ -17,7 +17,7 @@ import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/compon
 import ChartView from '@/components/chart-view/index.vue'
 import { getCssVar, hexToRgba } from '@/utils/art/ui'
 import { useChartOps, useChart } from '@/composables/use-chart'
-import type { LineChartProps, LineDataItem } from '../types'
+import type { LineChartProps, LineDataItem } from '@/components/art/charts/types'
 
 use([LineChart, GridComponent, TooltipComponent, LegendComponent])
 

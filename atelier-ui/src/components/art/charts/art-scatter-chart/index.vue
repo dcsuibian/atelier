@@ -17,7 +17,7 @@ import ChartView from '@/components/chart-view/index.vue'
 import type { EChartsOption } from 'echarts'
 import { getCssVar } from '@/utils/art/ui'
 import { useChartOps, useChart } from '@/composables/use-chart'
-import type { ScatterChartProps } from '../types'
+import type { ScatterChartProps } from '@/components/art/charts/types'
 
 use([ScatterChart, GridComponent, TooltipComponent])
 

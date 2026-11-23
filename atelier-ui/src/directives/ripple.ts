@@ -37,7 +37,7 @@
  * @author Art Design Pro Team
  */
 
-import type { App, Directive, DirectiveBinding } from 'vue'
+import type { Directive, DirectiveBinding } from 'vue'
 
 export interface RippleOptions {
   /** 水波纹颜色 */
@@ -109,6 +109,9 @@ export const vRipple: RippleDirective = {
   },
 }
 
-export function setupRippleDirective(app: App) {
-  app.directive('ripple', vRipple)
+// 就地声明，模板里 v-ripple 才有类型检查
+declare module 'vue' {
+  export interface GlobalDirectives {
+    vRipple: RippleDirective
+  }
 }

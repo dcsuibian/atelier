@@ -47,7 +47,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 - `src/types/art/`、`src/utils/art/` 是 ADP 原件；自有类型与工具平铺成 `src/types/session.ts`、`src/utils/http.ts` 这样
 - `src/composables/art/` 同理，`useAuth.ts` 是重写过的，平铺在 `src/composables/` 下。目录不叫 ADP 的 `hooks`：hooks 是 React 的叫法，Vue 官方叫 composables
-- `src/components/core/`、`src/directives/{core,business}/` 尚未改名
+- `src/components/core/` 尚未改名。`src/directives/` 已接管：每个指令一个文件，类型声明就地写在文件里
 
 理由只有一个，但足够：**ADP 升级时 `art/` 与 `core/` 可以整目录对照乃至替换**，不必逐行分辨哪行是上游的、哪行是自己改的。上面第 (1) 段同步的成本直接取决于这件事。
 
@@ -116,7 +116,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 这几样不是演示内容，是 ADP 的实现方式与本项目的设计对不上，对接后端时一并换掉了。
 
 - **ADP 的 HTTP 层**（`utils/art/http/`）：它按 `{ code, msg, data }` 收响应、往 header 注入 token、自带重试与 401 自动登出。响应结构与 `ResponseWrapper` 对不上，token 与 Cookie 会话也不是一回事。换成 `utils/http.ts`：只解包 `result`，不带 token、不重试——重试该由调用方按场景决定，放在这层只会误伤。401 是唯一的例外，见「前端的会话与权限」。
-- **`v-auth` 与 `v-roles` 指令**：理由见「前端的会话与权限」。`src/directives/` 现在只剩 `highlight` 和 `ripple` 两个纯 UI 指令。
+- **`v-auth` 与 `v-roles` 指令**：理由见「前端的会话与权限」。`src/directives/` 现在只剩 `ripple` 一个纯 UI 指令。
 - **userStore 这个杂物袋**：ADP 把登录态、用户信息、语言、搜索历史、锁屏全塞在一个 store 里。语言、搜索历史、锁屏是跟着浏览器走的用户偏好，与登录与否无关，已迁入 `settingStore`；剩下的会话部分由 `stores/session.ts` 接管。锁屏是例外：存在偏好里，生命周期却跟着会话，登出时由 `session.reset()` 一并解除。ADP 的 `logOut()` 本来会清它，拆分时容易漏掉。
 - **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。`ComponentLoader`、`RouteTransformer`、`RouteValidator`、`IframeRouteManager` 属于机制层，保留在 `core/` 下不动。
 
@@ -276,7 +276,6 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 **已决定，待做（建议按此顺序）：**
 
-- **`v-ripple` 合成一个文件**：现在分在三个文件（指令、`setupGlobDirectives`、`types/art/directive`），合成一个文件导出 `vRipple` 并就地 `declare module 'vue'`，`main.ts` 里一行注册。
 - **删 `useAuth`，直接用 `permissionStore.check()`**：它只是转发，路由守卫本就直接调 `check`，去掉后全项目只剩一种写法。注释里「按权限码不按角色」的理由挪到 `check` 上。
 - **路由改真 import，删后端路由模式**：后端路由模式是凭空设想的需求，没有实际用处。`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。顺带把 Layout 从 `views/index/` 挪到 `components/` 下：它是包住页面的外壳，不是页面；`'/index/index'` 魔法字符串、`routes-alias.ts` 的 `Layout` 别名及 `ComponentLoader`、`RouteValidator` 对它的特判一并删掉。
 - **删 `useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游不用它，模板页面的写法应与下游一致，否则对照失去意义。用户、角色、权限三页改为 `ElTable` + `ElPagination`，loading 与查询参数自己管；撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。

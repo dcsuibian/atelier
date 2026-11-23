@@ -3,7 +3,7 @@ import type { AppRouteRecord } from '@/types/art/router'
 export const resultRoutes: AppRouteRecord = {
   path: '/result',
   name: 'Result',
-  component: '/index/index',
+  component: () => import('@/components/app-layout/index.vue'),
   meta: {
     title: 'menus.result.title',
     icon: 'ri:checkbox-circle-line',
@@ -12,7 +12,7 @@ export const resultRoutes: AppRouteRecord = {
     {
       path: 'success',
       name: 'ResultSuccess',
-      component: '/result/success',
+      component: () => import('@/views/result/success/index.vue'),
       meta: {
         title: 'menus.result.success',
         icon: 'ri:checkbox-circle-line',
@@ -22,7 +22,7 @@ export const resultRoutes: AppRouteRecord = {
     {
       path: 'fail',
       name: 'ResultFail',
-      component: '/result/fail',
+      component: () => import('@/views/result/fail/index.vue'),
       meta: {
         title: 'menus.result.fail',
         icon: 'ri:close-circle-line',

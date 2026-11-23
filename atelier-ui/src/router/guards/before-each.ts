@@ -28,7 +28,8 @@ import { loadingService } from '@/utils/art/ui'
 import { RoutesAlias } from '../routes-alias'
 import { staticRoutes } from '../routes/static-routes'
 import { dynamicRoutes } from '../routes/dynamic-routes'
-import { IframeRouteManager, MenuProcessor } from '../core'
+import { IframeRouteManager } from '../iframe-route-manager'
+import { MenuProcessor } from '../menu-processor'
 import { DynamicRouteRegistry, filterByPermission } from './route-registry'
 
 const menuProcessor = new MenuProcessor()

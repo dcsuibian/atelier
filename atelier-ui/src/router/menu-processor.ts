@@ -3,46 +3,29 @@
  *
  * 负责菜单数据的获取、过滤和处理
  *
- * @module router/core/MenuProcessor
- * @author Art Design Pro Team
+ * 菜单就是前端路由表本身。ADP 还支持从后端接口拉菜单，那是凭空设想的需求，已删
+ *
+ * @module router/menu-processor
  */
 
 import type { AppRouteRecord } from '@/types/art/router'
-import { useAppMode } from '@/composables/art/useAppMode'
-import { fetchGetMenuList } from '@/apis/system-manage'
-import { dynamicRoutes } from '../routes/dynamic-routes'
-import { RoutesAlias } from '../routes-alias'
+import { dynamicRoutes } from './routes/dynamic-routes'
 import { formatMenuTitle } from '@/utils/art'
 
 export class MenuProcessor {
   /**
    * 获取菜单数据
    *
-   * @param routes 前端模式下要处理的路由，调用方已按权限过滤过；不传则用全量动态路由
+   * @param routes 要处理的路由，调用方已按权限过滤过；不传则用全量动态路由
    */
   async getMenuList(routes: AppRouteRecord[] = [...dynamicRoutes]): Promise<AppRouteRecord[]> {
-    const { isFrontendMode } = useAppMode()
-
-    let menuList: AppRouteRecord[]
-    if (isFrontendMode.value) {
-      menuList = this.filterEmptyMenus(routes)
-    } else {
-      menuList = await this.processBackendMenu()
-    }
+    const menuList = this.filterEmptyMenus(routes)
 
     // 在规范化路径之前，验证原始路径配置
     this.validateMenuPaths(menuList)
 
     // 规范化路径（将相对路径转换为完整路径）
     return this.normalizeMenuPaths(menuList)
-  }
-
-  /**
-   * 处理后端控制模式的菜单
-   */
-  private async processBackendMenu(): Promise<AppRouteRecord[]> {
-    const list = await fetchGetMenuList()
-    return this.filterEmptyMenus(list)
   }
 
   /**
@@ -73,7 +56,7 @@ export class MenuProcessor {
         }
 
         // 如果有有效的 component，保留
-        if (item.component && item.component !== '' && item.component !== RoutesAlias.Layout) {
+        if (item.component) {
           return true
         }
 
@@ -139,12 +122,7 @@ export class MenuProcessor {
    */
   private isNavigableRoute(route: AppRouteRecord): boolean {
     return Boolean(
-      route.path &&
-      route.path !== '/' &&
-      !route.meta?.link &&
-      route.meta?.isIframe !== true &&
-      route.component &&
-      route.component !== '',
+      route.path && route.path !== '/' && !route.meta?.link && route.meta?.isIframe !== true && route.component,
     )
   }
 

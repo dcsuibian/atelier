@@ -9,7 +9,43 @@
 import type { Router, RouteRecordRaw } from 'vue-router'
 import type { AppRouteRecord } from '@/types/art/router'
 import { usePermissionStore } from '@/stores/permission'
-import { RouteTransformer, ComponentLoader, RouteValidator } from '@/router/core'
+import { IframeRouteManager } from '@/router/iframe-route-manager'
+
+const AppLayout = () => import('@/components/app-layout/index.vue')
+const Iframe = () => import('@/views/outside/Iframe.vue')
+
+/**
+ * 转成 vue-router 的路由记录。组件在配置里已是真实 import，只有两种情况要改形：
+ * iframe 页面统一由 Iframe.vue 渲染；没有子路由的一级菜单要套一层布局，否则页面没有侧栏和顶栏
+ */
+function toRouteRecord(route: AppRouteRecord, depth = 0): RouteRecordRaw {
+  const { children, ...rest } = route
+  const isIframe = true === route.meta.isIframe
+  if (isIframe) {
+    IframeRouteManager.getInstance().add(route)
+  }
+  const component = isIframe ? Iframe : route.component
+
+  if (0 === depth && (isIframe || !children?.length)) {
+    if (!isIframe) {
+      route.meta.isFirstLevel = true
+    }
+    const firstSegment = route.path.split('/').find(Boolean)
+    return {
+      ...rest,
+      path: firstSegment ? `/${firstSegment}` : '/',
+      name: '',
+      component: AppLayout,
+      children: [{ ...rest, component }],
+    } as RouteRecordRaw
+  }
+
+  return {
+    ...rest,
+    component,
+    ...(children?.length && { children: children.map(child => toRouteRecord(child, depth + 1)) }),
+  } as RouteRecordRaw
+}
 
 /**
  * 按权限筛选路由树。父节点没权限时整棵子树一并去掉；
@@ -42,15 +78,11 @@ export class DynamicRouteRegistry {
   private static instance: DynamicRouteRegistry | null = null
 
   private readonly router: Router
-  private readonly transformer: RouteTransformer
-  private readonly validator: RouteValidator
   private removeRouteFns: (() => void)[] = []
   private registered = false
 
   private constructor(router: Router) {
     this.router = router
-    this.transformer = new RouteTransformer(new ComponentLoader())
-    this.validator = new RouteValidator()
   }
 
   /**
@@ -70,15 +102,9 @@ export class DynamicRouteRegistry {
       return
     }
 
-    // 路由配置写错（重名、组件缺失）时直接报出来，别让它静默变成点不开的菜单
-    const { valid, errors } = this.validator.validate(routes)
-    if (!valid) {
-      throw new Error(`路由配置验证失败: ${errors.join(', ')}`)
-    }
-
     this.removeRouteFns = routes
       .filter(route => route.name && !this.router.hasRoute(route.name))
-      .map(route => this.router.addRoute(this.transformer.transform(route) as RouteRecordRaw))
+      .map(route => this.router.addRoute(toRouteRecord(route)))
     this.registered = true
   }
 

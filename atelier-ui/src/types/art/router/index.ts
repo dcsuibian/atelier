@@ -20,7 +20,7 @@
  * @author Art Design Pro Team
  */
 
-import type { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw, RouteRecordSingleView } from 'vue-router'
 import type { PermissionExpression } from '@/types'
 
 /**
@@ -82,5 +82,6 @@ export interface AppRouteRecord extends Omit<RouteRecordRaw, 'meta' | 'children'
   id?: number
   meta: RouteMeta
   children?: AppRouteRecord[]
-  component?: string | (() => Promise<any>)
+  // atelier：ADP 允许写字符串路径由 ComponentLoader 按名加载，改为只认真实组件，路径写错在构建期就报
+  component?: RouteRecordSingleView['component']
 }

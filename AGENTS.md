@@ -53,7 +53,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 两条配套规则：
 
-- **上游原件连文件名都不改。** `tableCache.ts`、`ComponentLoader.ts` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
+- **上游原件连文件名都不改。** `tableCache.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase 一律原样保留——重命名会让与 ADP 的逐文件对照全部失效。只有自有文件才用 kebab-case。
 - **改动大到「接管」的模块不留原件。** `stores/`、`router/`、`apis/` 属于重写而非微调，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。在 `art/` 下留一份用不到的副本，只会制造「到底该改哪个」的困惑。
 
 **`art/` 与 `core/` 里的改动分三类**，ADP 升级整目录替换后逐类补回：
@@ -83,7 +83,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 | `router/guards/beforeEach.ts`、`afterEach.ts` | `router/guards/before-each.ts`、`after-each.ts` |
 | `router/routesAlias.ts` | `router/routes-alias.ts` |
 
-`router/core/` 下那几个 PascalCase 文件是 ADP 原件，已在 `core/` 里，按上面的规则不动。
+`router/` 整体属于接管，ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名 kebab-case 挪到 `router/` 下，其余随按字符串加载组件一起删了。
 
 ## 与上游的分歧
 
@@ -105,7 +105,7 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` 从 367 个文件降到 266 个）。判断标准是：**演示页面用完即弃，去 ADP 仓库看就行；可复用组件要留下**。
 
-- 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested、system/menu（菜单写在 `router/modules/` 里，没有菜单管理的需要；`MenuProcessor` 的后端菜单模式仍会调 `fetchGetMenuList`，那是机制层，没删）
+- 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested、system/menu（菜单写在 `router/modules/` 里，没有菜单管理的需要）
 - 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件——它们各自绑着一个重型 npm 依赖
 - **统计卡片（8 个）与图表组件（6 个）全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
 
@@ -118,7 +118,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **ADP 的 HTTP 层**（`utils/art/http/`）：它按 `{ code, msg, data }` 收响应、往 header 注入 token、自带重试与 401 自动登出。响应结构与 `ResponseWrapper` 对不上，token 与 Cookie 会话也不是一回事。换成 `utils/http.ts`：只解包 `result`，不带 token、不重试——重试该由调用方按场景决定，放在这层只会误伤。401 是唯一的例外，见「前端的会话与权限」。
 - **`v-auth` 与 `v-roles` 指令**：理由见「前端的会话与权限」。`src/directives/` 现在只剩 `ripple` 一个纯 UI 指令。
 - **userStore 这个杂物袋**：ADP 把登录态、用户信息、语言、搜索历史、锁屏全塞在一个 store 里。语言、搜索历史、锁屏是跟着浏览器走的用户偏好，与登录与否无关，已迁入 `settingStore`；剩下的会话部分由 `stores/session.ts` 接管。锁屏是例外：存在偏好里，生命周期却跟着会话，登出时由 `session.reset()` 一并解除。ADP 的 `logOut()` 本来会清它，拆分时容易漏掉。
-- **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。`ComponentLoader`、`RouteTransformer`、`RouteValidator`、`IframeRouteManager` 属于机制层，保留在 `core/` 下不动。
+- **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。
+- **后端路由模式与按字符串加载组件**：ADP 可以从接口拉菜单，路由里写 `component: '/system/user'` 由 `ComponentLoader` 按名加载。后端路由模式是凭空设想的需求，没有实际用处；字符串路径写错要到运行时才发现。现在路由配置一律写 `() => import(...)`，`AppRouteRecord.component` 的类型也不再接受字符串。布局外壳从 `views/index/` 挪到 `components/app-layout/`：它包住页面，本身不是页面。
 
 ### 已替换为自有配置
 
@@ -256,7 +257,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 ## 当前状态
 
 - `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check` 与 `build` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。**用户、角色管理页已对接**：列表、搜索、增删改、分配角色、分配权限均走真实接口。分配权限的树按权限码冒号前的前缀分组；已分配但被禁用的权限不在树里展示，保存时原样带回，不会被整体替换冲掉。**权限管理页已新增**（`views/system/permission`），只读，权限点的增删改只能改后端 `permissions.yml`。
-- **前端尚未对接的部分**：注册页与忘记密码页后端没有对应接口，链接目前指向死路，**有意留着作参考**，不要顺手删。`apis/system-manage.ts` 只剩 `fetchGetMenuList`，因为 `router/core/MenuProcessor.ts` 的后端菜单模式还引用它，挪走就得改 `core/` 的 import，所以留在原处。
+- **前端尚未对接的部分**：注册页与忘记密码页后端没有对应接口，链接目前指向死路，**有意留着作参考**，不要顺手删。
 - `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。**认证拦截已接上**：未登录访问业务接口返回真实 HTTP 401，前端在 `utils/http.ts` 里统一登出并跳登录页。后端已用真实服务跑通（登录 → 访问 → 登出后旧 Cookie → 401），前端那段跳转尚未在浏览器里实走过。
 - **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话、未登录拦截），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
 
@@ -276,7 +277,6 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 **已决定，待做（建议按此顺序）：**
 
-- **路由改真 import，删后端路由模式**：后端路由模式是凭空设想的需求，没有实际用处。`component: '/system/user'` 改为 `() => import('@/views/system/user/index.vue')`，路径写错从运行时才发现变为构建期报错，IDE 也能跳转。连带删除 `useAppMode`、`VITE_ACCESS_MODE`、`MenuProcessor` 的后端分支、`fetchGetMenuList` 与整个 `apis/system-manage.ts`，`ComponentLoader` 大概率也能删。等于接管 `router/core/`。动手前先确认 iframe 外链路由（`IframeRouteManager`、`views/outside`）是否依赖字符串路径。顺带把 Layout 从 `views/index/` 挪到 `components/` 下：它是包住页面的外壳，不是页面；`'/index/index'` 魔法字符串、`routes-alias.ts` 的 `Layout` 别名及 `ComponentLoader`、`RouteValidator` 对它的特判一并删掉。
 - **删 `useTable`（723 行，带缓存、防抖、三种刷新策略）**：下游不用它，模板页面的写法应与下游一致，否则对照失去意义。用户、角色、权限三页改为 `ElTable` + `ElPagination`，loading 与查询参数自己管；撤回为它开的两处破例（`useTable.ts` 的 `InferRecordType`、`tableConfig.ts` 的分页键）。
 
 **等决定：**

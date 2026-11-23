@@ -25,7 +25,7 @@ import { useWorktabStore } from '@/stores/work-tab'
 import type { RouteLocationNormalized } from 'vue-router'
 import { isIframe } from './route'
 import { useSettingStore } from '@/stores/setting'
-import { IframeRouteManager } from '@/router/core'
+import { IframeRouteManager } from '@/router/iframe-route-manager'
 import { useCommon } from '@/composables/art/useCommon'
 
 /**

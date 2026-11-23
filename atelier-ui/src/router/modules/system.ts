@@ -4,7 +4,7 @@ import { PERMISSIONS } from '@/constants/permission'
 export const systemRoutes: AppRouteRecord = {
   path: '/system',
   name: 'System',
-  component: '/index/index',
+  component: () => import('@/components/app-layout/index.vue'),
   meta: {
     title: 'menus.system.title',
     icon: 'ri:user-3-line',
@@ -14,7 +14,7 @@ export const systemRoutes: AppRouteRecord = {
     {
       path: 'user',
       name: 'User',
-      component: '/system/user',
+      component: () => import('@/views/system/user/index.vue'),
       meta: {
         title: 'menus.system.user',
         icon: 'ri:user-line',
@@ -25,7 +25,7 @@ export const systemRoutes: AppRouteRecord = {
     {
       path: 'role',
       name: 'Role',
-      component: '/system/role',
+      component: () => import('@/views/system/role/index.vue'),
       meta: {
         title: 'menus.system.role',
         icon: 'ri:user-settings-line',
@@ -36,7 +36,7 @@ export const systemRoutes: AppRouteRecord = {
     {
       path: 'permission',
       name: 'Permission',
-      component: '/system/permission',
+      component: () => import('@/views/system/permission/index.vue'),
       meta: {
         title: 'menus.system.permission',
         icon: 'ri:shield-keyhole-line',
@@ -47,7 +47,7 @@ export const systemRoutes: AppRouteRecord = {
     {
       path: 'user-center',
       name: 'UserCenter',
-      component: '/system/user-center',
+      component: () => import('@/views/system/user-center/index.vue'),
       meta: {
         title: 'menus.system.userCenter',
         icon: 'ri:user-line',

@@ -56,7 +56,7 @@ export const staticRoutes: AppRouteRecordRaw[] = [
   },
   {
     path: '/outside',
-    component: () => import('@/views/index/index.vue'),
+    component: () => import('@/components/app-layout/index.vue'),
     name: 'Outside',
     meta: { title: 'menus.outside.title' },
     children: [

@@ -10,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import type { PermissionQuery } from '@/types'
 
 interface Emits {
@@ -21,26 +22,29 @@ const emit = defineEmits<Emits>()
 
 const formData = defineModel<PermissionQuery>({ required: true })
 
-const formItems = [
+const { t } = useI18n()
+
+// 写成 computed，切换语言时标签跟着变
+const formItems = computed(() => [
   {
-    label: '关键字',
+    label: t('common.keyword'),
     key: 'searchText',
     type: 'input',
-    placeholder: '权限码 / 名称 / 描述',
+    placeholder: t('system.permission.searchPlaceholder'),
     clearable: true,
   },
   {
-    label: '状态',
+    label: t('common.status'),
     key: 'status',
     type: 'select',
     props: {
-      placeholder: '全部',
+      placeholder: t('common.all'),
       clearable: true,
       options: [
-        { label: '启用', value: 'ENABLED' },
-        { label: '禁用', value: 'DISABLED' },
+        { label: t('common.enabled'), value: 'ENABLED' },
+        { label: t('common.disabled'), value: 'DISABLED' },
       ],
     },
   },
-]
+])
 </script>

@@ -6,25 +6,30 @@
     <ElCard class="art-table-card">
       <div class="flex h-full flex-col">
         <div v-if="permissionStore.check(PERMISSIONS.ROLE_ADD)" class="mb-3">
-          <ElButton @click="showDialog()" v-ripple>新增角色</ElButton>
+          <ElButton @click="showDialog()" v-ripple>{{ $t('system.role.add') }}</ElButton>
         </div>
 
         <div class="min-h-0 flex-1">
           <ElTable v-loading="loading" :data="roles" height="100%">
-            <ElTableColumn type="index" label="序号" width="60" />
-            <ElTableColumn prop="name" label="角色名称" min-width="120" />
-            <ElTableColumn prop="description" label="角色描述" min-width="150" show-overflow-tooltip />
-            <ElTableColumn label="角色状态" width="100">
+            <ElTableColumn type="index" :label="$t('common.index')" width="60" />
+            <ElTableColumn prop="name" :label="$t('system.role.name')" min-width="120" />
+            <ElTableColumn
+              prop="description"
+              :label="$t('system.role.description')"
+              min-width="150"
+              show-overflow-tooltip
+            />
+            <ElTableColumn :label="$t('system.role.status')" width="100">
               <template #default="{ row }">
                 <ElTag :type="STATUS_TAG[row.status as RoleStatus].type">
                   {{ STATUS_TAG[row.status as RoleStatus].text }}
                 </ElTag>
               </template>
             </ElTableColumn>
-            <ElTableColumn label="创建时间" width="180">
+            <ElTableColumn :label="$t('common.createTime')" width="180">
               <template #default="{ row }">{{ formatTime(row.createTime) }}</template>
             </ElTableColumn>
-            <ElTableColumn label="操作" width="80" fixed="right">
+            <ElTableColumn :label="$t('common.operation')" width="80" fixed="right">
               <template #default="{ row }">
                 <ArtButtonMore
                   :list="OPERATIONS"
@@ -57,6 +62,7 @@
 <script setup lang="ts">
 import { formatDate } from '@vueuse/core'
 import { ElMessageBox } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import type { ButtonMoreItem } from '@/components/art/forms/art-button-more/index.vue'
 import ArtButtonMore from '@/components/art/forms/art-button-more/index.vue'
 import { usePermissionStore } from '@/stores/permission'
@@ -70,28 +76,29 @@ import RolePermissionDialog from './modules/role-permission-dialog.vue'
 defineOptions({ name: 'Role' })
 
 const permissionStore = usePermissionStore()
+const { t } = useI18n()
 
 const STATUS_TAG: Record<RoleStatus, { type: 'success' | 'danger'; text: string }> = {
-  ENABLED: { type: 'success', text: '启用' },
-  DISABLED: { type: 'danger', text: '禁用' },
+  ENABLED: { type: 'success', text: t('common.enabled') },
+  DISABLED: { type: 'danger', text: t('common.disabled') },
 }
 
 const OPERATIONS: ButtonMoreItem[] = [
   {
     key: 'permission',
-    label: '分配权限',
+    label: t('system.role.assignPermission'),
     icon: 'ri:shield-keyhole-line',
     auth: PERMISSIONS.ROLE_ASSIGN_PERMISSION,
   },
   {
     key: 'edit',
-    label: '编辑角色',
+    label: t('system.role.edit'),
     icon: 'ri:edit-2-line',
     auth: PERMISSIONS.ROLE_EDIT,
   },
   {
     key: 'delete',
-    label: '删除角色',
+    label: t('system.role.delete'),
     icon: 'ri:delete-bin-4-line',
     color: '#f56c6c',
     auth: PERMISSIONS.ROLE_DELETE,
@@ -168,9 +175,9 @@ const handleOperation = (item: ButtonMoreItem, row: Role) => {
 
 const deleteRole = async (role: Role) => {
   try {
-    await ElMessageBox.confirm(`确定删除角色「${role.name}」吗？其权限分配会一并删除。`, '删除角色', {
-      confirmButtonText: '删除',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm(t('system.role.deleteConfirm', { name: role.name }), t('system.role.delete'), {
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel'),
       type: 'warning',
     })
   } catch {
@@ -178,7 +185,7 @@ const deleteRole = async (role: Role) => {
   }
   // 仍分配给用户时后端返回 409，提示由 http 层弹出
   await deleteRoleById(role.id)
-  ElMessage.success('删除成功')
+  ElMessage.success(t('common.deleteSuccess'))
   // 删掉的是当前页最后一条时，当前页已经不存在了，退回上一页
   if (1 === roles.value.length && pageNumber.value > 1) {
     pageNumber.value--

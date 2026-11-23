@@ -1,47 +1,53 @@
 <template>
-  <ElDialog v-model="visible" :title="user ? '编辑用户' : '新增用户'" width="480px" align-center @open="handleOpen">
-    <ElForm ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="80px">
-      <ElFormItem label="用户名" prop="name">
-        <ElInput v-model="form.name" :disabled="infoDisabled" placeholder="用于登录，不区分大小写" />
+  <ElDialog
+    v-model="visible"
+    :title="user ? $t('system.user.edit') : $t('system.user.add')"
+    width="480px"
+    align-center
+    @open="handleOpen"
+  >
+    <ElForm ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto">
+      <ElFormItem :label="$t('system.user.name')" prop="name">
+        <ElInput v-model="form.name" :disabled="infoDisabled" :placeholder="$t('system.user.namePlaceholder')" />
       </ElFormItem>
-      <ElFormItem label="密码" prop="password">
+      <ElFormItem :label="$t('system.user.password')" prop="password">
         <ElInput
           v-model="form.password"
           :disabled="infoDisabled"
           type="password"
           show-password
           autocomplete="new-password"
-          :placeholder="user ? '留空则不修改' : '6 到 72 个字符'"
+          :placeholder="user ? $t('system.user.passwordPlaceholderEdit') : $t('system.user.passwordPlaceholderNew')"
         />
       </ElFormItem>
-      <ElFormItem label="真实姓名" prop="realName">
+      <ElFormItem :label="$t('system.user.realName')" prop="realName">
         <ElInput v-model="form.realName" :disabled="infoDisabled" />
       </ElFormItem>
-      <ElFormItem label="手机号" prop="phoneNumber">
+      <ElFormItem :label="$t('system.user.phoneNumber')" prop="phoneNumber">
         <ElInput v-model="form.phoneNumber" :disabled="infoDisabled" />
       </ElFormItem>
-      <ElFormItem label="邮箱" prop="email">
+      <ElFormItem :label="$t('system.user.email')" prop="email">
         <ElInput v-model="form.email" :disabled="infoDisabled" />
       </ElFormItem>
-      <ElFormItem label="性别" prop="gender">
+      <ElFormItem :label="$t('system.user.gender')" prop="gender">
         <ElRadioGroup v-model="form.gender" :disabled="infoDisabled">
-          <ElRadio value="MALE">男</ElRadio>
-          <ElRadio value="FEMALE">女</ElRadio>
-          <ElRadio value="UNKNOWN">未知</ElRadio>
+          <ElRadio value="MALE">{{ $t('system.user.genders.MALE') }}</ElRadio>
+          <ElRadio value="FEMALE">{{ $t('system.user.genders.FEMALE') }}</ElRadio>
+          <ElRadio value="UNKNOWN">{{ $t('system.user.genders.UNKNOWN') }}</ElRadio>
         </ElRadioGroup>
       </ElFormItem>
-      <ElFormItem label="状态" prop="status">
+      <ElFormItem :label="$t('common.status')" prop="status">
         <ElSwitch
           v-model="form.status"
           :disabled="infoDisabled || isSuperAdmin"
           active-value="ENABLED"
           inactive-value="DISABLED"
-          active-text="启用"
-          inactive-text="禁用"
+          :active-text="$t('common.enabled')"
+          :inactive-text="$t('common.disabled')"
         />
       </ElFormItem>
       <!-- 超级管理员的权限不走角色，给它分配角色没有意义 -->
-      <ElFormItem v-if="rolesVisible" label="角色" prop="roleIds">
+      <ElFormItem v-if="rolesVisible" :label="$t('system.user.roles')" prop="roleIds">
         <ElSelect
           v-model="form.roleIds"
           multiple
@@ -49,26 +55,27 @@
           remote
           :remote-method="searchRoles"
           :loading="rolesLoading"
-          placeholder="输入名称搜索"
+          :placeholder="$t('system.user.rolesPlaceholder')"
         >
           <ElOption
             v-for="role in roleOptions"
             :key="role.id"
             :value="role.id"
-            :label="'DISABLED' === role.status ? `${role.name}（已禁用）` : role.name"
+            :label="'DISABLED' === role.status ? $t('system.user.roleDisabled', { name: role.name }) : role.name"
           />
         </ElSelect>
       </ElFormItem>
     </ElForm>
     <template #footer>
-      <ElButton @click="visible = false">取消</ElButton>
-      <ElButton type="primary" :loading="submitting" @click="handleSubmit">提交</ElButton>
+      <ElButton @click="visible = false">{{ $t('common.cancel') }}</ElButton>
+      <ElButton type="primary" :loading="submitting" @click="handleSubmit">{{ $t('common.submit') }}</ElButton>
     </template>
   </ElDialog>
 </template>
 
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import { type UserForm, addUser, editUserPartially, getRolesByUserId, setRolesByUserId } from '@/apis/user'
 import { getRoles } from '@/apis/role'
 import { usePermissionStore } from '@/stores/permission'
@@ -93,6 +100,7 @@ const visible = defineModel<boolean>('visible', { required: true })
 
 const permissionStore = usePermissionStore()
 const sessionStore = useSessionStore()
+const { t } = useI18n()
 
 const isSuperAdmin = computed(() => SUPER_ADMIN_ID === props.user?.id)
 /** 只有分配角色权限的人也能打开编辑弹窗，这时资料只读 */
@@ -127,19 +135,19 @@ const form = reactive<Form>(createForm())
 // 与后端 User 上的校验保持一致，后端仍会再校验一遍
 const rules = computed<FormRules<Form>>(() => ({
   name: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 2, max: 16, message: '长度在 2 到 16 个字符之间', trigger: 'blur' },
+    { required: true, message: t('system.user.enterName'), trigger: 'blur' },
+    { min: 2, max: 16, message: t('common.lengthBetween', { min: 2, max: 16 }), trigger: 'blur' },
   ],
   password: [
-    { required: !props.user, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 72, message: '长度在 6 到 72 个字符之间', trigger: 'blur' },
+    { required: !props.user, message: t('system.user.enterPassword'), trigger: 'blur' },
+    { min: 6, max: 72, message: t('common.lengthBetween', { min: 6, max: 72 }), trigger: 'blur' },
   ],
   realName: [
-    { required: true, message: '请输入真实姓名', trigger: 'blur' },
-    { max: 20, message: '不能超过 20 个字符', trigger: 'blur' },
+    { required: true, message: t('system.user.enterRealName'), trigger: 'blur' },
+    { max: 20, message: t('common.maxLength', { max: 20 }), trigger: 'blur' },
   ],
-  phoneNumber: [{ min: 3, max: 20, message: '长度在 3 到 20 个字符之间', trigger: 'blur' }],
-  email: [{ type: 'email', message: '邮箱格式不正确', trigger: 'blur' }],
+  phoneNumber: [{ min: 3, max: 20, message: t('common.lengthBetween', { min: 3, max: 20 }), trigger: 'blur' }],
+  email: [{ type: 'email', message: t('system.user.invalidEmail'), trigger: 'blur' }],
 }))
 
 const loading = ref(false)
@@ -233,7 +241,7 @@ const handleSubmit = async () => {
     if (user.id === sessionStore.user?.id) {
       await sessionStore.refresh()
     }
-    ElMessage.success(props.user ? '保存成功' : '新增成功')
+    ElMessage.success(props.user ? t('common.saveSuccess') : t('common.addSuccess'))
   } catch {
     // 已提示
   } finally {

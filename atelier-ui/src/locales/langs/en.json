@@ -12,7 +12,9 @@
     "requestCancelled": "Request cancelled",
     "networkError": "Network connection error, please check your connection",
     "requestFailed": "Request failed",
-    "requestConfigError": "Request configuration error"
+    "requestConfigError": "Request configuration error",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "invalidResponse": "Request failed: unexpected response format"
   },
   "topBar": {
     "search": {
@@ -36,7 +38,29 @@
     "tips": "Prompt",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "logOutTips": "Do you want to log out?"
+    "logOutTips": "Do you want to log out?",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "submit": "Submit",
+    "index": "No.",
+    "operation": "Actions",
+    "status": "Status",
+    "name": "Name",
+    "description": "Description",
+    "createTime": "Created",
+    "updateTime": "Updated",
+    "keyword": "Keyword",
+    "all": "All",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "noData": "No data",
+    "addSuccess": "Created successfully",
+    "saveSuccess": "Saved successfully",
+    "deleteSuccess": "Deleted successfully",
+    "lengthBetween": "Must be {min} to {max} characters",
+    "maxLength": "Must be at most {max} characters"
   },
   "search": {
     "placeholder": "Search page",
@@ -258,5 +282,61 @@
     "zebra": "Zebra",
     "border": "Border",
     "headerBackground": "Header BG"
+  },
+  "session": {
+    "noPagePermission": "This account has no page permissions. Please contact an administrator."
+  },
+  "system": {
+    "user": {
+      "add": "Add User",
+      "edit": "Edit User",
+      "delete": "Delete User",
+      "name": "Username",
+      "namePlaceholder": "Used to sign in, case-insensitive",
+      "enterName": "Please enter a username",
+      "password": "Password",
+      "passwordPlaceholderNew": "6 to 72 characters",
+      "passwordPlaceholderEdit": "Leave blank to keep unchanged",
+      "enterPassword": "Please enter a password",
+      "realName": "Full Name",
+      "enterRealName": "Please enter the full name",
+      "phoneNumber": "Phone",
+      "email": "Email",
+      "invalidEmail": "Invalid email address",
+      "gender": "Gender",
+      "genders": {
+        "MALE": "Male",
+        "FEMALE": "Female",
+        "UNKNOWN": "Unknown"
+      },
+      "roles": "Roles",
+      "rolesPlaceholder": "Type a name to search",
+      "roleDisabled": "{name} (disabled)",
+      "searchPlaceholder": "Username / full name / phone",
+      "deleteConfirm": "Delete user \"{name}\"? Their role assignments will also be removed."
+    },
+    "role": {
+      "add": "Add Role",
+      "edit": "Edit Role",
+      "delete": "Delete Role",
+      "name": "Role Name",
+      "namePlaceholder": "Case-insensitive, must be unique",
+      "enterName": "Please enter a role name",
+      "description": "Description",
+      "status": "Status",
+      "searchPlaceholder": "Role name / description",
+      "deleteConfirm": "Delete role \"{name}\"? Its permission assignments will also be removed.",
+      "assignPermission": "Assign Permissions",
+      "assignPermissionTitle": "Assign Permissions: {name}",
+      "expandAll": "Expand All",
+      "collapseAll": "Collapse All",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "permissionSaved": "Permissions saved"
+    },
+    "permission": {
+      "code": "Code",
+      "searchPlaceholder": "Code / name / description"
+    }
   }
 }

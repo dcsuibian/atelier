@@ -198,6 +198,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **新文件用 kebab-case**，`art/` 下的上游原件保持原名，理由见「代码组织」一节。
 - **递归类型用对象，别用元组。** 自引用的元组（`type X = string | [X, 'AND' | 'OR', X]`）一旦进了 `RouteMeta`，Vue 模板推导路由对象时会撞上 `TS2589: Type instantiation is excessively deep`；对象的自引用是惰性解析的，不会触发。同一份代码在 TS 5.9 + vue-tsc 3.2 下不报错，所以这是工具链版本差异而非写法错误——但对象写法在新旧两边都成立，没有理由赌旧版本。
 - **别用 `<!-- @vue-ignore -->` 压 TS2589。** 它能让 type-check 过，代价是那个元素上所有表达式一起失去检查，而且随着使用面扩大要到处补；治本的办法是让类型推导得动。
+- **界面文案走 i18n。** 人手写可以只往 `zh.json` 里加，缺的英文会回退成中文显示；AI 写的要把能准确表达的英文一并补进 `en.json`，两边的键保持一致。后端返回的数据（权限名、用户姓名等）不归前端翻译，控制台日志也不必。脚本里用 `useI18n()` 的 `t`，组件外用 `@/locales` 导出的 `$t`；表单校验规则、搜索栏配置这类在 setup 里生成的文案写成 computed，切换语言才会跟着变。
 
 ### atelier-engine
 
@@ -271,11 +272,12 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 **等决定：**
 
-- **i18n 立场**：菜单走 i18n，自有页面文案硬编码中文，ADP 页面两种都有。要么明确只做中文（机制保留、自有页面不强求），要么全部走 i18n。Element Plus 的语言已由 `App.vue` 的 `ElConfigProvider` 联动；项目未直接依赖 dayjs，时间格式化用 `@vueuse/core` 的 `formatDate`。日期选择器内部的 dayjs 是否需要另外 `import 'dayjs/locale/zh-cn'` 才能让周起始、月份名跟随语言，未验证。
+- **日期选择器的周起始要装包才能修**：月份名、年月标题已随语言切换，但中文下一周仍从周日开始。Element Plus 从 dayjs 的 locale 取周起始，要 `import 'dayjs/locale/zh-cn'`；dayjs 只是 Element Plus 的间接依赖，pnpm 下导入不到，得先把它加成直接依赖（版本与 Element Plus 用的保持一致）。
 
 **放到后面：**
 
 - **composables**：`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
+- **ADP 演示页的文案**：工作台、个人中心的演示数据，以及注册、忘记密码页里仍有写死的中文。它们是 ADP 的示例内容，随这些页面的去留一起处理。
 
 ### 待定
 

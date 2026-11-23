@@ -12,7 +12,9 @@
     "requestCancelled": "请求已取消",
     "networkError": "网络连接异常，请检查网络连接",
     "requestFailed": "请求失败",
-    "requestConfigError": "请求配置错误"
+    "requestConfigError": "请求配置错误",
+    "sessionExpired": "登录状态已失效，请重新登录",
+    "invalidResponse": "请求失败：响应格式不正确"
   },
   "topBar": {
     "search": {
@@ -36,7 +38,29 @@
     "tips": "提示",
     "cancel": "取消",
     "confirm": "确定",
-    "logOutTips": "您是否要退出登录?"
+    "logOutTips": "您是否要退出登录?",
+    "add": "新增",
+    "edit": "编辑",
+    "delete": "删除",
+    "save": "保存",
+    "submit": "提交",
+    "index": "序号",
+    "operation": "操作",
+    "status": "状态",
+    "name": "名称",
+    "description": "描述",
+    "createTime": "创建时间",
+    "updateTime": "更新时间",
+    "keyword": "关键字",
+    "all": "全部",
+    "enabled": "启用",
+    "disabled": "禁用",
+    "noData": "暂无数据",
+    "addSuccess": "新增成功",
+    "saveSuccess": "保存成功",
+    "deleteSuccess": "删除成功",
+    "lengthBetween": "长度在 {min} 到 {max} 个字符之间",
+    "maxLength": "不能超过 {max} 个字符"
   },
   "search": {
     "placeholder": "搜索页面",
@@ -258,5 +282,61 @@
     "zebra": "斑马纹",
     "border": "边框",
     "headerBackground": "表头背景"
+  },
+  "session": {
+    "noPagePermission": "当前账号没有任何页面权限，请联系管理员分配"
+  },
+  "system": {
+    "user": {
+      "add": "新增用户",
+      "edit": "编辑用户",
+      "delete": "删除用户",
+      "name": "用户名",
+      "namePlaceholder": "用于登录，不区分大小写",
+      "enterName": "请输入用户名",
+      "password": "密码",
+      "passwordPlaceholderNew": "6 到 72 个字符",
+      "passwordPlaceholderEdit": "留空则不修改",
+      "enterPassword": "请输入密码",
+      "realName": "真实姓名",
+      "enterRealName": "请输入真实姓名",
+      "phoneNumber": "手机号",
+      "email": "邮箱",
+      "invalidEmail": "邮箱格式不正确",
+      "gender": "性别",
+      "genders": {
+        "MALE": "男",
+        "FEMALE": "女",
+        "UNKNOWN": "未知"
+      },
+      "roles": "角色",
+      "rolesPlaceholder": "输入名称搜索",
+      "roleDisabled": "{name}（已禁用）",
+      "searchPlaceholder": "用户名 / 真实姓名 / 手机号",
+      "deleteConfirm": "确定要删除用户「{name}」吗？其角色分配会一并删除。"
+    },
+    "role": {
+      "add": "新增角色",
+      "edit": "编辑角色",
+      "delete": "删除角色",
+      "name": "角色名称",
+      "namePlaceholder": "不区分大小写，不能重复",
+      "enterName": "请输入角色名称",
+      "description": "角色描述",
+      "status": "角色状态",
+      "searchPlaceholder": "角色名称 / 描述",
+      "deleteConfirm": "确定删除角色「{name}」吗？其权限分配会一并删除。",
+      "assignPermission": "分配权限",
+      "assignPermissionTitle": "分配权限：{name}",
+      "expandAll": "全部展开",
+      "collapseAll": "全部收起",
+      "selectAll": "全部选择",
+      "deselectAll": "取消全选",
+      "permissionSaved": "权限保存成功"
+    },
+    "permission": {
+      "code": "权限码",
+      "searchPlaceholder": "权限码 / 名称 / 描述"
+    }
   }
 }

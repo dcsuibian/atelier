@@ -1,31 +1,38 @@
 <template>
-  <ElDialog v-model="visible" :title="role ? '编辑角色' : '新增角色'" width="480px" align-center @open="handleOpen">
-    <ElForm ref="formRef" :model="form" :rules="rules" label-width="80px">
-      <ElFormItem label="角色名称" prop="name">
-        <ElInput v-model="form.name" placeholder="不区分大小写，不能重复" />
+  <ElDialog
+    v-model="visible"
+    :title="role ? $t('system.role.edit') : $t('system.role.add')"
+    width="480px"
+    align-center
+    @open="handleOpen"
+  >
+    <ElForm ref="formRef" :model="form" :rules="rules" label-width="auto">
+      <ElFormItem :label="$t('system.role.name')" prop="name">
+        <ElInput v-model="form.name" :placeholder="$t('system.role.namePlaceholder')" />
       </ElFormItem>
-      <ElFormItem label="描述" prop="description">
+      <ElFormItem :label="$t('common.description')" prop="description">
         <ElInput v-model="form.description" type="textarea" :rows="3" />
       </ElFormItem>
-      <ElFormItem label="状态" prop="status">
+      <ElFormItem :label="$t('common.status')" prop="status">
         <ElSwitch
           v-model="form.status"
           active-value="ENABLED"
           inactive-value="DISABLED"
-          active-text="启用"
-          inactive-text="禁用"
+          :active-text="$t('common.enabled')"
+          :inactive-text="$t('common.disabled')"
         />
       </ElFormItem>
     </ElForm>
     <template #footer>
-      <ElButton @click="visible = false">取消</ElButton>
-      <ElButton type="primary" :loading="submitting" @click="handleSubmit">提交</ElButton>
+      <ElButton @click="visible = false">{{ $t('common.cancel') }}</ElButton>
+      <ElButton type="primary" :loading="submitting" @click="handleSubmit">{{ $t('common.submit') }}</ElButton>
     </template>
   </ElDialog>
 </template>
 
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import { addRole, editRolePartially } from '@/apis/role'
 import type { Role, RoleStatus } from '@/types'
 
@@ -55,16 +62,17 @@ const createForm = (): Form => ({
   status: 'ENABLED',
 })
 
+const { t } = useI18n()
 const formRef = ref<FormInstance>()
 const form = reactive<Form>(createForm())
 
 // 与后端 Role 上的校验保持一致；描述不能为 null，但可以是空串
-const rules: FormRules<Form> = {
+const rules = computed<FormRules<Form>>(() => ({
   name: [
-    { required: true, message: '请输入角色名称', trigger: 'blur' },
-    { max: 255, message: '不能超过 255 个字符', trigger: 'blur' },
+    { required: true, message: t('system.role.enterName'), trigger: 'blur' },
+    { max: 255, message: t('common.maxLength', { max: 255 }), trigger: 'blur' },
   ],
-}
+}))
 
 const submitting = ref(false)
 
@@ -87,7 +95,7 @@ const handleSubmit = async () => {
     } else {
       await addRole({ ...form })
     }
-    ElMessage.success(props.role ? '保存成功' : '新增成功')
+    ElMessage.success(props.role ? t('common.saveSuccess') : t('common.addSuccess'))
     visible.value = false
     emit('submit')
   } catch {

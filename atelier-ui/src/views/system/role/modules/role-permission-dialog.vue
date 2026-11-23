@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     v-model="visible"
-    :title="`分配权限：${role?.name ?? ''}`"
+    :title="$t('system.role.assignPermissionTitle', { name: role?.name ?? '' })"
     width="520px"
     align-center
     class="el-dialog-border"
@@ -26,15 +26,22 @@
       </ElTree>
     </ElScrollbar>
     <template #footer>
-      <ElButton @click="toggleExpandAll">{{ isExpandAll ? '全部收起' : '全部展开' }}</ElButton>
-      <ElButton @click="toggleSelectAll">{{ isSelectAll ? '取消全选' : '全部选择' }}</ElButton>
-      <ElButton type="primary" :loading="submitting" :disabled="loading" @click="savePermissions">保存</ElButton>
+      <ElButton @click="toggleExpandAll">{{
+        isExpandAll ? $t('system.role.collapseAll') : $t('system.role.expandAll')
+      }}</ElButton>
+      <ElButton @click="toggleSelectAll">{{
+        isSelectAll ? $t('system.role.deselectAll') : $t('system.role.selectAll')
+      }}</ElButton>
+      <ElButton type="primary" :loading="submitting" :disabled="loading" @click="savePermissions">{{
+        $t('common.save')
+      }}</ElButton>
     </template>
   </ElDialog>
 </template>
 
 <script setup lang="ts">
 import type { TreeInstance } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import { getPermissionsByRoleId, setPermissionsByRoleId } from '@/apis/role'
 import { getAllPermissions } from '@/apis/permission'
 import { getRolesByUserId } from '@/apis/user'
@@ -58,6 +65,8 @@ interface TreeNode {
   code?: string
   children?: TreeNode[]
 }
+
+const { t } = useI18n()
 
 const treeRef = ref<TreeInstance>()
 const treeData = ref<TreeNode[]>([])
@@ -138,7 +147,7 @@ const savePermissions = async () => {
   submitting.value = true
   try {
     await setPermissionsByRoleId(role.id, [...getCheckedPermissionIds(), ...disabledPermissionIds])
-    ElMessage.success('权限保存成功')
+    ElMessage.success(t('system.role.permissionSaved'))
     visible.value = false
     await refreshSessionIfAffected(role)
   } catch {

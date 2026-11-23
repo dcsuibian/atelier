@@ -18,6 +18,7 @@
  */
 import type { NavigationGuardReturn, RouteLocationNormalized, Router } from 'vue-router'
 import NProgress from 'nprogress'
+import { $t } from '@/locales'
 import { useSettingStore } from '@/stores/setting'
 import { useSessionStore } from '@/stores/session'
 import { useMenuStore } from '@/stores/menu'
@@ -91,7 +92,7 @@ async function resolve(to: RouteLocationNormalized, router: Router): Promise<Nav
     const registered = await registerDynamicRoutes(router)
     // 一个页面都没有，再往下走只会落到 404，还不如直接说清楚
     if (0 === registered) {
-      ElMessage.warning('当前账号没有任何页面权限，请联系管理员分配')
+      ElMessage.warning($t('session.noPagePermission'))
       await sessionStore.logout(false)
       return { name: 'Login' }
     }

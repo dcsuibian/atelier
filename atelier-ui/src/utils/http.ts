@@ -9,6 +9,8 @@
  */
 import axios, { type AxiosRequestConfig, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import type { ResponseWrapper } from '@/types'
+// 只在拦截器里调用，与 locales 之间的循环引用不影响模块初始化
+import { $t } from '@/locales'
 
 const { VITE_API_URL } = import.meta.env
 
@@ -54,7 +56,7 @@ function handleUnauthorized(): void {
     const { useSessionStore } = await import('@/stores/session')
     const sessionStore = useSessionStore()
     if (sessionStore.isLoggedIn) {
-      ElMessage.error('登录状态已失效，请重新登录')
+      ElMessage.error($t('httpMsg.sessionExpired'))
     }
     await sessionStore.logout()
   })().finally(() => {
@@ -70,7 +72,7 @@ axiosInstance.interceptors.response.use(
     }
     // body 不是 ResponseWrapper 时（比如接口地址配错，拿到的是前端的 index.html）message 为空，
     // 不兜底就会弹一个空白提示
-    return Promise.reject(new Error(message ?? '请求失败：响应格式不正确'))
+    return Promise.reject(new Error(message ?? $t('httpMsg.invalidResponse')))
   },
   error => {
     if (isUnauthorized(error)) {

@@ -8,13 +8,13 @@
     <ElCard class="art-table-card">
       <div class="flex h-full flex-col">
         <div v-if="permissionStore.check(PERMISSIONS.USER_ADD)" class="mb-3">
-          <ElButton @click="showDialog()" v-ripple>新增用户</ElButton>
+          <ElButton @click="showDialog()" v-ripple>{{ $t('system.user.add') }}</ElButton>
         </div>
 
         <div class="min-h-0 flex-1">
           <ElTable v-loading="loading" :data="users" height="100%">
-            <ElTableColumn type="index" label="序号" width="60" />
-            <ElTableColumn label="用户名" min-width="240">
+            <ElTableColumn type="index" :label="$t('common.index')" width="60" />
+            <ElTableColumn :label="$t('system.user.name')" min-width="240">
               <template #default="{ row }">
                 <div class="flex-c">
                   <!-- 预览插入到 body 上，否则在表格内部样式会错乱 -->
@@ -31,24 +31,24 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="realName" label="真实姓名" />
-            <ElTableColumn label="性别">
-              <template #default="{ row }">{{ GENDER_TEXT[row.gender as UserGender] }}</template>
+            <ElTableColumn prop="realName" :label="$t('system.user.realName')" />
+            <ElTableColumn :label="$t('system.user.gender')">
+              <template #default="{ row }">{{ row.gender && $t(`system.user.genders.${row.gender}`) }}</template>
             </ElTableColumn>
-            <ElTableColumn label="手机号">
+            <ElTableColumn :label="$t('system.user.phoneNumber')">
               <template #default="{ row }">{{ row.phoneNumber ?? '-' }}</template>
             </ElTableColumn>
-            <ElTableColumn label="状态">
+            <ElTableColumn :label="$t('common.status')">
               <template #default="{ row }">
                 <ElTag :type="STATUS_TAG[row.status as UserStatus].type">
                   {{ STATUS_TAG[row.status as UserStatus].text }}
                 </ElTag>
               </template>
             </ElTableColumn>
-            <ElTableColumn label="创建时间" width="180">
+            <ElTableColumn :label="$t('common.createTime')" width="180">
               <template #default="{ row }">{{ formatTime(row.createTime) }}</template>
             </ElTableColumn>
-            <ElTableColumn label="操作" width="120" fixed="right">
+            <ElTableColumn :label="$t('common.operation')" width="120" fixed="right">
               <template #default="{ row }">
                 <!-- 编辑弹窗里既改资料也分配角色，有其一就给入口 -->
                 <ArtButtonTable
@@ -86,12 +86,13 @@
 <script setup lang="ts">
 import { formatDate } from '@vueuse/core'
 import { ElMessageBox } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import ArtButtonTable from '@/components/art/forms/art-button-table/index.vue'
 import { usePermissionStore } from '@/stores/permission'
 import { deleteUserById, getUsers } from '@/apis/user'
 import { PERMISSIONS } from '@/constants/permission'
 import { SUPER_ADMIN_ID } from '@/constants/user'
-import type { User, UserGender, UserQuery, UserStatus } from '@/types'
+import type { User, UserQuery, UserStatus } from '@/types'
 import defaultAvatar from '@/assets/images/user/avatar.webp'
 import UserSearch from './modules/user-search.vue'
 import UserDialog from './modules/user-dialog.vue'
@@ -99,16 +100,11 @@ import UserDialog from './modules/user-dialog.vue'
 defineOptions({ name: 'User' })
 
 const permissionStore = usePermissionStore()
-
-const GENDER_TEXT: Record<UserGender, string> = {
-  MALE: '男',
-  FEMALE: '女',
-  UNKNOWN: '未知',
-}
+const { t } = useI18n()
 
 const STATUS_TAG: Record<UserStatus, { type: 'success' | 'danger'; text: string }> = {
-  ENABLED: { type: 'success', text: '启用' },
-  DISABLED: { type: 'danger', text: '禁用' },
+  ENABLED: { type: 'success', text: t('common.enabled') },
+  DISABLED: { type: 'danger', text: t('common.disabled') },
 }
 
 const formatTime = (time: number) => formatDate(new Date(time), 'YYYY-MM-DD HH:mm:ss')
@@ -161,16 +157,16 @@ const handleDialogSubmit = () => {
 
 const deleteUser = async (user: User) => {
   try {
-    await ElMessageBox.confirm(`确定要删除用户「${user.name}」吗？其角色分配会一并删除。`, '删除用户', {
-      confirmButtonText: '删除',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm(t('system.user.deleteConfirm', { name: user.name }), t('system.user.delete'), {
+      confirmButtonText: t('common.delete'),
+      cancelButtonText: t('common.cancel'),
       type: 'warning',
     })
   } catch {
     return
   }
   await deleteUserById(user.id)
-  ElMessage.success('删除成功')
+  ElMessage.success(t('common.deleteSuccess'))
   // 删掉的是当前页最后一条时，当前页已经不存在了，退回上一页
   if (1 === users.value.length && pageNumber.value > 1) {
     pageNumber.value--

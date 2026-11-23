@@ -4,7 +4,7 @@
   <div :style="height ? { height } : undefined" v-loading="loading">
     <div class="relative size-full">
       <div v-if="empty" class="absolute inset-0 flex-cc text-xs" :style="{ color: isDark ? '#555555' : '#B3B2B2' }">
-        暂无数据
+        {{ $t('common.noData') }}
       </div>
       <!-- autoresize 用 ResizeObserver 盯着容器，窗口缩放、菜单收起都会跟着重排 -->
       <VChart v-else :option="option" autoresize />

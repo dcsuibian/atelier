@@ -8,22 +8,22 @@
       <div class="flex h-full flex-col">
         <div class="min-h-0 flex-1">
           <ElTable v-loading="loading" :data="permissions" height="100%">
-            <ElTableColumn type="index" label="序号" width="60" />
-            <ElTableColumn label="权限码" min-width="200">
+            <ElTableColumn type="index" :label="$t('common.index')" width="60" />
+            <ElTableColumn :label="$t('system.permission.code')" min-width="200">
               <template #default="{ row }">
                 <code>{{ row.code }}</code>
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="name" label="名称" min-width="120" />
-            <ElTableColumn prop="description" label="描述" min-width="240" />
-            <ElTableColumn label="状态">
+            <ElTableColumn prop="name" :label="$t('common.name')" min-width="120" />
+            <ElTableColumn prop="description" :label="$t('common.description')" min-width="240" />
+            <ElTableColumn :label="$t('common.status')">
               <template #default="{ row }">
                 <ElTag :type="STATUS_TAG[row.status as PermissionStatus].type">
                   {{ STATUS_TAG[row.status as PermissionStatus].text }}
                 </ElTag>
               </template>
             </ElTableColumn>
-            <ElTableColumn label="更新时间" width="180">
+            <ElTableColumn :label="$t('common.updateTime')" width="180">
               <template #default="{ row }">{{ formatTime(row.updateTime) }}</template>
             </ElTableColumn>
           </ElTable>
@@ -46,16 +46,19 @@
 
 <script setup lang="ts">
 import { formatDate } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 import { getPermissions } from '@/apis/permission'
 import type { Permission, PermissionQuery, PermissionStatus } from '@/types'
 import PermissionSearch from './modules/permission-search.vue'
 
 defineOptions({ name: 'Permission' })
 
+const { t } = useI18n()
+
 const STATUS_TAG: Record<PermissionStatus, { type: 'success' | 'info'; text: string }> = {
-  ENABLED: { type: 'success', text: '启用' },
+  ENABLED: { type: 'success', text: t('common.enabled') },
   // 禁用的权限是 permissions.yml 里删掉或停用的，不再生效，但保留记录
-  DISABLED: { type: 'info', text: '禁用' },
+  DISABLED: { type: 'info', text: t('common.disabled') },
 }
 
 const formatTime = (time: number) => formatDate(new Date(time), 'YYYY-MM-DD HH:mm:ss')

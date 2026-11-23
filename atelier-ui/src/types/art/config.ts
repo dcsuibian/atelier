@@ -1,31 +1,38 @@
 /**
- * 配置类型定义模块
- *
- * 提供系统配置相关的类型定义
- *
- * ## 主要功能
- *
- * - 主题设置类型
- * - 菜单布局类型
- * - 节日配置类型
- * - 系统基础配置类型
- * - 快速入口配置类型
- * - 顶部栏功能配置类型
- * - 环境配置类型
- * - 应用配置类型
- *
- * ## 使用场景
- *
- * - 系统配置文件类型约束
- * - 配置项类型定义
- * - 配置数据验证
+ * 系统配置（@/config）的类型，以及其中引用的主题、菜单主题、顶部栏功能开关
  *
  * @module types/art/config
  * @author Art Design Pro Team
  */
 
-import { MenuTypeEnum, SystemThemeEnum } from '@/constants/app'
-import type { MenuThemeType, SystemThemeTypes } from '@/types/art/store'
+import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/constants/app'
+
+// 系统主题样式（light | dark）
+export interface SystemThemeType {
+  /** 主题类名 */
+  className: string
+}
+
+// 定义包含多个主题的类型
+export type SystemThemeTypes = {
+  [key in Exclude<SystemThemeEnum, typeof SystemThemeEnum.AUTO>]: SystemThemeType
+}
+
+// 菜单主题样式
+export interface MenuThemeType {
+  /** 主题类型 */
+  theme: MenuThemeEnum
+  /** 背景颜色 */
+  background: string
+  /** 系统名称颜色 */
+  systemNameColor: string
+  /** 文本颜色 */
+  textColor: string
+  /** 图标颜色 */
+  iconColor: string
+  /** 背景图片 */
+  img?: string
+}
 
 // 主题设置
 export interface ThemeSetting {
@@ -87,38 +94,6 @@ export interface SystemConfig {
   systemMainColor: readonly string[]
   // 顶部栏功能配置
   headerBar?: HeaderBarFeatureConfig
-}
-
-// 环境配置
-export interface EnvConfig {
-  // 环境名称
-  NODE_ENV: string
-  // 应用版本
-  VITE_VERSION: string
-  // 应用端口
-  VITE_PORT: string
-  // 应用基础路径
-  VITE_BASE_URL: string
-  // API 地址
-  VITE_API_URL: string
-  // 是否开启 Mock
-  VITE_USE_MOCK?: string
-  // 是否开启压缩
-  VITE_USE_GZIP?: string
-  // 是否开启 CDN
-  VITE_USE_CDN?: string
-}
-
-// 应用配置
-export interface AppConfig extends SystemConfig {
-  // 环境配置
-  env: EnvConfig
-  // 开发模式
-  isDev: boolean
-  // 生产模式
-  isProd: boolean
-  // 测试模式
-  isTest: boolean
 }
 
 // 功能配置项基础接口

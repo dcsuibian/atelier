@@ -87,7 +87,7 @@ import { useWorkTabStore } from '@/stores/work-tab'
 import { formatMenuTitle } from '@/utils/art/router'
 import { useSettingStore } from '@/stores/setting'
 import type { MenuItemType } from '../art-menu-right/index.vue'
-import type { WorkTab } from '@/types/art'
+import type { WorkTab } from '@/stores/work-tab'
 
 defineOptions({ name: 'ArtWorkTab' })
 

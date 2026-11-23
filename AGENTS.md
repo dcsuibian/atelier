@@ -275,7 +275,6 @@ ADP 已从上游降为参考：不再整目录替换升级，`art/` 下的代码
 
 **放到后面：**
 
-- **`types/art` 就近归位**：共 1092 行，像嵌套了一个小 src。组件专用的类型挪到组件旁边（图表 props 已挪到 `components/art/charts/types.ts`），代价是改 `art/` 组件的 import，等接管策略定了再做。
 - **composables**：`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
 
 ### 待定

@@ -36,7 +36,7 @@ export function editUserPartially(id: number, data: UserForm): Promise<User> {
 }
 
 /**
- * 删除时连同角色分配一起删。超级管理员不能删除
+ * 删除不级联：用户仍有角色或仍负责项目时拒绝删除（409），要先解除。超级管理员不能删除
  */
 export function deleteUserById(id: number): Promise<void> {
   return request.delete({

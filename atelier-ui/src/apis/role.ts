@@ -28,7 +28,7 @@ export function editRolePartially(id: number, data: RoleForm): Promise<Role> {
 }
 
 /**
- * 删除时连同权限分配一起删。角色仍分配给用户时拒绝删除（409），以免用户的权限悄悄变少
+ * 删除不级联：角色仍分配给用户或仍有权限时拒绝删除（409），要先解除
  */
 export function deleteRoleById(id: number): Promise<void> {
   return request.delete({

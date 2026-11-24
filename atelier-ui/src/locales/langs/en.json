@@ -262,6 +262,10 @@
       "role": "Role Manage",
       "permission": "Permission Manage",
       "userCenter": "User Center"
+    },
+    "project": {
+      "title": "Projects",
+      "list": "Project List"
     }
   },
   "table": {
@@ -361,5 +365,16 @@
       "positive": "Positive",
       "negative": "Negative"
     }
+  },
+  "project": {
+    "add": "Add Project",
+    "edit": "Edit Project",
+    "delete": "Delete Project",
+    "name": "Project Name",
+    "enterName": "Please enter the project name",
+    "owner": "Owner",
+    "selectOwner": "Please select an owner",
+    "searchPlaceholder": "Project name / description",
+    "deleteConfirm": "Delete project \"{name}\"?"
   }
 }

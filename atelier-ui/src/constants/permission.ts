@@ -16,6 +16,10 @@ const PERMISSIONS = {
   ROLE_DELETE: 'role:delete',
   ROLE_ASSIGN_PERMISSION: 'role:assign-permission',
   PERMISSION_VIEW: 'permission:view',
+  PROJECT_VIEW: 'project:view',
+  PROJECT_ADD: 'project:add',
+  PROJECT_EDIT: 'project:edit',
+  PROJECT_DELETE: 'project:delete',
 } as const
 
 export { PERMISSIONS }

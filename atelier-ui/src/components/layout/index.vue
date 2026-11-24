@@ -5,6 +5,7 @@
       <ArtSidebarMenu />
     </aside>
 
+    <!-- 页面在这里滚动，不是 window。scrollToTop 按这个 id 找它，改名要同步 -->
     <main id="app-main">
       <div id="app-header">
         <ArtHeaderBar />

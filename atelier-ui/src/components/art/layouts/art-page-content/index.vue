@@ -1,15 +1,8 @@
 <!-- 布局内容 -->
 <template>
   <div class="layout-content" :class="{ 'overflow-auto': isFullPage }" :style="containerStyle">
-    <div id="app-content-header">
-      <!-- 路由信息调试 -->
-      <div
-        v-if="isOpenRouteInfo === 'true'"
-        class="px-2 py-1.5 mb-3 text-sm text-g-500 bg-g-200 border-full-d rounded-md"
-      >
-        router meta：{{ route.meta }}
-      </div>
-    </div>
+    <!-- atelier：ADP 在这里有个按环境变量显示路由信息的调试块，已删。容器留着，内容区高度的计算会减去它 -->
+    <div id="app-content-header"></div>
 
     <RouterView v-if="isRefresh" v-slot="{ Component, route }" :style="contentStyle">
       <!-- 缓存路由动画 -->
@@ -51,7 +44,6 @@ const { pageTransition, containerWidth, refresh } = storeToRefs(useSettingStore(
 const { keepAliveExclude } = storeToRefs(useWorkTabStore())
 
 const isRefresh = shallowRef(true)
-const isOpenRouteInfo = import.meta.env.VITE_OPEN_ROUTE_INFO
 const showTransitionMask = ref(false)
 
 // 标记是否是首次加载（浏览器刷新）

@@ -1,6 +1,6 @@
 import App from './App.vue'
 import { createApp } from 'vue'
-import { initStore } from '@/stores' // Store
+import { pinia } from '@/stores'
 import { initRouter } from './router' // Router
 import language from './locales' // 国际化
 import '@/styles/art/tailwind.css' // tailwind
@@ -13,7 +13,7 @@ import { setupLockScreen } from '@/utils/setup/lock-screen'
 document.addEventListener('touchstart', function () {}, { passive: false })
 
 const app = createApp(App)
-initStore(app)
+app.use(pinia)
 setupHttp() // http 层的失败提示与 401 处理
 setupLockScreen()
 initRouter(app)

@@ -51,7 +51,9 @@ export function setupSessionSync(router: Router, registry: DynamicRouteRegistry)
         return
       }
       // 原地重新导航，交给守卫：已登出会被送去登录页并带上 redirect，权限变了会按新权限重新注册
-      void router.replace(router.currentRoute.value.fullPath)
+      // 要 force：撤掉动态路由后当前地址若仍匹配同一条路由（比如停在 404 页），vue-router 会当作重复导航直接跳过
+      const { path, query, hash } = router.currentRoute.value
+      void router.replace({ path, query, hash, force: true })
     },
   )
 }

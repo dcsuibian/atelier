@@ -46,7 +46,7 @@
               </template>
             </ElTableColumn>
             <ElTableColumn :label="$t('common.createTime')" width="180">
-              <template #default="{ row }">{{ formatTime(row.createTime) }}</template>
+              <template #default="{ row }">{{ formatDateTime(row.createTime) }}</template>
             </ElTableColumn>
             <ElTableColumn :label="$t('common.operation')" width="120" fixed="right">
               <template #default="{ row }">
@@ -85,7 +85,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { formatDate } from '@vueuse/core'
 import {
   ElButton,
   ElCard,
@@ -102,6 +101,7 @@ import { useI18n } from 'vue-i18n'
 import ArtButtonTable from '@/components/art/forms/art-button-table/index.vue'
 import { usePermissionStore } from '@/stores/permission'
 import { deleteUserById, getUsers } from '@/apis/user'
+import { formatDateTime } from '@/utils/format'
 import { PERMISSIONS } from '@/constants/permission'
 import { SUPER_ADMIN_ID } from '@/constants/user'
 import type { User, UserQuery, UserStatus } from '@/types'
@@ -118,8 +118,6 @@ const STATUS_TAG: Record<UserStatus, { type: 'success' | 'danger'; text: string 
   ENABLED: { type: 'success', text: t('common.enabled') },
   DISABLED: { type: 'danger', text: t('common.disabled') },
 }
-
-const formatTime = (time: number) => formatDate(new Date(time), 'YYYY-MM-DD HH:mm:ss')
 
 const searchForm = ref<UserQuery>({
   searchText: undefined,

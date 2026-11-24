@@ -24,7 +24,7 @@
               </template>
             </ElTableColumn>
             <ElTableColumn :label="$t('common.updateTime')" width="180">
-              <template #default="{ row }">{{ formatTime(row.updateTime) }}</template>
+              <template #default="{ row }">{{ formatDateTime(row.updateTime) }}</template>
             </ElTableColumn>
           </ElTable>
         </div>
@@ -47,9 +47,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { ElCard, ElPagination, ElTable, ElTableColumn, ElTag, vLoading } from 'element-plus'
-import { formatDate } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import { getPermissions } from '@/apis/permission'
+import { formatDateTime } from '@/utils/format'
 import type { Permission, PermissionQuery, PermissionStatus } from '@/types'
 import PermissionSearch from './modules/permission-search.vue'
 
@@ -62,8 +62,6 @@ const STATUS_TAG: Record<PermissionStatus, { type: 'success' | 'info'; text: str
   // 禁用的权限是 permissions.yml 里删掉或停用的，不再生效，但保留记录
   DISABLED: { type: 'info', text: t('common.disabled') },
 }
-
-const formatTime = (time: number) => formatDate(new Date(time), 'YYYY-MM-DD HH:mm:ss')
 
 const searchForm = ref<PermissionQuery>({
   searchText: undefined,

@@ -27,7 +27,7 @@
               </template>
             </ElTableColumn>
             <ElTableColumn :label="$t('common.createTime')" width="180">
-              <template #default="{ row }">{{ formatTime(row.createTime) }}</template>
+              <template #default="{ row }">{{ formatDateTime(row.createTime) }}</template>
             </ElTableColumn>
             <ElTableColumn :label="$t('common.operation')" width="80" fixed="right">
               <template #default="{ row }">
@@ -61,7 +61,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { formatDate } from '@vueuse/core'
 import {
   ElButton,
   ElCard,
@@ -78,6 +77,7 @@ import type { ButtonMoreItem } from '@/components/art/forms/art-button-more/inde
 import ArtButtonMore from '@/components/art/forms/art-button-more/index.vue'
 import { usePermissionStore } from '@/stores/permission'
 import { deleteRoleById, getRoles } from '@/apis/role'
+import { formatDateTime } from '@/utils/format'
 import { PERMISSIONS } from '@/constants/permission'
 import type { Role, RoleQuery, RoleStatus } from '@/types'
 import RoleSearch from './modules/role-search.vue'
@@ -115,8 +115,6 @@ const OPERATIONS: ButtonMoreItem[] = [
     auth: PERMISSIONS.ROLE_DELETE,
   },
 ]
-
-const formatTime = (time: number) => formatDate(new Date(time), 'YYYY-MM-DD HH:mm:ss')
 
 const searchForm = ref<RoleQuery>({
   searchText: undefined,

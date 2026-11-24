@@ -154,6 +154,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 - **递归类型用对象，别用元组。** 自引用的元组一旦进了 `RouteMeta`，模板推导路由对象时会撞上 `TS2589: Type instantiation is excessively deep`；对象的自引用是惰性解析的，不会触发。
 - **别用 `<!-- @vue-ignore -->` 压 TS2589**：那个元素上所有表达式会一起失去检查，治本是让类型推导得动。
 - **i18n**：`zh.json` 与 `en.json` 的键保持一致，AI 写的要把英文一并补上。脚本里用 `useI18n()` 的 `t`，组件外用 `@/locales` 导出的 `$t`。
+- **日期时间**：展示时用 `utils/format.ts` 的 `formatDateTime` 等，目前是固定格式、不随语言切换。需要月份名、星期名这类本地化文字时，可以用 `Intl.DateTimeFormat`。
 - **会话与权限**：
   - `stores/session.ts` 是登录态的唯一出口（`user`、`isLoggedIn`、`ensureLoaded()`、`login()`、`logout()`），权限由它统一编排，别在别处单独填或清 permission store。
   - 权限码集中在 `constants/permission.ts`，一律引用 `PERMISSIONS.XXX`。按钮级判断写 `v-if="permissionStore.check(...)"`，与路由守卫共用。

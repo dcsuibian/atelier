@@ -5,9 +5,9 @@ import request from '@/utils/http'
  * 权限列表的查询条件，对应后端 PermissionQo
  */
 interface PermissionQuery {
-  status?: PermissionStatus
+  status?: PermissionStatus | null
   /** 模糊匹配权限码、名称、描述，不区分大小写 */
-  searchText?: string
+  searchText?: string | null
 }
 
 /**

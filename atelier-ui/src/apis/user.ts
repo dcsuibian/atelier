@@ -5,9 +5,9 @@ import request from '@/utils/http'
  * 用户列表的查询条件，对应后端 UserQo
  */
 interface UserQuery {
-  status?: UserStatus
+  status?: UserStatus | null
   /** 模糊匹配用户名、真实姓名、手机号，不区分大小写 */
-  searchText?: string
+  searchText?: string | null
 }
 
 /**

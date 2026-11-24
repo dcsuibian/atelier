@@ -30,7 +30,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const ownerId = defineModel<number>()
+const ownerId = defineModel<number | null>()
 
 const options = ref<ProjectOwner[]>([])
 const loading = ref(false)

@@ -5,9 +5,9 @@ import request from '@/utils/http'
  * 项目列表的查询条件，对应后端 ProjectQo
  */
 interface ProjectQuery {
-  ownerId?: number
+  ownerId?: number | null
   /** 模糊匹配项目名称、描述，不区分大小写 */
-  searchText?: string
+  searchText?: string | null
 }
 
 /**

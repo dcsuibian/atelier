@@ -45,10 +45,10 @@ export function setupBeforeEachGuard(router: Router): void {
       NProgress.start()
     }
 
-    // 只有真要等网络时才遮罩。注册完重新导航的那一轮不再满足条件，所以不会闪
+    // 只有真要等网络时才遮罩。关闭放在 afterEach：守卫放行后还要下载懒加载的布局与页面，
+    // 在这里关掉的话，这段时间屏幕会停在旧页面上
     const sessionStore = useSessionStore()
-    const needsLoading = !sessionStore.ready || !registry?.isRegistered()
-    if (needsLoading) {
+    if (!sessionStore.ready || !registry?.isRegistered()) {
       loadingService.showLoading()
     }
 
@@ -57,10 +57,6 @@ export function setupBeforeEachGuard(router: Router): void {
     } catch (error) {
       console.error('[RouteGuard] 路由守卫处理失败', error)
       return { name: 'Exception500', replace: true }
-    } finally {
-      if (needsLoading) {
-        loadingService.hideLoading()
-      }
     }
   })
 }

@@ -7,8 +7,6 @@
 export const LOCAL_STORAGE_KEYS = {
   /** 设置 store 的持久化 */
   SETTING: 'setting',
-  /** 表格偏好 store 的持久化 */
-  TABLE: 'table',
   /** 工作标签页 store 的持久化 */
   WORK_TAB: 'work-tab',
   /** 明暗主题。index.html 在应用加载前就要读它来避免闪烁，那里写的是字面量，改名要同步 */

@@ -11,7 +11,7 @@
         <ElRadioButton value="今年" label="今年"></ElRadioButton>
       </ElRadioGroup>
     </div>
-    <ArtTable
+    <ElTable
       class="w-full"
       :data="tableData"
       style="width: 100%"
@@ -48,20 +48,19 @@
           </template>
         </ElTableColumn>
       </template>
-    </ArtTable>
+    </ElTable>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { ElProgress, ElRadioButton, ElRadioGroup, ElTableColumn } from 'element-plus'
+import { ElProgress, ElRadioButton, ElRadioGroup, ElTable, ElTableColumn } from 'element-plus'
 import avatar1 from '@/assets/images/avatar/avatar1.webp'
 import avatar2 from '@/assets/images/avatar/avatar2.webp'
 import avatar3 from '@/assets/images/avatar/avatar3.webp'
 import avatar4 from '@/assets/images/avatar/avatar4.webp'
 import avatar5 from '@/assets/images/avatar/avatar5.webp'
 import avatar6 from '@/assets/images/avatar/avatar6.webp'
-import ArtTable from '@/components/art/tables/art-table/index.vue'
 
 interface UserTableItem {
   username: string

@@ -4,7 +4,7 @@ import { PERMISSIONS } from '@/constants/permission'
 export const projectRoutes: AppRouteRecord = {
   path: '/project',
   name: 'ProjectRoot',
-  component: () => import('@/components/app-layout/index.vue'),
+  component: () => import('@/components/layout/index.vue'),
   meta: {
     title: 'menus.project.title',
     icon: 'ri:folder-2-line',

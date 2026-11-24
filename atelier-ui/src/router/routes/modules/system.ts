@@ -4,7 +4,7 @@ import { PERMISSIONS } from '@/constants/permission'
 export const systemRoutes: AppRouteRecord = {
   path: '/system',
   name: 'System',
-  component: () => import('@/components/app-layout/index.vue'),
+  component: () => import('@/components/layout/index.vue'),
   meta: {
     title: 'menus.system.title',
     icon: 'ri:user-3-line',

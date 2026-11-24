@@ -3,7 +3,7 @@ import type { AppRouteRecord } from '@/types'
 export const dashboardRoutes: AppRouteRecord = {
   name: 'Dashboard',
   path: '/dashboard',
-  component: () => import('@/components/app-layout/index.vue'),
+  component: () => import('@/components/layout/index.vue'),
   meta: {
     title: 'menus.dashboard.title',
     icon: 'ri:pie-chart-line',

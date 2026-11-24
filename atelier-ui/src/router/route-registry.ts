@@ -10,7 +10,7 @@ import type { Router, RouteRecordRaw } from 'vue-router'
 import type { AppRouteRecord } from '@/types'
 import { usePermissionStore } from '@/stores/permission'
 
-const AppLayout = () => import('@/components/app-layout/index.vue')
+const Layout = () => import('@/components/layout/index.vue')
 
 /**
  * 标出没有子路由的一级菜单。侧栏和面包屑对它们特殊处理，注册路由时也要给它们套一层布局
@@ -37,7 +37,7 @@ function toRouteRecord(route: AppRouteRecord, depth = 0): RouteRecordRaw {
       ...rest,
       path: firstSegment ? `/${firstSegment}` : '/',
       name: '',
-      component: AppLayout,
+      component: Layout,
       children: [{ ...rest, component }],
     } as RouteRecordRaw
   }

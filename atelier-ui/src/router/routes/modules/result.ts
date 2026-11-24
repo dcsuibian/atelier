@@ -3,7 +3,7 @@ import type { AppRouteRecord } from '@/types'
 export const resultRoutes: AppRouteRecord = {
   path: '/result',
   name: 'Result',
-  component: () => import('@/components/app-layout/index.vue'),
+  component: () => import('@/components/layout/index.vue'),
   meta: {
     title: 'menus.result.title',
     icon: 'ri:checkbox-circle-line',

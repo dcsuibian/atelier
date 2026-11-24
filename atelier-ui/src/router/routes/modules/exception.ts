@@ -3,7 +3,7 @@ import type { AppRouteRecord } from '@/types'
 export const exceptionRoutes: AppRouteRecord = {
   path: '/exception',
   name: 'Exception',
-  component: () => import('@/components/app-layout/index.vue'),
+  component: () => import('@/components/layout/index.vue'),
   meta: {
     title: 'menus.exception.title',
     icon: 'ri:error-warning-line',

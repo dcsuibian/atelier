@@ -39,7 +39,6 @@
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { router } from '@/router'
 import type { LocationQueryRaw, Router } from 'vue-router'
 import { useMenuStore } from '@/stores/menu'
 import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
@@ -112,25 +111,6 @@ export const useWorkTabStore = defineStore(
      */
     const isTabClosable = (tab: WorkTab): boolean => {
       return !tab.fixedTab
-    }
-
-    /**
-     * 安全的路由跳转
-     */
-    const safeRouterPush = (tab: Partial<WorkTab>): void => {
-      if (!tab.path) {
-        console.warn('尝试跳转到无效路径的标签页')
-        return
-      }
-
-      try {
-        router.push({
-          path: tab.path,
-          query: tab.query as LocationQueryRaw,
-        })
-      } catch (error) {
-        console.error('路由跳转失败:', error)
-      }
     }
 
     /**
@@ -230,11 +210,10 @@ export const useWorkTabStore = defineStore(
 
       const homePath = useMenuStore().getHomePath()
 
-      // 如果关闭后无标签页，跳转首页
+      // 关闭后一个标签都不剩：清空当前标签，标签栏据此回首页
       if (!hasOpenedTabs.value) {
         if (path !== homePath) {
           current.value = {}
-          safeRouterPush({ path: homePath })
         }
         return
       }
@@ -243,7 +222,6 @@ export const useWorkTabStore = defineStore(
       if (current.value.path === path) {
         const newIndex = targetIndex >= opened.value.length ? opened.value.length - 1 : targetIndex
         current.value = opened.value[newIndex]
-        safeRouterPush(current.value)
       }
     }
 
@@ -373,7 +351,6 @@ export const useWorkTabStore = defineStore(
       // 处理激活状态
       if (!hasOpenedTabs.value) {
         current.value = {}
-        safeRouterPush({ path: homePath })
         return
       }
 
@@ -382,7 +359,6 @@ export const useWorkTabStore = defineStore(
       const targetTab = homeTab || opened.value[0]
 
       current.value = targetTab
-      safeRouterPush(targetTab)
     }
 
     /**

@@ -86,6 +86,7 @@ import { storeToRefs } from 'pinia'
 import { useWorkTabStore } from '@/stores/work-tab'
 import { formatMenuTitle } from '@/utils/art/router'
 import { useSettingStore } from '@/stores/setting'
+import { useMenuStore } from '@/stores/menu'
 import type { MenuItemType } from '../art-menu-right/index.vue'
 import type { WorkTab } from '@/stores/work-tab'
 import ArtMenuRight from '@/components/art/layouts/art-menu-right/index.vue'
@@ -364,6 +365,17 @@ const useTabOperations = (adjustPositionAfterClose: () => void) => {
     })
   }
 
+  /**
+   * atelier：ADP 由 store 在关闭标签后自己调 router.push，store 因此反过来依赖路由。
+   * 改为 store 只选出接下来的当前标签，跳转放在这里；一个都不剩时回首页
+   */
+  const followCurrentTab = () => {
+    const next = store.current.path ? store.current : { path: useMenuStore().getHomePath(), query: undefined }
+    if (next.path && next.path !== route.path) {
+      router.push({ path: next.path, query: next.query as LocationQueryRaw })
+    }
+  }
+
   const closeWorktab = (type: TabCloseType, tabPath: string) => {
     const path = typeof tabPath === 'string' ? tabPath : route.path
 
@@ -376,6 +388,7 @@ const useTabOperations = (adjustPositionAfterClose: () => void) => {
     }
 
     closeActions[type]?.()
+    followCurrentTab()
 
     setTimeout(() => {
       adjustPositionAfterClose()

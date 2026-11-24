@@ -20,8 +20,6 @@
     },
     "user": {
       "userCenter": "User center",
-      "docs": "Document",
-      "github": "Github",
       "lockScreen": "Lock screen",
       "logout": "Log out"
     },

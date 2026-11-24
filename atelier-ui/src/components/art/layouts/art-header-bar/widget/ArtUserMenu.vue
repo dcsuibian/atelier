@@ -35,14 +35,6 @@
             <ArtSvgIcon icon="ri:user-3-line" />
             <span>{{ $t('topBar.user.userCenter') }}</span>
           </li>
-          <li class="btn-item" @click="toDocs()">
-            <ArtSvgIcon icon="ri:book-2-line" />
-            <span>{{ $t('topBar.user.docs') }}</span>
-          </li>
-          <li class="btn-item" @click="toGithub()">
-            <ArtSvgIcon icon="ri:github-line" />
-            <span>{{ $t('topBar.user.github') }}</span>
-          </li>
           <li class="btn-item" @click="lockScreen()">
             <ArtSvgIcon icon="ri:lock-line" />
             <span>{{ $t('topBar.user.lockScreen') }}</span>
@@ -64,7 +56,6 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessageBox, ElPopover } from 'element-plus'
 import { useSessionStore } from '@/stores/session'
-import { WEB_LINKS } from '@/utils/art/constants'
 import { mittBus } from '@/utils/art/sys'
 import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 
@@ -83,20 +74,6 @@ const userMenuPopover = ref()
  */
 const goPage = (path: string): void => {
   router.push(path)
-}
-
-/**
- * 打开文档页面
- */
-const toDocs = (): void => {
-  window.open(WEB_LINKS.DOCS)
-}
-
-/**
- * 打开 GitHub 页面
- */
-const toGithub = (): void => {
-  window.open(WEB_LINKS.GITHUB)
 }
 
 /**

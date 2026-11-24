@@ -13,7 +13,7 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 ## 代码组织：ADP 原件与自有代码
 
 - `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons`、`tables` 等）、`composables/art/`、`styles/art/`、`utils/art/`、`types/art/`（只剩系统配置的类型）
-- 自有代码平铺：如 `components/app-layout/`、`components/chart-view/`、`composables/use-chart.ts`、`utils/http.ts`、`types/user.ts`（与后端对接的类型都在 `types/` 根上）
+- 自有代码平铺：如 `components/layout/`、`components/chart-view/`、`composables/use-chart.ts`、`utils/http.ts`、`types/user.ts`（与后端对接的类型都在 `types/` 根上）
 - 整体接管、不再区分原件的目录：`router/`、`stores/`、`apis/`、`directives/`、`config/`、`constants/`、`locales/`
 
 几条命名规则：
@@ -67,10 +67,11 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor` 改名 kebab-case 挪到 `rou
 - `v-auth`、`v-roles` 指令，`meta.roles`、`info.buttons`；`src/directives/` 只剩 `ripple`
 - userStore 这个杂物袋：语言、搜索历史、锁屏迁入 `settingStore`，会话归 `stores/session.ts`。锁屏存在偏好里，生命周期却跟着会话，由 `utils/setup/lock-screen.ts` 订阅会话，确认没登录时解除，拆分时容易漏掉
 - `router/core/` 的编排层（`RouteRegistry`、角色过滤、`RoutePermissionValidator`）
-- 后端路由模式与按字符串加载组件（`ComponentLoader`）；`AppRouteRecord.component` 不再接受字符串。布局外壳在 `components/app-layout/`
+- 后端路由模式与按字符串加载组件（`ComponentLoader`）；`AppRouteRecord.component` 不再接受字符串。布局外壳在 `components/layout/`
 - `useTable` 及配套（`useTableColumns`、`utils/art/table/`、`Api.Common`、`ArtTableHeader`），表格页以用户管理页为准
 - 自动导入插件（`unplugin-auto-import`、`unplugin-vue-components`、`unplugin-element-plus`）
 - iframe 内嵌页面（`meta.isIframe`、`/outside` 路由、`views/outside/`、`IframeRouteManager`）。外链菜单（`meta.link`）保留
+- 指向 ADP 官网、文档、GitHub 的链接（`utils/art/constants.ts` 的 `WEB_LINKS`），连同用户菜单里的「文档」「GitHub」入口
 - 版本化存储键与存储兼容性检查（`utils/art/storage/`），连同 `__APP_VERSION__`；控制台宣传语（`utils/art/sys/console.ts`）
 - `useChart` 与 `plugins/echarts.ts`，换成 vue-echarts 加自有的 `ChartView`；`composables/use-chart.ts` 只剩按明暗主题生成样式的函数
 - `useAuth`、`useCommon`

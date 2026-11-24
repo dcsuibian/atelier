@@ -20,8 +20,6 @@
     },
     "user": {
       "userCenter": "个人中心",
-      "docs": "使用文档",
-      "github": "Github",
       "lockScreen": "锁定屏幕",
       "logout": "退出登录"
     },

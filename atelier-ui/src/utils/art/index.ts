@@ -18,9 +18,6 @@ export * from './navigation'
 // 系统管理相关
 export * from './sys'
 
-// 常量定义相关
-export * from './constants'
-
 // atelier：ADP 在这里还导出了 http 与 socket，两个模块已移除
 
 // 表单相关

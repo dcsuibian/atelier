@@ -12,38 +12,23 @@ This file provides guidance to AI coding agents (Claude Code, Codex, etc.) when 
 
 约束范围覆盖**代码、注释、文档、配置、示例数据、测试夹具，以及 commit message**。需要举例时用通用业务概念（用户、角色、菜单、订单、设备），不要借用真实项目的业务模型。
 
-同理，本仓库**不具名列出下游项目**——其中部分项目的名称本身即属上述信息。统称「下游项目」即可。
+同理，本仓库**不具名列出下游项目**——其中部分项目的名称本身即属上述信息。统称「下游项目」即可；面向读者的文档里写「基于它的项目」。
 
-## 项目定位
+## 文档分工
 
-Atelier 是一个**模板项目**，不是可复用的库。它为作者维护的多个后台管理系统提供统一基准：把「认为对的写法」沉淀在这里，下游项目需要同步时，与 atelier 做 diff，人工加 AI 判断哪些该搬、哪些因项目差异保留。
+- **`docs/`**：设计决策，写给人看——为什么这样做、哪些判断过不做、坑在哪。动手改某个领域之前，先读 README 索引里对应的那篇。本文件不重复其中的理由，只写操作层面的细节。
+- **本文件**：命令、目录、具体文件与类名、只有动手时才用得上的坑。
+- **代码注释**：贴着某段代码的理由。
 
-几个已经定下来的判断，改动方案前先理解：
-
-- **刻意不做成 npm 包。** 前端模板共享的形式上就不适合库化——库路线要求接口稳定、发版、下游升级版本；模板路线接受重复代码，换取每个下游项目完全的自主权。库化只适合小而独立的功能点。
-- **下游没有共同的 git 祖先**，各自魔改后已经彼此发散。同步手段只能是**对照 diff**，不是 `git merge`。因此代码组织要便于逐文件肉眼和 AI 对比：目录结构、文件命名、文件内顺序尽量与下游可对齐，不要自行另搞一套更优雅的组织。
-- **公开 ≠ 开源。** 不做宣传、不接外部贡献，因此不需要 CONTRIBUTING、issue/PR 模板、CI 徽章，也不承诺语义化版本或向后兼容。文档可以写得很私人。已附 MIT LICENSE。
+新的决策先写成草稿 `docs/drafts/claude-<主题>.md`，作者审过后才移出 `drafts/`、按 `NNN、标题.md` 编号转正，并加进 README 的索引。写法：每条结论配理由，写清坑点和自然会冒出的反问；不举具体代码、不写备选方案与讨论过程、不写会过期的数值与状态；只是当前实现而非规定的，要注明。
 
 ## 上游：Art Design Pro
 
-前端源自 [Art Design Pro](https://github.com/Daymychen/art-design-pro)（下称 ADP）。**当前对齐版本：v3.0.2（2026-03-15）**。
+前端源自 [Art Design Pro](https://github.com/Daymychen/art-design-pro)（下称 ADP），现已降为参考，定位见 `docs/` 的「项目定位与上游」。
 
-同步链条是两段的，两段都靠锚点维持增量：
-
-```
-ADP ──(1)──> atelier ──(2)──> 下游项目
-```
-
-- **第 (1) 段**：ADP 发新版时，只需消化 ADP 自身的版本间 diff，不必重新做 atelier 与 ADP 的全量对比。前提是上面那行「当前对齐版本」始终准确——**每次同步后必须更新它**，锚点一旦含糊，就会退化成全量对比。
-- **第 (2) 段**：同理，下游只需消化 atelier 的增量。因此 atelier **需要打 tag**，让下游有可引用的锚点；这不是为了外部使用者，是为了下游项目自己。
-
-做 atelier 的动机在于：ADP 在视觉和完成度上做得很好，但程序风格与作者偏好不符。前端改动若牵涉接口设计，分歧会一路体现到后端。
+**当前对齐版本：v3.0.2（2026-03-15）。** 这是跟进 ADP 新版时的锚点，**每次同步后必须更新它**。
 
 ## 代码组织：ADP 原件与自有代码
-
-**ADP 已从上游降为参考。** 不再整目录替换升级，也不建 `upstream` 分支借三方合并：魔改越彻底冲突越多，不如读 ADP 的版本间 diff、理解意图后自己写。值得跟进的是视觉组件（布局、卡片、表格外观）；机制层（路由、表格、图表、类型组织）与作者偏好不合，已陆续接管。
-
-**ADP 的原件放在各目录的 `art/` 子目录里，自有代码平铺在目录根上**，一眼就能分清哪些是 ADP 的、可以拿去和 ADP 仓库逐文件对照：
 
 - `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons`、`tables` 等）、`composables/art/`、`styles/art/`、`utils/art/`、`types/art/`（只剩路由与系统配置的类型）
 - 自有代码平铺：如 `components/app-layout/`、`components/chart-view/`、`composables/use-chart.ts`、`utils/http.ts`、`types/user.ts`（与后端对接的类型都在 `types/` 根上）
@@ -53,14 +38,13 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 - 子目录统一叫 `art/`，不用 `core`、`common` 这类不表达含义的名字。只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」。目录不叫 ADP 的 `hooks`：那是 React 的叫法，Vue 官方叫 composables
 - `art/` 下的原件保留原名（`useTheme.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase），改名会让逐文件对照失效。自有文件一律 kebab-case。组件名与 `art-` 前缀沿用 ADP
-- 接管到要重写的程度，就挪出 `art/`、按自有代码的规矩命名，原件直接删掉；需要参考时去 ADP 仓库或 git 历史里看。留一份用不到的副本，只会制造「到底该改哪个」的困惑
 
-**`art/` 里的小改动标 `atelier：` 注释**，写清改了什么、为什么；跟进 ADP 新版、对照某个原件时，用 `rg -n 'atelier：' src` 就能找全自己动过的地方。格式化、`import type`、路径别名、`useUserStore()` 按内容改到 `settingStore` / `sessionStore` 这类机械改动不标，标了反而淹没真正的改动。需要多解释的两处：
+**`art/` 里的小改动标 `atelier：` 注释**，用 `rg -n 'atelier：' src` 能找全。格式化、`import type`、路径别名、`useUserStore()` 按内容改到 `settingStore` / `sessionStore` 这类机械改动不标，标了反而淹没真正的改动。需要多解释的两处：
 
 - `types/art/router.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，就地加一个字段比整个挪出来、逼着一堆文件改 import 更省事。
 - `components/art/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
 
-顺带一提，`RouteMeta` 继承了 `Record<string | number | symbol, unknown>`，**这意味着路由 meta 里写错字段名永远不会报错**——ADP 的 `roles`、`authList` 能在改造后一直残留到被专门清理，就是这么来的。
+`RouteMeta` 继承了 `Record<string | number | symbol, unknown>`，**路由 meta 里写错字段名永远不会报错**。
 
 与 ADP 的目录差异，命名向下游看齐以便对照：
 
@@ -81,80 +65,55 @@ ADP ──(1)──> atelier ──(2)──> 下游项目
 
 ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名 kebab-case 挪到 `router/` 下，其余随按字符串加载组件一起删了。
 
-## 与上游的分歧
+## 跟进 ADP 时不要带回来的东西
 
-这份清单比版本号更有价值——它是设计理念与 ADP 分歧的显性化。**同步 ADP 新版时逐条对照，不要把下面这些东西带回来。**
+理由见 `docs/` 对应的篇目，这里只是清单。
 
-### 已移除的工具链
+**工具链**：husky、lint-staged、commitizen、cz-git、commitlint、ESLint、Stylelint（连同 `eslint-config-prettier`、`eslint-plugin-prettier`）、`vite-plugin-vue-devtools`、`scripts/clean-dev.ts`（写死的路径已脱节，且会写回 ADP 的推广链接；它的演示内容清单可从 git 历史取回参考）。**Prettier 是保留的**，它是 formatter 不是 linter。
 
-前三项的原因是同一个——**作者不用这类工具**。不必为它们补技术理由，同步时也不必重新评估。
+**演示内容**：判断标准是演示页面用完即弃，可复用组件留下。
 
-- **husky、lint-staged**：git hook 那一套
-- **commitizen、cz-git、commitlint**：交互式提交与提交信息校验
-- **ESLint、Stylelint**，连同桥接包 `eslint-config-prettier`、`eslint-plugin-prettier`
-- **`vite-plugin-vue-devtools`**：插件版会默认注入页面，大型项目从启动起就处于降速状态。需要时用浏览器扩展版，它按需加载
-- **`scripts/clean-dev.ts`**：这一条另有具体理由——它写死的路径已与当前目录结构脱节，且会写回 ADP 的推广链接与演示后端的接口约定。演示内容删哪些、留哪些改为按需手动决定；脚本里那份 21 项的演示内容清单仍有参考价值，可从 git 历史中取回
+- 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested、system/menu
+- 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件，以及聊天窗口、消息通知、节日烟花、升级提示、顶栏快速入口
+- **统计卡片与图表组件全部保留**，哪怕只有演示页在引用
+- 删页面时要连带过一遍：路由模块、`router/modules/index.ts`、i18n 的 menus 键、`env.d.ts` 的 declare module、`utils/art/index.ts` 的 re-export
 
-**Prettier 是保留的**，它是 formatter 不是 linter，清理 lint 工具时别顺手带走。
+**机制**：
 
-### 已删除的演示内容
+- ADP 的 HTTP 层（`utils/art/http/`），换成 `utils/http.ts`
+- `v-auth`、`v-roles` 指令，`meta.roles`、`info.buttons`；`src/directives/` 只剩 `ripple`
+- userStore 这个杂物袋：语言、搜索历史、锁屏迁入 `settingStore`，会话归 `stores/session.ts`。锁屏存在偏好里，生命周期却跟着会话，登出时由 `session.reset()` 解除，拆分时容易漏掉
+- `router/core/` 的编排层（`RouteRegistry`、角色过滤、`RoutePermissionValidator`）
+- 后端路由模式与按字符串加载组件（`ComponentLoader`）；`AppRouteRecord.component` 不再接受字符串。布局外壳在 `components/app-layout/`
+- `useTable` 及配套（`useTableColumns`、`utils/art/table/`、`Api.Common`、`ArtTableHeader`），表格页以用户管理页为准
+- 自动导入插件（`unplugin-auto-import`、`unplugin-vue-components`、`unplugin-element-plus`）
+- `useChart` 与 `plugins/echarts.ts`，换成 vue-echarts 加自有的 `ChartView`；`composables/use-chart.ts` 只剩按明暗主题生成样式的函数
+- `useAuth`、`useCommon`
 
-ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` 从 367 个文件降到 266 个）。判断标准是：**演示页面用完即弃，去 ADP 仓库看就行；可复用组件要留下**。
+**配置**：
 
-- 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested、system/menu（菜单写在 `router/modules/` 里，没有菜单管理的需要）
-- 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件——它们各自绑着一个重型 npm 依赖
-- **统计卡片与图表组件全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
+- Prettier 用自有的 `.prettierrc.json`（带 `$schema`），只写与默认不同的项，与 helix-ui 一致
+- tsconfig 拆成 project references（`tsconfig.app.json` / `tsconfig.node.json`），基础配置取自 `@vue/tsconfig` 与 `@tsconfig/node24`
+- `.gitignore` 以 Vite 官方模板为底；`.vscode/` 与 helix-ui 一致
+- 路径别名只保留 `@`。`@plugins` 只存在于 ADP 的 tsconfig，`vite.config.ts` 里从来没有，用了会 TS 不报错但构建失败
+- 打包配置：不写等同默认值的 `target`/`outDir`，`minify` 用默认的 esbuild，不要 terser，gzip 交给部署层，不要 `VITE_DROP_CONSOLE`
+- 类型声明优先用 `@types/*` 包，`env.d.ts` 只留 `vite/client` 引用和全局变量声明
+- ADP 的 `README`、`CHANGELOG` 已删除；`index.html` 补了 `<html lang="zh-CN">`，favicon 走 `public/`
 
-连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`env.d.ts` 的 declare module 和 `utils/art/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
+**`atelier-ui/LICENSE` 必须保留**：清理上游痕迹时最容易误删。
 
-### 已移除的机制
-
-这几样不是演示内容，是 ADP 的实现方式与本项目的设计对不上，对接后端时一并换掉了。
-
-- **ADP 的 HTTP 层**（`utils/art/http/`）：它按 `{ code, msg, data }` 收响应、往 header 注入 token、自带重试与 401 自动登出。响应结构与 `ResponseWrapper` 对不上，token 与 Cookie 会话也不是一回事。换成 `utils/http.ts`：只解包 `result`，不带 token、不重试——重试该由调用方按场景决定，放在这层只会误伤。401 是唯一的例外，见「前端的会话与权限」。
-- **`v-auth` 与 `v-roles` 指令**：理由见「前端的会话与权限」。`src/directives/` 现在只剩 `ripple` 一个纯 UI 指令。
-- **userStore 这个杂物袋**：ADP 把登录态、用户信息、语言、搜索历史、锁屏全塞在一个 store 里。语言、搜索历史、锁屏是跟着浏览器走的用户偏好，与登录与否无关，已迁入 `settingStore`；剩下的会话部分由 `stores/session.ts` 接管。锁屏是例外：存在偏好里，生命周期却跟着会话，登出时由 `session.reset()` 一并解除。ADP 的 `logOut()` 本来会清它，拆分时容易漏掉。
-- **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。
-- **后端路由模式与按字符串加载组件**：ADP 可以从接口拉菜单，路由里写 `component: '/system/user'` 由 `ComponentLoader` 按名加载。后端路由模式是凭空设想的需求，没有实际用处；字符串路径写错要到运行时才发现。现在路由配置一律写 `() => import(...)`，`AppRouteRecord.component` 的类型也不再接受字符串。布局外壳从 `views/index/` 挪到 `components/app-layout/`：它包住页面，本身不是页面。
-- **`useTable` 及其配套**（`useTableColumns`、`utils/art/table/`、`Api.Common`）：带缓存、防抖、三种刷新策略，下游不用它，模板页面的写法要与下游一致才有对照价值。表格页改为 `ElTable` + `ElTableColumn` 插槽 + `ElPagination`，数据、loading、分页参数在页面里用 `ref` 自己管，以用户管理页为准。`ArtTableHeader` 的列显示设置依赖它，组件一并删了。
-- **自动导入插件**（`unplugin-auto-import`、`unplugin-vue-components`、`unplugin-element-plus`）：开发时依赖预构建的扫描器看不见插件在编译时注入的 import——Element Plus 各组件的样式、只在自动注册组件里用到的包——首次打开用到它们的页面才被发现，触发重新预构建和整页刷新；生成的 `auto-imports.d.ts` / `components.d.ts` 不进版本库，新克隆的仓库还得先跑一次构建才能 type-check。现在 JS 一律显式具名 import，Element Plus 样式在 `styles/index.scss` 里全量引入（仍按 `el-light.scss` 定制变量），比按需引入只多几 KB（gzip），ECharts 照旧按模块 `use([...])`。
-- **`useChart` 与 `plugins/echarts.ts`**：ADP 自己管图表的初始化、resize、主题切换、销毁与延迟加载，724 行；`plugins/` 一次注册全部图表类型，用一个图表就把全部打进包。换成 vue-echarts：图表组件把配置写成 computed 交给自有的 `ChartView`（`autoresize`、空数据提示、加载态），各自 `use([...])` 注册用到的模块；`composables/use-chart.ts` 只剩按明暗主题生成样式的那组函数。不再等图表滚进可视区才初始化，首屏外的图表在进入页面时就画好。
-
-### 已替换为自有配置
-
-- **Prettier**：`.prettierrc.json`（带 `$schema`），只写与默认不同的项，与 helix-ui 一致
-- **tsconfig**：拆成 project references（`tsconfig.app.json` / `tsconfig.node.json`），基础配置取自 `@vue/tsconfig` 与 `@tsconfig/node24`
-- **`.gitignore`**：以 Vite 官方模板为底
-- **`.vscode/`**：与 helix-ui 保持一致
-- **路径别名只保留 `@`**：ADP 的 `@views`/`@imgs`/`@icons`/`@utils`/`@stores`/`@styles` 全部改写为 `@/` 开头的完整路径。当时 `@stores` 指向的是 `src/store`（别名与目录单复数不一致），`@icons` 指向的目录根本不存在——目录现已改名 `src/stores`，别名则没有恢复的打算
-- **打包配置做减法**：移除等同默认值的 `target`/`outDir`，`minify` 回落到 esbuild（terser 依赖一并删除），gzip 预压缩交给部署层。体积分析改为 `pnpm build:analyze` 按需启用，而非 ADP 那样整段注释掉。`VITE_DROP_CONSOLE` 也已删除：构建时一刀切去掉 console 太粗糙，会误伤有意保留的日志；不该留的日志在代码里删掉
-- **类型声明优先用 `@types/*` 包**：`env.d.ts` 里只留 `vite/client` 引用和全局变量声明，不手写 `declare module`
-
-### 其它
-
-- ADP 的 `README` 与 `CHANGELOG`（含 zh-CN 版本）已删除
-- **`atelier-ui/LICENSE` 必须保留**：ADP 采用 MIT，衍生作品须保留原版权声明。清理「上游痕迹」时最容易误删这一个
-- **`@plugins` 路径别名未保留**：它只存在于 tsconfig，`vite.config.ts` 里从来没有过，用了会 TS 不报错但构建失败
-- `index.html` 补了 `<html lang="zh-CN">`，favicon 改走 `public/`
-
-### 尚未清理的上游痕迹
-
-`src/utils/art/constants.ts` 里 7 个常量全指向 ADP（GitHub 仓库、artd.pro 文档站与社区、作者的 B 站），被 `dashboard/console/modules/about-project.vue` 和 `art-header-bar/widget/ArtUserMenu.vue` 引用着。`index.html` 的 `<title>` 和 description 同样还是上游的。**这些是有意留着的**，等决定好要显示什么内容再一起换。
+**尚未清理的上游痕迹**：`src/utils/art/constants.ts` 里的常量全指向 ADP（GitHub、文档站、社区、作者的 B 站），被 `dashboard/console/modules/about-project.vue` 和 `art-header-bar/widget/ArtUserMenu.vue` 引用；`index.html` 的 `<title>` 和 description 也还是上游的。**有意留着**，等决定好要显示什么再一起换。
 
 ## 仓库构成
 
-两个子项目，各自独立，没有根级别的构建配置。技术栈与作者的个人项目 helix（`github.com/dcsuibian/helix`）保持一致，其 `CLAUDE.md` 里的后端分层与接口约定可作参考。
+两个子项目，各自独立，没有根级别的构建配置。技术栈与作者的个人项目 helix（`github.com/dcsuibian/helix`）一致，其 `CLAUDE.md` 里的后端分层与接口约定可作参考。
 
-- `atelier-ui/`：Vue 3 + TypeScript + Vite + Element Plus，ADP 起步，pnpm 管理，Node.js v24.11.1（fnm）
-- `atelier-engine/`：Java 25 + Spring Boot 4 + jOOQ + Flyway + PostgreSQL，Testcontainers 测试，`mvnd` 构建，包名 `com.dcsuibian.atelier`
+- `atelier-ui/`：Vue 3 + TypeScript + Vite + Element Plus，pnpm 管理，Node.js v24.11.1（fnm）
+- `atelier-engine/`：Java 25 + Spring Boot 4 + jOOQ + Flyway + PostgreSQL + Redis，Testcontainers 测试，`mvnd` 构建，包名 `com.dcsuibian.atelier`
 
-**为什么模板要带后端**：设计理念主要体现在前后端交界面上——分页怎么传、错误怎么返、鉴权怎么挂、列表查询参数怎么组织。Mock Server 只能模拟已经想清楚的接口，没法逼出「这个设计在真实实现里是否别扭」。做真后端等于给设计理念一个证伪机会。
+下游项目多为独立仓库、前端目录即仓库根，所以子项目各自带一份完整的 `.gitignore`、`.gitattributes`，能兼顾时兼顾。仓库根的 `.gitignore` 忽略 `node_modules/`、`dist/`、`target/` 作为防御。**包管理和构建命令一律在对应子项目目录内执行**。
 
-下游项目多为独立仓库、前端目录即仓库根。所以子项目自带一份完整的 `.gitignore`、`.gitattributes` 会更便于取用——**这不是强制要求，只是能兼顾时兼顾一下**。
-
-`.gitignore` 在仓库根忽略 `node_modules/`、`dist/`、`target/` 作为防御。**包管理和构建命令一律在对应子项目目录内执行**，不要在仓库根运行 `pnpm` / `mvnd`。
-
-**推 `main` 即上线。** `.github/workflows/` 按子项目路径分别触发，构建镜像推到 GHCR，再通知服务器更新在线 demo（`atelier.dcsuibian.com`）。日常在 `dev` 上开发，上线时把 `main` 快进到 `dev` 再推送。
+**推 `main` 即上线。** `.github/workflows/` 按子项目路径分别触发，构建镜像推到 GHCR，再通知服务器更新在线 demo。日常在 `dev` 上开发，上线时把 `main` 快进到 `dev` 再推送。
 
 ## 命令
 
@@ -165,110 +124,62 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - `pnpm build:analyze`：构建并输出体积分析到 `dist/stats.html`
 - `pnpm type-check`：`vue-tsc --build`
 - `pnpm serve`：预览构建产物
-- `pnpm format`：Prettier 格式化，**范围仅 `src/` 与 `tests/`**，根目录的配置文件不在其中
-- `pnpm test`：vitest 跑一遍单元测试，配置在独立的 `vitest.config.ts`，不加载 Vite 插件以求快。测试文件 `*.test.ts` 放在 `tests/` 下，目录结构对照 `src`，只测能在 node 环境里直接跑的逻辑。不写组件测试，页面流程靠实际操作验证。需要一堆 `vi.mock` 才测得了时，先把逻辑抽成纯函数再测
+- `pnpm format`：Prettier 格式化，**范围仅 `src/` 与 `tests/`**
+- `pnpm test`：vitest，配置在独立的 `vitest.config.ts`。测试放 `tests/`，目录结构对照 `src`
 
-开发环境前端跑在 **32732**，后端 `development` 跑在 **32733**。前端请求带 `/api` 前缀，由 vite 代理 rewrite 掉——后端没有 context-path，接口路径就是 `/session`、`/users`，前缀属于部署层的事。端口取值区间是 **10000–49151**：Windows 的动态端口从 49152 起，WSL2 与 Hyper-V 的保留块都从那里面划，避开就不会撞上。
+开发环境前端跑在 **32732**，后端 `development` 跑在 **32733**。前端请求带 `/api` 前缀，由 vite 代理 rewrite 掉——后端没有 context-path，接口路径就是 `/session`、`/users`，前缀属于部署层的事。端口取值区间是 **10000–49151**：Windows 的动态端口从 49152 起，WSL2 与 Hyper-V 的保留块都从那里面划。
 
-**部署**：`Dockerfile` 两阶段构建，产物交给 nginx。镜像里只跑 `build-only`，不跑 type-check：开发时本来就会跑，镜像构建求快。路由用 history 模式，nginx 把所有路径回落到 `index.html`；`/api` 的反代不在这个 nginx 里，由外层负责。
+**部署**：`Dockerfile` 两阶段构建，产物交给 nginx。镜像里只跑 `build-only`，不跑 type-check。路由用 history 模式，nginx 把所有路径回落到 `index.html`；`/api` 的反代由外层负责。
 
-### atelier-engine
-
-（在该目录下执行）
+### atelier-engine（在该目录下执行）
 
 - `mvnd test`：运行测试，Testcontainers 自动起 PostgreSQL 与 Redis，需要 Docker
-- `mvnd test-compile exec:java`：重新生成 jOOQ 代码。起临时 PostgreSQL 容器跑完 Flyway 迁移后读取表结构，输出到 `jooq/generated/`。**改完迁移脚本后执行，生成结果提交进版本库**，普通构建因此不依赖 Docker
+- `mvnd test-compile exec:java`：重新生成 jOOQ 代码，输出到 `jooq/generated/`。**改完迁移脚本后执行，生成结果一起提交**
 
 **部署**：`Dockerfile` 以 `production` profile 启动，需要的环境变量见 `application-production.yml`。
 
 `BIGSERIAL` 不是标准 IDENTITY 列，jOOQ 不会自动识别。`JooqCodegen` 把所有表的 `id` 列声明为合成自增列；若某张表的 `id` 由应用层赋值，需要在那里排除。
 
-测试与代码生成共用 `TestcontainersConfiguration.POSTGRES_IMAGE`，用 `postgres:16`。固定大版本，免得 `latest` 悄悄升级导致测试环境与生产不一致。刻意不带扩展，因为示例用不到：下游需要 PostGIS 时换成 `postgis/postgis:16-3.5`，要 TimescaleDB（或两者都要）时换成 `timescale/timescaledb-ha:pg16-oss`。换镜像时要加 `.asCompatibleSubstituteFor("postgres")`。
+测试与代码生成共用 `TestcontainersConfiguration.POSTGRES_IMAGE`。镜像固定到小版本。刻意不带扩展；下游需要 PostGIS 或 TimescaleDB 时换成对应镜像（如 `timescale/timescaledb-ha` 的 `pg16.14-ts2.29.2` 这种连扩展版本一起写死的标签），并加 `.asCompatibleSubstituteFor("postgres")`。
 
 ## 代码约定
 
 ### atelier-ui
 
-- **类型导入一律 type-only**（`verbatimModuleSyntax` 已开启）。整条 import 的具名导入都是类型时，整条写成 `import type { X } from '...'`；与值混在一条时用内联形式 `import { type X, y } from '...'`，保持单行不拆分。
-- **一律显式 import**，不依赖插件注入。全局可用的只有 `app.use(router)` 注册的 `RouterView` / `RouterLink` 和 `main.ts` 里注册的 `v-ripple`；Element Plus 的 `v-loading` 也要 import `vLoading`。
-- **路径引用只用 `@`**，不要新增其它别名。跨目录引用一律 `@/` 开头，不写 `../../` 这种相对路径（同目录内的 `./xxx` 不在此列）。
-- **新文件用 kebab-case**，`art/` 下的上游原件保持原名，理由见「代码组织」一节。
-- **递归类型用对象，别用元组。** 自引用的元组（`type X = string | [X, 'AND' | 'OR', X]`）一旦进了 `RouteMeta`，Vue 模板推导路由对象时会撞上 `TS2589: Type instantiation is excessively deep`；对象的自引用是惰性解析的，不会触发。同一份代码在 TS 5.9 + vue-tsc 3.2 下不报错，所以这是工具链版本差异而非写法错误——但对象写法在新旧两边都成立，没有理由赌旧版本。
-- **别用 `<!-- @vue-ignore -->` 压 TS2589。** 它能让 type-check 过，代价是那个元素上所有表达式一起失去检查，而且随着使用面扩大要到处补；治本的办法是让类型推导得动。
-- **界面文案走 i18n。** 人手写可以只往 `zh.json` 里加，缺的英文会回退成中文显示；AI 写的要把能准确表达的英文一并补进 `en.json`，两边的键保持一致。后端返回的数据（权限名、用户姓名等）不归前端翻译，控制台日志也不必。脚本里用 `useI18n()` 的 `t`，组件外用 `@/locales` 导出的 `$t`；表单校验规则、搜索栏配置这类在 setup 里生成的文案写成 computed，切换语言才会跟着变。
+决策与理由见 `docs/` 的「前端构建与依赖」「前端写法」「会话与权限」。动手时要注意的：
+
+- **类型导入一律 type-only**（`verbatimModuleSyntax` 已开启）。整条都是类型时写 `import type { X } from '...'`；与值混在一条时用内联 `import { type X, y } from '...'`，保持单行不拆分。
+- **一律显式 import**。全局可用的只有 `RouterView` / `RouterLink` 和 `main.ts` 里注册的 `v-ripple`；Element Plus 的 `v-loading` 也要 import `vLoading`。
+- **路径**：引用全局的东西用 `@/`，只在一块内部共享的（如某个组件目录下的 composables、几个页面共用的模块）用相对路径。不要新增其它别名。
+- **递归类型用对象，别用元组。** 自引用的元组一旦进了 `RouteMeta`，模板推导路由对象时会撞上 `TS2589: Type instantiation is excessively deep`；对象的自引用是惰性解析的，不会触发。
+- **别用 `<!-- @vue-ignore -->` 压 TS2589**：那个元素上所有表达式会一起失去检查，治本是让类型推导得动。
+- **i18n**：`zh.json` 与 `en.json` 的键保持一致，AI 写的要把英文一并补上。脚本里用 `useI18n()` 的 `t`，组件外用 `@/locales` 导出的 `$t`。
+- **会话与权限**：
+  - `stores/session.ts` 是登录态的唯一出口（`user`、`isLoggedIn`、`ensureLoaded()`、`login()`、`logout()`），权限由它统一编排，别在别处单独填或清 permission store。
+  - 权限码集中在 `constants/permission.ts`，一律引用 `PERMISSIONS.XXX`。按钮级判断写 `v-if="permissionStore.check(...)"`，与路由守卫共用。
+  - `PermissionExpression` 只有 and / or。路由由 `filterByPermission(dynamicRoutes)` 筛完才注册。
+  - 401 在 `utils/http.ts` 统一处理，取 session store 要用**动态 `import`**：session store 经 `apis/` 绕回 `utils/http.ts`，静态引用会成环。`GET /session` 未登录时返回 200，守卫的 `ensureLoaded()` 不受 401 处理影响。
+  - 并发去重（会话加载、401 登出）用进行中的 Promise。
 
 ### atelier-engine
 
-- **枚举值存 Java 枚举名**（`ENABLED`、`MALE`），库里和 JSON 里都一样。Jackson 与 MapStruct 默认就按枚举名转换，不需要 `@JsonValue` 和成对的转换方法。库里用 `VARCHAR` 加 CHECK 约束限定取值，不用 PostgreSQL 原生 ENUM，因为原生 ENUM 很难删改取值。
-- **不区分大小写的唯一性不用 CITEXT**，用 `LOWER(col)` 唯一索引兜底，接口层先查重并给出具体文案。
-- **密码哈希用 `TEXT`**，不用 `CHAR(60)`：长度由算法保证，不写死，以后才换得了算法。
-- **响应统一用 `ResponseWrapper { code, message, result, timestamp }`**：已处理的情况一律返回 HTTP 200，结果看业务码 `code`（借用 HTTP 状态码的语义）。两类例外返回真实 HTTP 状态码：没匹配上接口（404 / 405），以及未登录（401）。401 走真实状态码是为了让前端在 http 层拦一次就够，body 仍按 `ResponseWrapper` 出，调用方不必为它准备另一套解析。分页用 `PageWrapper { data, total, pageNumber, pageSize }`，页码从 1 开始，不带 `totalPages`。
-- **时间在 JSON 里一律是毫秒时间戳**（`JacksonConfig`）。
-- **业务码**：参数错误 400，不存在 404，唯一性冲突 409。
-- **密码明文经 HTTPS 传输**，后端直接 BCrypt，前端不做哈希。领域模型的 `password` 标注 `WRITE_ONLY`，任何响应里都不会出现。BCrypt 上限 72 字节，按字节数校验（字符数没超、字节数超的情况会有），超了返回 400。
-  - **可选：前端先哈希再传。** 好处只有一个：后端或网关不小心把请求体打进日志时，留下的不是明文，用户在别处复用的密码不会从这里漏出去。它不增加传输安全，哈希值本身就成了密码，截获了照样能登录。模板默认不做，下游需要时自行加，注意几点：
-    - 算法用 SHA-256 的 hex。SHA-512 不论 hex 还是 base64 都超过 BCrypt 的 72 字节上限
-    - 算法和盐上线后就换不掉：库里存的是对哈希值的 BCrypt，换了所有人都得重设密码
-    - 盐不是秘密，构建产物里看得见。它的作用是让同一个密码在不同站点得到不同的哈希，所以建议每个项目各配一个。几个前端共用同一套账号体系时共用一个盐也合理
-    - 后端看不到明文，密码强度只能在前端校验；登录接口的所有调用方（脚本、测试、超级管理员初始密码）都要做同样的哈希
-    - 用纯 JS 实现，不要用 Web Crypto。`crypto.subtle` 只在 HTTPS 或 localhost 下存在，开发时用局域网 IP 走 http 访问就登录不了
-- **PATCH 里 `null` 表示不修改**，所以部分更新无法把可空字段清空。确实需要清空时再另想办法，不要为此改变 `null` 的语义。
-- **基础数据不进 Flyway**，Flyway 只管表结构，基础数据由 `DataInitializer` 在启动时准备：
-  - **权限点**写在 `permissions.yml`，每次启动同步进库：新的插入，改过的更新，文件里删掉的置为禁用、不真删。权限码发布后不改名，不再需要时把 `enabled` 改成 `false`。
-  - **超级管理员**固定为 id 1，只在用户表为空时创建。初始密码取配置 `atelier.super-admin.initial-password`，生产环境对应环境变量 `ATELIER_PASSWORD`，之后再改这个配置不影响已有密码。
-- **超级管理员只在两处特判**：可用权限为全部启用的权限，不走角色；不能被删除或禁用。计算「某人有哪些权限」的逻辑只在 `RbacServiceImpl` 一处。
-- **可用权限码缓存在 Redis**，5 分钟过期。改了用户的角色或状态，就清这个用户的缓存；改了角色的权限或状态、同步了权限，就清全部缓存。清缓存要等事务提交后再做（`TransactionUtil.runAfterCommit`）。
-- **会话**：Spring Session 存在 Redis，会话 id 走 Cookie。会话里只存 `userId` 和 `loginTime`，`GET /session` 每次都现查用户、拼成 `SessionVo`，所以用户被删除或禁用后，会话自然失效。登录时更换会话 id。
-- **认证拦截做，授权拦截不做**。`AuthenticationInterceptor` 只回答「登录了没」：会话里没有 `userId` 就抛 `UnauthenticatedException`，由 `GlobalExceptionHandler` 出 401。「能不能做这件事」留给下游。
-  - 放行的只有 `/session`：GET 是前端判断登录态的依据，POST 是登录本身，DELETE 放行是为了让会话过期后登出仍调得动，不至于卡在页面上。
-  - 拦截器只看会话里有没有 `userId`，**不查库确认用户仍存在且启用**——那是每请求一次查询的成本。代价是用户被删除或禁用后，他手上的会话还能调业务接口，直到前端下次导航走 `GET /session` 才被踢。要堵这个口子就在拦截器里查一次用户状态。
-  - 拦截器先于路由匹配，所以**未登录访问不存在的路径得到 401 而不是 404**。这是有意的，不暴露哪些路径存在。
-- **删除时连带的数据**：删用户时，连同他的角色分配一起删；删角色时，连同它的权限分配一起删；但角色还分配给用户时拒绝删除（409），以免用户的权限悄悄变少。
-- **集成测试继承 `IntegrationTests`**，所有测试共用一个 Spring 上下文和一套容器。新测试不要另加 `@MockitoBean` 之类会改变上下文的注解，否则会多起一套容器。
-  - 基类给 MockMvc 配了 `defaultRequest`，**所有请求默认带一个已登录的会话**，否则会被认证拦截器挡成 401。认证是横切关注点，由 `AuthenticationInterceptorTests` 集中验证一次，其余测试各管各的那件事。要测未登录的行为就加 `.with(anonymous())`。
-  - 默认会话必须**经 `SessionRepository` 真造一个、再按 Cookie 传**：Spring Session 的 filter 接管了 `getSession()`，只认 Cookie 里的会话 id，请求上预设的 `MockHttpSession` 它根本不看。
+决策与理由见 `docs/` 的「接口约定」「后端约定」。动手时要注意的：
+
+- 响应用 `ResponseWrapper { code, message, result, timestamp }`，分页用 `PageWrapper { data, total, pageNumber, pageSize }`。时间序列化在 `JacksonConfig`。
+- BCrypt 上限 72 字节，按字节数校验，超了返回 400。领域模型的 `password` 标注 `WRITE_ONLY`。
+- **权限点**写在 `permissions.yml`，由 `DataInitializer` 每次启动同步。**超级管理员**固定为 id 1，初始密码取 `atelier.super-admin.initial-password`，生产环境对应环境变量 `ATELIER_PASSWORD`。
+- 计算「某人有哪些权限」的逻辑只在 `RbacServiceImpl` 一处。权限缓存的清理要等事务提交后（`TransactionUtil.runAfterCommit`）。
+- 会话：Spring Session 存在 Redis，会话 id 走 Cookie，会话里只存 `userId` 和 `loginTime`，登录时更换会话 id。
+- `AuthenticationInterceptor` 只认会话里的 `userId`，缺了就抛 `UnauthenticatedException`，由 `GlobalExceptionHandler` 出 401。放行的只有 `/session`：GET 用来判断登录态，POST 是登录，DELETE 放行是为了让会话过期后登出仍调得动。
+- **集成测试继承 `IntegrationTests`**，共用一个 Spring 上下文和一套容器，不要另加 `@MockitoBean` 之类会改变上下文的注解。
+  - 基类给 MockMvc 配了 `defaultRequest`，**所有请求默认带一个已登录的会话**。认证由 `AuthenticationInterceptorTests` 集中验证，要测未登录的行为就加 `.with(anonymous())`。
+  - 默认会话必须**经 `SessionRepository` 真造一个、再按 Cookie 传**：Spring Session 的 filter 只认 Cookie 里的会话 id，请求上预设的 `MockHttpSession` 它根本不看。
   - `SessionControllerTests` 里发起登录的请求要显式 `.with(anonymous())`，否则会复用默认会话，`changeSessionId()` 和登出会把它的 id 和 `userId` 一起改掉，后面的测试全挂。
 
-## 前端的会话与权限
+## 现状与待办
 
-后端做认证拦截（未登录一律 401），但**不做授权拦截**。所以前端这套权限的目标不是拦截，而是**别让人看见点不动的入口**。真正的鉴权由下游按自己的场景补在后端。
-
-### 会话
-
-- **`stores/session.ts` 是登录态的唯一出口**：`user`、`isLoggedIn`、`ensureLoaded()`、`login()`、`logout()`。登录态在 Cookie 里、前端不持有凭证，服务端才是真相源，本地状态只是副本——所以这个 store 不做持久化，每次启动由守卫 `await ensureLoaded()` 重新向服务端确认。
-- **权限由 session 统一编排**，别在其它地方单独去填或清 permission store。两个 store 各自为政的下场是「登出时要记得清七个地方」，漏一个就是 bug。
-- **并发去重用进行中的 Promise，不要用 boolean 标志。** `if (!fetched) { await ...; fetched = true }` 这种写法，两个导航同时进来时会重复打后端。
-- **先把数据取齐再赋值。** 会话拿到了但权限请求失败时，本地状态应当保持原样，不要留下「有 user 却没有权限」的半截状态。
-- **401 在 `utils/http.ts` 这一层统一处理**，不交给调用方。这与「重试和登出该由调用方决定」不矛盾：401 的语义是服务端已经断定没登录，本地登录态必然是错的，不存在按场景判断的余地；让几十个调用点各自处理，漏掉才是常态。处理方式是调 `sessionStore.logout()`——提示、清本地状态、跳登录页并带 `redirect` 都在里面。
-  - 多个请求同时 401 时**只登出一次**，用进行中的 Promise 去重，理由同上。
-  - 取 session store 要用**动态 `import`**：session store 经 `apis/` 绕回 `utils/http.ts`，静态引用会成环。
-  - `GET /session` 未登录时返回 200 而非 401，所以守卫的 `ensureLoaded()` 不受这条影响，走的还是原来那条「user 为 null 就跳登录页」的路。
-
-### 权限
-
-- **权限码是唯一依据，不认角色。** 角色是库里的数据、名字随时会被改；权限码写在后端 `permissions.yml` 里、发布后不改名，只有它适合写进前端代码。ADP 的 `meta.roles`、`v-roles`、`info.buttons` 已全部移除。
-- **权限码集中在 `constants/permission.ts`**，一律引用 `PERMISSIONS.XXX`，不写裸字符串——后端增删权限时，靠这张表就能找全前端的引用点。
-- **`PermissionExpression` 只有 and / or。** 不要加 NOT：一旦出现「没有某权限才能看见」，权限就不再是单调递增的，加权限反而可能让人少看见东西，排查起来极难。
-- **权限在路由注册这一步落地。** `filterByPermission(dynamicRoutes)` 筛完才注册，没权限的路由压根不进路由表，于是菜单、可访问路径、路由表三者天然同源，不必再单独做一遍路径权限校验。子项被筛光的目录会一并消失，所以目录本身不用重复声明权限。
-- **按钮级判断与路由守卫共用 `permissionStore.check()`**，写成 `v-if="permissionStore.check(...)"`。ADP 的 `useAuth` 只是对它的转发，已删。`v-auth` 指令已删：它在 `mounted` 之后用 `removeChild` 摘 DOM，绕过虚拟 DOM、不响应权限变化，而且下游真实项目里两年没人用过一次。
-- **一个页面都没有时要兜底。** 路由注册结果为空，说明这个账号什么都看不到，应当提示并登出，而不是让他掉进 404。
-
-## 当前状态
-
-- `atelier-ui/`：工具链清理、配置替换、演示内容移除、`import type` 改造、全量格式化、目录重组均已完成，`type-check`、`build`、`test` 全绿。**登录与会话已对接后端并实测跑通**——真实登录、Cookie 会话、权限拉取、按权限过滤菜单与路由都验证过了。**用户、角色管理页已对接**：列表、搜索、增删改、分配角色、分配权限均走真实接口。分配权限的树按权限码冒号前的前缀分组；已分配但被禁用的权限不在树里展示，保存时原样带回，不会被整体替换冲掉。**权限管理页已新增**（`views/system/permission`），只读，权限点的增删改只能改后端 `permissions.yml`。
-- **前端尚未对接的部分**：注册页与忘记密码页后端没有对应接口，链接目前指向死路，**有意留着作参考**，不要顺手删。
-- `atelier-engine/`：依赖与 jOOQ 代码生成已就绪，数据源按 profile 配置（`development` / `production`）；用户、角色、权限的表结构已建（`V1.1.0`）；用户、角色、权限、会话的接口均已完成。**认证拦截已接上**：未登录访问业务接口返回真实 HTTP 401，前端在 `utils/http.ts` 里统一登出并跳登录页。后端已用真实服务跑通（登录 → 访问 → 登出后旧 Cookie → 401），前端那段跳转尚未在浏览器里实走过。
-- **示例业务域：用户、角色、权限（RBAC）**，另设超级管理员特判。后端只做认证（登录、会话、未登录拦截），**不做授权拦截**：权限只用来控制前端的展示和可操作性。后端鉴权取决于使用场景，由下游自行补上。
-
-### 待办（前端，已评估、暂缓）
-
-设计理由优先写进代码注释，注释放不下的才进 README。
-
-**等决定：**
-
-- **日期选择器的周起始要装包才能修**：月份名、年月标题已随语言切换，但中文下一周仍从周日开始。Element Plus 从 dayjs 的 locale 取周起始，要 `import 'dayjs/locale/zh-cn'`；dayjs 只是 Element Plus 的间接依赖，pnpm 下导入不到，得先把它加成直接依赖（版本与 Element Plus 用的保持一致）。
-
-**放到后面：**
-
-- **composables**：`useHeaderBar`、`useLayoutHeight`、`useTableHeight` 都只有 1～3 处引用，本质是某个组件的逻辑被抽了出来。不单独处理，随对应功能的去留走。
-- **ADP 演示页的文案**：工作台、个人中心的演示数据，以及注册、忘记密码页里仍有写死的中文。它们是 ADP 的示例内容，随这些页面的去留一起处理。
+- 注册页与忘记密码页后端没有对应接口，链接指向死路，**有意留着作参考**，不要顺手删。
+- 后端只做了认证拦截，没做按权限码的授权拦截，由下游按场景补。
+- 日期选择器在中文下一周仍从周日开始：Element Plus 从 dayjs 的 locale 取周起始，要 `import 'dayjs/locale/zh-cn'`。dayjs 已是直接依赖，等日期格式化的方案定下来一起做。
+- `useHeaderBar`、`useLayoutHeight`、`useTableHeight` 只有 1～3 处引用，不单独处理，随对应功能的去留走。
+- ADP 演示页（工作台、个人中心、注册、忘记密码）里仍有写死的中文与演示数据，随这些页面的去留一起处理。

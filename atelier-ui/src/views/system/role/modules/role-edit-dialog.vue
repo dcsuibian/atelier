@@ -68,7 +68,7 @@ const { t } = useI18n()
 const formRef = ref<FormInstance>()
 const form = reactive<Form>(createForm())
 
-// 与后端 Role 上的校验保持一致；描述不能为 null，但可以是空串
+// 与后端 Role 上的校验保持一致；描述可以不填
 const rules = computed<FormRules<Form>>(() => ({
   name: [
     { required: true, message: t('system.role.enterName'), trigger: 'blur' },

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dcsuibian.atelier.jooq.generated.Tables.ROLE;
 import static com.dcsuibian.atelier.jooq.generated.Tables.ROLE_PERMISSION;
@@ -91,7 +92,7 @@ public class RoleServiceImpl implements RoleService {
 		Role.Status status = null == role.getStatus() ? Role.Status.ENABLED : role.getStatus();
 		RoleRecord record = dsl.insertInto(ROLE)
 				.set(ROLE.NAME, role.getName())
-				.set(ROLE.DESCRIPTION, role.getDescription())
+				.set(ROLE.DESCRIPTION, Objects.requireNonNullElse(role.getDescription(), ""))
 				.set(ROLE.STATUS, status.name())
 				.set(ROLE.CREATE_TIME, now)
 				.set(ROLE.UPDATE_TIME, now)

@@ -23,7 +23,9 @@ public class Role {
 	@Size(groups = {Add.class, Edit.class, EditPartially.class}, min = 1, max = 255, message = "角色名称长度必须在1到255个字符之间")
 	private String name;
 
-	@NotNull(groups = {Add.class, Edit.class}, message = "角色描述不能为空")
+	/**
+	 * 不传时当作空串，库里「没有描述」只有空串这一种表示
+	 */
 	private String description;
 
 	/**

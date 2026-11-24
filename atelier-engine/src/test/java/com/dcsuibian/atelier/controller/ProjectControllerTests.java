@@ -54,7 +54,7 @@ public class ProjectControllerTests extends IntegrationTests {
 	}
 
 	@Test
-	@DisplayName("新增项目：返回带上负责人的用户名与姓名；负责人缺失或不存在返回 400")
+	@DisplayName("新增项目：返回带上负责人的用户名与姓名，不传描述当作空串；负责人缺失或不存在返回 400")
 	void add() throws Exception {
 		long ownerId = addUser("owner", "张三");
 		mockMvc.perform(post("/projects").contentType(MediaType.APPLICATION_JSON).content("""
@@ -65,6 +65,11 @@ public class ProjectControllerTests extends IntegrationTests {
 				.andExpect(jsonPath("$.result.owner.name").value("pt_owner"))
 				.andExpect(jsonPath("$.result.owner.realName").value("张三"))
 				.andExpect(jsonPath("$.result.createTime").isNumber());
+
+		mockMvc.perform(post("/projects").contentType(MediaType.APPLICATION_JSON).content("""
+						{"name": "pt_no_desc", "owner": {"id": %d}}
+						""".formatted(ownerId)))
+				.andExpect(jsonPath("$.result.description").value(""));
 
 		mockMvc.perform(post("/projects").contentType(MediaType.APPLICATION_JSON).content("""
 						{"name": "pt_no_owner", "description": "测试项目"}

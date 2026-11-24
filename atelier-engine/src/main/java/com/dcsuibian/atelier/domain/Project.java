@@ -30,7 +30,9 @@ public class Project {
 	@NotNull(groups = {Add.class, Edit.class}, message = "负责人不能为空")
 	private User owner;
 
-	@NotNull(groups = {Add.class, Edit.class}, message = "项目描述不能为空")
+	/**
+	 * 不传时当作空串，库里「没有描述」只有空串这一种表示
+	 */
 	private String description;
 
 	private Instant createTime;

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dcsuibian.atelier.jooq.generated.Tables.PROJECT;
 import static com.dcsuibian.atelier.jooq.generated.Tables.USER;
@@ -116,7 +117,7 @@ public class ProjectServiceImpl implements ProjectService {
 		ProjectRecord record = dsl.insertInto(PROJECT)
 				.set(PROJECT.NAME, project.getName())
 				.set(PROJECT.OWNER_ID, ownerId)
-				.set(PROJECT.DESCRIPTION, project.getDescription())
+				.set(PROJECT.DESCRIPTION, Objects.requireNonNullElse(project.getDescription(), ""))
 				.set(PROJECT.CREATE_TIME, now)
 				.set(PROJECT.UPDATE_TIME, now)
 				.returning()

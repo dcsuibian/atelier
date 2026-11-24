@@ -65,7 +65,7 @@ public class RoleControllerTests extends IntegrationTests {
 	}
 
 	@Test
-	@DisplayName("新增角色：默认启用；名称重复返回 409")
+	@DisplayName("新增角色：默认启用，不传描述当作空串；名称重复返回 409")
 	void add() throws Exception {
 		mockMvc.perform(post("/roles").contentType(MediaType.APPLICATION_JSON).content("""
 						{"name": "rt_add", "description": "测试角色"}
@@ -80,7 +80,8 @@ public class RoleControllerTests extends IntegrationTests {
 		mockMvc.perform(post("/roles").contentType(MediaType.APPLICATION_JSON).content("""
 						{"name": "rt_nodesc"}
 						"""))
-				.andExpect(jsonPath("$.code").value(400));
+				.andExpect(jsonPath("$.code").value(200))
+				.andExpect(jsonPath("$.result.description").value(""));
 	}
 
 	@Test

@@ -12,13 +12,4 @@ interface Role {
 
 type RoleStatus = 'ENABLED' | 'DISABLED'
 
-/**
- * 角色列表的查询条件，对应后端 RoleQo
- */
-interface RoleQuery {
-  status?: RoleStatus
-  /** 模糊匹配角色名称、描述，不区分大小写 */
-  searchText?: string
-}
-
-export type { Role, RoleStatus, RoleQuery }
+export type { Role, RoleStatus }

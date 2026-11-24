@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { RoleQuery } from '@/types'
+import type { RoleQuery } from '@/apis/role'
 import ArtSearchBar from '@/components/art/forms/art-search-bar/index.vue'
 
 interface Emits {

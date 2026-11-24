@@ -1,15 +1,24 @@
-import type { PageQuery, PageWrapper, Permission, Role, RoleQuery } from '@/types'
+import type { PageWrapper, Permission, Role, RoleStatus } from '@/types'
 import request from '@/utils/http'
+
+/**
+ * 角色列表的查询条件，对应后端 RoleQo
+ */
+interface RoleQuery {
+  status?: RoleStatus
+  /** 模糊匹配角色名称、描述，不区分大小写 */
+  searchText?: string
+}
 
 /**
  * 新增与编辑时提交的角色。编辑走 PATCH，字段为 undefined 表示不修改
  */
 type RoleForm = Partial<Omit<Role, 'id' | 'createTime' | 'updateTime'>>
 
-export function getRoles(params: RoleQuery & PageQuery): Promise<PageWrapper<Role>> {
+export function getRoles(query: RoleQuery, pageNumber: number, pageSize: number): Promise<PageWrapper<Role>> {
   return request.get({
     url: '/roles',
-    params,
+    params: { ...query, pageNumber, pageSize },
   })
 }
 
@@ -52,4 +61,4 @@ export function setPermissionsByRoleId(roleId: number, permissionIds: number[]):
   })
 }
 
-export type { RoleForm }
+export type { RoleQuery, RoleForm }

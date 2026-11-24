@@ -45,7 +45,7 @@ import { ElButton, ElDialog, ElMessage, ElScrollbar, ElTree, vLoading } from 'el
 import type { TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { getPermissionsByRoleId, setPermissionsByRoleId } from '@/apis/role'
-import { getAllPermissions } from '@/apis/permission'
+import { getPermissions } from '@/apis/permission'
 import { getRolesByUserId } from '@/apis/user'
 import { useSessionStore } from '@/stores/session'
 import type { Permission, Role } from '@/types'
@@ -107,7 +107,7 @@ const handleOpen = async () => {
   loading.value = true
   try {
     const [permissions, assigned] = await Promise.all([
-      getAllPermissions({ status: 'ENABLED' }),
+      getPermissions({ status: 'ENABLED' }),
       getPermissionsByRoleId(role.id),
     ])
     treeData.value = buildTree(permissions)

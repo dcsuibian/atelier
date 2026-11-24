@@ -48,9 +48,9 @@
 import { onMounted, ref } from 'vue'
 import { ElCard, ElPagination, ElTable, ElTableColumn, ElTag, vLoading } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { getPermissions } from '@/apis/permission'
+import { getPermissions, type PermissionQuery } from '@/apis/permission'
 import { formatDateTime } from '@/utils/format'
-import type { Permission, PermissionQuery, PermissionStatus } from '@/types'
+import type { Permission, PermissionStatus } from '@/types'
 import PermissionSearch from './modules/permission-search.vue'
 
 defineOptions({ name: 'Permission' })
@@ -76,7 +76,7 @@ const loading = ref(false)
 const load = async () => {
   loading.value = true
   try {
-    const page = await getPermissions({ ...searchForm.value, pageNumber: pageNumber.value, pageSize: pageSize.value })
+    const page = await getPermissions(searchForm.value, pageNumber.value, pageSize.value)
     permissions.value = page.data
     total.value = page.total
   } finally {

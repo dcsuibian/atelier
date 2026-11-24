@@ -177,7 +177,7 @@ const roleOptions = ref<Role[]>([])
 const searchRoles = async (searchText: string) => {
   rolesLoading.value = true
   try {
-    const page = await getRoles({ searchText: toOptional(searchText), pageNumber: 1, pageSize: 20 })
+    const page = await getRoles({ searchText: toOptional(searchText) }, 1, 20)
     const selected = roleOptions.value.filter(role => form.roleIds.includes(role.id))
     roleOptions.value = [...selected, ...page.data.filter(role => !form.roleIds.includes(role.id))]
   } finally {

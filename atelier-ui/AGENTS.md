@@ -113,6 +113,8 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 - **别用 `<!-- @vue-ignore -->` 压 TS2589**：那个元素上所有表达式会一起失去检查，治本是让类型推导得动。
 - **i18n**：`zh.json` 与 `en.json` 的键保持一致，AI 写的要把英文一并补上。脚本里用 `useI18n()` 的 `t`，组件外用 `@/locales` 导出的 `$t`。
 - **日期时间**：展示时用 `utils/format.ts` 的 `formatDateTime` 等，目前是固定格式、不随语言切换。需要月份名、星期名这类本地化文字时，可以用 `Intl.DateTimeFormat`。
+- **列表接口**：写成 `getXxxs(query, pageNumber, pageSize)`，返回 `PageWrapper`。后端另有不分页的全量接口时，再加一个 `getXxxs(query)` 重载返回数组（如 `getPermissions`）。重载只区分分页与全量；一个资源只用一种分页方式，真要另一种（如游标）就起别的名字，别靠参数类型区分。
+- **类型放哪**：`types/` 只放没有唯一归属的类型：与后端约定的数据结构、`ResponseWrapper` / `PageWrapper` 这类协议外壳、多处共用的概念（如 `Tensor`）。接口的查询条件 `XxxQuery`、表单 `XxxForm` 跟着接口放在 `apis/`；组件、store 自己的类型写在自己文件里。
 - **会话与权限**：
   - `stores/session.ts` 是登录态的唯一出口（`user`、`isLoggedIn`、`ensureLoaded()`、`login()`、`logout()`），权限由它统一编排，别在别处单独填或清 permission store。
   - 权限码集中在 `constants/permission.ts`，一律引用 `PERMISSIONS.XXX`。按钮级判断写 `v-if="permissionStore.check(...)"`，与路由守卫共用。

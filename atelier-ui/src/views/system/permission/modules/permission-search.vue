@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { PermissionQuery } from '@/types'
+import type { PermissionQuery } from '@/apis/permission'
 import ArtSearchBar from '@/components/art/forms/art-search-bar/index.vue'
 
 interface Emits {

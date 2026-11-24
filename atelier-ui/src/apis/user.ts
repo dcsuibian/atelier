@@ -1,5 +1,14 @@
-import type { PageQuery, PageWrapper, Permission, Role, User, UserQuery } from '@/types'
+import type { PageWrapper, Permission, Role, User, UserStatus } from '@/types'
 import request from '@/utils/http'
+
+/**
+ * 用户列表的查询条件，对应后端 UserQo
+ */
+interface UserQuery {
+  status?: UserStatus
+  /** 模糊匹配用户名、真实姓名、手机号，不区分大小写 */
+  searchText?: string
+}
 
 /**
  * 新增与编辑时提交的用户。password 只进不出，响应里的 User 没有这个字段
@@ -8,10 +17,10 @@ import request from '@/utils/http'
  */
 type UserForm = Partial<Omit<User, 'id' | 'createTime' | 'updateTime'> & { password: string }>
 
-export function getUsers(params: UserQuery & PageQuery): Promise<PageWrapper<User>> {
+export function getUsers(query: UserQuery, pageNumber: number, pageSize: number): Promise<PageWrapper<User>> {
   return request.get({
     url: '/users',
-    params,
+    params: { ...query, pageNumber, pageSize },
   })
 }
 
@@ -71,4 +80,4 @@ export function getAvailablePermissionsByUserId(userId: number): Promise<Permiss
   })
 }
 
-export type { UserForm }
+export type { UserQuery, UserForm }

@@ -14,13 +14,4 @@ interface Project {
 
 type ProjectOwner = Pick<User, 'id' | 'name' | 'realName'>
 
-/**
- * 项目列表的查询条件，对应后端 ProjectQo
- */
-interface ProjectQuery {
-  ownerId?: number
-  /** 模糊匹配项目名称、描述，不区分大小写 */
-  searchText?: string
-}
-
-export type { Project, ProjectOwner, ProjectQuery }
+export type { Project, ProjectOwner }

@@ -55,10 +55,10 @@ import { useI18n } from 'vue-i18n'
 import type { ButtonMoreItem } from '@/components/art/forms/art-button-more/index.vue'
 import ArtButtonMore from '@/components/art/forms/art-button-more/index.vue'
 import { usePermissionStore } from '@/stores/permission'
-import { deleteProjectById, getProjects } from '@/apis/project'
+import { deleteProjectById, getProjects, type ProjectQuery } from '@/apis/project'
 import { formatDateTime } from '@/utils/format'
 import { PERMISSIONS } from '@/constants/permission'
-import type { Project, ProjectQuery } from '@/types'
+import type { Project } from '@/types'
 import ProjectSearch from './modules/project-search.vue'
 import ProjectEditDialog from './modules/project-edit-dialog.vue'
 
@@ -96,7 +96,7 @@ const loading = ref(false)
 const load = async () => {
   loading.value = true
   try {
-    const page = await getProjects({ ...searchForm.value, pageNumber: pageNumber.value, pageSize: pageSize.value })
+    const page = await getProjects(searchForm.value, pageNumber.value, pageSize.value)
     projects.value = page.data
     total.value = page.total
   } finally {

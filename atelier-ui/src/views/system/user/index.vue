@@ -100,11 +100,11 @@ import {
 import { useI18n } from 'vue-i18n'
 import ArtButtonTable from '@/components/art/forms/art-button-table/index.vue'
 import { usePermissionStore } from '@/stores/permission'
-import { deleteUserById, getUsers } from '@/apis/user'
+import { deleteUserById, getUsers, type UserQuery } from '@/apis/user'
 import { formatDateTime } from '@/utils/format'
 import { PERMISSIONS } from '@/constants/permission'
 import { SUPER_ADMIN_USER_ID } from '@/constants/user'
-import type { User, UserQuery, UserStatus } from '@/types'
+import type { User, UserStatus } from '@/types'
 import defaultAvatar from '@/assets/images/user/avatar.webp'
 import UserSearch from './modules/user-search.vue'
 import UserDialog from './modules/user-dialog.vue'
@@ -132,7 +132,7 @@ const loading = ref(false)
 const load = async () => {
   loading.value = true
   try {
-    const page = await getUsers({ ...searchForm.value, pageNumber: pageNumber.value, pageSize: pageSize.value })
+    const page = await getUsers(searchForm.value, pageNumber.value, pageSize.value)
     users.value = page.data
     total.value = page.total
   } finally {

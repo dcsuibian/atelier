@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { ProjectQuery } from '@/types'
+import type { ProjectQuery } from '@/apis/project'
 import ArtSearchBar from '@/components/art/forms/art-search-bar/index.vue'
 import OwnerSelect from './owner-select.vue'
 

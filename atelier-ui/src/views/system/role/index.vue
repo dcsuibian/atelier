@@ -76,10 +76,10 @@ import { useI18n } from 'vue-i18n'
 import type { ButtonMoreItem } from '@/components/art/forms/art-button-more/index.vue'
 import ArtButtonMore from '@/components/art/forms/art-button-more/index.vue'
 import { usePermissionStore } from '@/stores/permission'
-import { deleteRoleById, getRoles } from '@/apis/role'
+import { deleteRoleById, getRoles, type RoleQuery } from '@/apis/role'
 import { formatDateTime } from '@/utils/format'
 import { PERMISSIONS } from '@/constants/permission'
-import type { Role, RoleQuery, RoleStatus } from '@/types'
+import type { Role, RoleStatus } from '@/types'
 import RoleSearch from './modules/role-search.vue'
 import RoleEditDialog from './modules/role-edit-dialog.vue'
 import RolePermissionDialog from './modules/role-permission-dialog.vue'
@@ -129,7 +129,7 @@ const loading = ref(false)
 const load = async () => {
   loading.value = true
   try {
-    const page = await getRoles({ ...searchForm.value, pageNumber: pageNumber.value, pageSize: pageSize.value })
+    const page = await getRoles(searchForm.value, pageNumber.value, pageSize.value)
     roles.value = page.data
     total.value = page.total
   } finally {

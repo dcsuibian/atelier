@@ -47,7 +47,7 @@ const search = async (searchText?: string) => {
   loading.value = true
   try {
     // 只取第一页：人多时靠搜索缩小范围，不在下拉里翻页
-    const page = await getUsers({ searchText: searchText || undefined, pageNumber: 1, pageSize: 20 })
+    const page = await getUsers({ searchText: searchText || undefined }, 1, 20)
     options.value = page.data
   } finally {
     loading.value = false

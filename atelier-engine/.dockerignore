@@ -1,5 +1,6 @@
-target/
-.idea/
-.vscode/
-.mvn/wrapper/maven-wrapper.jar
-HELP.md
+# 白名单：Dockerfile 只用到下面这些，其余一律不进构建上下文
+*
+!.mvn
+!mvnw
+!pom.xml
+!src

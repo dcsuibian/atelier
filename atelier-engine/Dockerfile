@@ -9,13 +9,19 @@ COPY mvnw pom.xml ./
 RUN ./mvnw dependency:go-offline -B
 
 COPY src ./src
-RUN ./mvnw package -DskipTests -B \
-    && mv target/atelier-engine-*.jar app.jar
+# maven.test.skip 连测试代码也不编译，比 skipTests 省时间
+RUN ./mvnw package -Dmaven.test.skip=true -B \
+    && mv target/atelier-engine-*.jar app.jar \
+    && java -Djarmode=tools -jar app.jar extract --layers --destination extracted
 
 FROM eclipse-temurin:25-jre
 
 WORKDIR /app
-COPY --from=builder /build/app.jar app.jar
+# 按变动频率分层：依赖不变时前几层直接复用，推送和拉取只传最后的应用代码
+COPY --from=builder /build/extracted/dependencies/ ./
+COPY --from=builder /build/extracted/spring-boot-loader/ ./
+COPY --from=builder /build/extracted/snapshot-dependencies/ ./
+COPY --from=builder /build/extracted/application/ ./
 
 ENV SPRING_PROFILES_ACTIVE=production
 EXPOSE 80

@@ -9,15 +9,15 @@ atelier 的后端。仓库层面的约束（公开仓库须脱敏、文档分工
 技术栈：Java 25 + Spring Boot 4 + jOOQ + Flyway + PostgreSQL + Redis，Testcontainers 测试，`mvnd` 构建，包名 `com.dcsuibian.atelier`。
 
 - `mvnd test`：运行测试，Testcontainers 自动起 PostgreSQL 与 Redis，需要 Docker
-- `mvnd test-compile exec:java`：重新生成 jOOQ 代码，输出到 `jooq/generated/`。**改完迁移脚本后执行，生成结果一起提交**
+- `mvnd exec:exec@jooq-codegen`：重新生成 jOOQ 代码，输出到 `src/main/java/.../jooq/generated/`，生成结果一起提交
+
+**加表的顺序**：写 Flyway 迁移 → 把表名加进 `src/codegen/jooq-codegen.xml` 的 `<includes>`（id 由数据库自增的，同时加进 `<syntheticObjects>` 的 identities）→ 跑生成 → 再写引用新表的代码。`src/codegen/JooqCodegen.java` 按源文件运行，不需要项目先编译通过，改列导致代码报错时照样能生成。漏加 identities 不会报错，只是插入后拿不到自增 id。
 
 开发环境用 `development` profile，跑在 **32733**。
 
 **部署**：`Dockerfile` 以 `production` profile 启动，需要的环境变量见 `application-production.yml`。
 
-`BIGSERIAL` 不是标准 IDENTITY 列，jOOQ 不会自动识别。`JooqCodegen` 把所有表的 `id` 列声明为合成自增列；若某张表的 `id` 由应用层赋值，需要在那里排除。
-
-测试与代码生成共用 `TestcontainersConfiguration.POSTGRES_IMAGE`。镜像固定到小版本。刻意不带扩展；下游需要 PostGIS 或 TimescaleDB 时换成对应镜像（如 `timescale/timescaledb-ha` 的 `pg16.14-ts2.29.2` 这种连扩展版本一起写死的标签），并加 `.asCompatibleSubstituteFor("postgres")`。
+测试用 `TestcontainersConfiguration.POSTGRES_IMAGE`，代码生成用 `pom.xml` 里 `jooq-codegen` 的 `codegen.image`，两处要一致。镜像固定到小版本。刻意不带扩展；下游需要 PostGIS 或 TimescaleDB 时换成对应镜像（如 `timescale/timescaledb-ha` 的 `pg16.14-ts2.29.2` 这种连扩展版本一起写死的标签），测试里加 `.asCompatibleSubstituteFor("postgres")`，代码生成需要建扩展时用 `codegen.initScript`。
 
 ## 代码约定
 

@@ -188,16 +188,31 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- 重新生成 jOOQ 类：mvnd exec:exec@jooq-codegen（见 src/codegen/JooqCodegen.java） -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>3.6.4</version>
-				<configuration>
-					<mainClass>com.dcsuibian.atelier.JooqCodegen</mainClass>
-					<classpathScope>test</classpathScope>
-					<!-- Testcontainers 的 Ryuk 线程会在进程退出时自行结束，交给插件清理反而会被中断报错 -->
-					<cleanupDaemonThreads>false</cleanupDaemonThreads>
-				</configuration>
+				<executions>
+					<execution>
+						<id>jooq-codegen</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>${java.home}/bin/java</executable>
+							<classpathScope>test</classpathScope>
+							<arguments>
+								<!-- 与 TestcontainersConfiguration.POSTGRES_IMAGE 保持一致 -->
+								<argument>-Dcodegen.image=postgres:17.10</argument>
+								<argument>-Dcodegen.locations=filesystem:src/main/resources/db/migration</argument>
+								<argument>-classpath</argument>
+								<classpath/>
+								<argument>src/codegen/JooqCodegen.java</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

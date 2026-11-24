@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.21.0.xsd">
+	<generator>
+		<database>
+			<name>org.jooq.meta.postgres.PostgresDatabase</name>
+			<inputSchema>public</inputSchema>
+			<!-- 白名单：新表要加进来才会生成 -->
+			<includes>
+				user
+				| role
+				| permission
+				| user_role
+				| role_permission
+				| project
+			</includes>
+			<includeRoutines>false</includeRoutines>
+			<syntheticObjects>
+				<identities>
+					<!-- BIGSERIAL 不是标准 IDENTITY 列，jOOQ 不会自动识别，不声明的话插入后拿不到自增 id。
+					     只列 id 由数据库自增的表，应用层赋值的 id 列进来会被插入时丢弃 -->
+					<identity>
+						<tables>
+							user
+							| role
+							| permission
+							| user_role
+							| role_permission
+							| project
+						</tables>
+						<fields>id</fields>
+					</identity>
+				</identities>
+			</syntheticObjects>
+		</database>
+		<target>
+			<packageName>com.dcsuibian.atelier.jooq.generated</packageName>
+			<directory>src/main/java</directory>
+		</target>
+		<generate>
+			<javaTimeTypes>true</javaTimeTypes>
+			<routines>false</routines>
+			<indexes>false</indexes>
+			<keys>false</keys>
+		</generate>
+	</generator>
+</configuration>

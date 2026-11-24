@@ -122,8 +122,8 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
   - 权限码集中在 `constants/permission.ts`，一律引用 `PERMISSIONS.XXX`。按钮级判断写 `v-if="permissionStore.check(...)"`，与路由守卫共用。
   - `PermissionExpression` 只有 and / or。路由由 `filterByPermission(dynamicRoutes)` 筛完才注册。
   - **依赖只朝一个方向**：页面 → 路由 → store → apis → `utils/http.ts`，下层不 import 上层。session store 只管状态，不碰路由；登出后跳登录页、权限变了重新注册路由，由 `router/session-sync.ts` 订阅会话与权限的变化去做（原地重新导航，交给守卫决定去哪）。所以 `await logout()` 返回时还不一定已在登录页。
-  - 401 在 `utils/http.ts` 统一拦截，处理由 `main.ts` 经 `onUnauthorized` 接上（调 `sessionStore.expire()`）。失败提示同理，经 `onRequestError` 接上，这些接线都在 `utils/setup/http.ts`（`setupHttp()`），文案由其中的 `messageOf` 翻译。http 层既不依赖会话，也不依赖界面。`utils/setup/` 放启动时调用、把各层接起来的代码，不是通用工具。
-  - 全局错误兜底在 `utils/setup/error-handle.ts`（原 ADP 的 `utils/art/sys/error-handle.ts`，已接管）。没人 catch 的 Promise 失败若已由 http 层处理过（`isHandled`），不再重复记录，列表页不必为此补 catch；传了 `silent` 的不算已处理。`GET /session` 未登录时返回 200，守卫的 `ensureLoaded()` 不受 401 处理影响。
+  - `utils/http.ts` 只管传输：拆 `ResponseWrapper`、业务码非 200 抛 `BusinessError`，导出 `interceptors` 供上层挂处理。出错后怎么办（401 调 `sessionStore.expire()`、其余弹提示、`silent` 不弹）都在 `utils/setup/http.ts` 的 `setupHttp()` 里挂的拦截器中，判断集中在 `dispositionOf`，文案由 `messageOf` 翻译。它必须挂在拆包装的拦截器之后，业务失败才会经过它；http 模块加载时就挂好了拆包装，所以顺序天然成立。`utils/setup/` 放启动时调用、把各层接起来的代码，不是通用工具。
+  - 全局错误兜底在 `utils/setup/error-handle.ts`（原 ADP 的 `utils/art/sys/error-handle.ts`，已接管）。没人 catch 的 Promise 失败若已统一处理过（`utils/setup/http.ts` 的 `isHandled`），不再重复记录，列表页不必为此补 catch；传了 `silent` 的不算已处理。`GET /session` 未登录时返回 200，守卫的 `ensureLoaded()` 不受 401 处理影响。
   - 并发去重（会话加载、401 登出）用进行中的 Promise。
 
 ## 现状与待办

@@ -1,18 +1,38 @@
-import { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
-import { describe, expect, it, vi } from 'vitest'
-import { BusinessError } from '@/utils/http'
-import { messageOf } from '@/utils/setup/http'
+import {
+  AxiosError,
+  CanceledError,
+  type AxiosAdapter,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from 'axios'
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import request, { BusinessError } from '@/utils/http'
+import { isHandled, messageOf, setupHttp } from '@/utils/setup/http'
+
+const { expire, showError } = vi.hoisted(() => ({ expire: vi.fn(), showError: vi.fn() }))
 
 vi.mock('@/locales', () => ({ $t: (key: string) => key }))
-// 只测 messageOf，同文件里接线用到的依赖不需要真的加载
-vi.mock('element-plus', () => ({ ElMessage: { error: vi.fn() } }))
-vi.mock('@/stores/session', () => ({ useSessionStore: vi.fn() }))
+vi.mock('element-plus', () => ({ ElMessage: { error: showError } }))
+vi.mock('@/stores/session', () => ({ useSessionStore: () => ({ expire }) }))
 
 const config = { headers: {} } as InternalAxiosRequestConfig
 
+function fakeResponse(status: number, data: unknown = '', requestConfig = config): AxiosResponse {
+  return { status, data, headers: {}, config: requestConfig, statusText: '' }
+}
+
 function responseError(status: number, data: unknown = ''): AxiosError {
-  const response = { status, data, headers: {}, config, statusText: '' } as AxiosResponse
-  return new AxiosError(`Request failed with status code ${status}`, 'ERR_BAD_RESPONSE', config, {}, response)
+  return new AxiosError(
+    `Request failed with status code ${status}`,
+    'ERR_BAD_RESPONSE',
+    config,
+    {},
+    fakeResponse(status, data),
+  )
+}
+
+function businessError(message: string, code: number | undefined): BusinessError {
+  return new BusinessError(message, code, fakeResponse(200))
 }
 
 describe('messageOf', () => {
@@ -41,12 +61,70 @@ describe('messageOf', () => {
   })
 
   it('业务失败用后端的文案，文案为空时说明响应格式不对', () => {
-    expect(messageOf(new BusinessError('角色名称已存在', 409))).toBe('角色名称已存在')
-    expect(messageOf(new BusinessError('', undefined))).toBe('httpMsg.invalidResponse')
+    expect(messageOf(businessError('角色名称已存在', 409))).toBe('角色名称已存在')
+    expect(messageOf(businessError('', undefined))).toBe('httpMsg.invalidResponse')
   })
 
   it('其他错误沿用自身的 message', () => {
     expect(messageOf(new Error('出错了'))).toBe('出错了')
     expect(messageOf('奇怪的东西')).toBe('httpMsg.requestFailed')
+  })
+})
+
+/** 不发真请求，直接以这个状态码失败 */
+function failWith(status: number): AxiosAdapter {
+  return async requestConfig => {
+    throw new AxiosError('failed', 'ERR_BAD_RESPONSE', requestConfig, {}, fakeResponse(status, '', requestConfig))
+  }
+}
+
+describe('setupHttp', () => {
+  beforeAll(() => {
+    setupHttp()
+  })
+
+  beforeEach(() => {
+    expire.mockReset()
+    showError.mockReset()
+  })
+
+  it('业务失败经过拆包装后照样弹提示，并算作已处理', async () => {
+    const adapter: AxiosAdapter = async requestConfig =>
+      fakeResponse(200, { code: 409, message: '名称已存在' }, requestConfig)
+    const error = await request.get({ url: '/anything', adapter }).catch(e => e)
+    expect(showError).toHaveBeenCalledWith('名称已存在')
+    expect(isHandled(error)).toBe(true)
+  })
+
+  it('silent 的不弹提示，也不算已处理', async () => {
+    const error = await request.get({ url: '/anything', silent: true, adapter: failWith(500) }).catch(e => e)
+    expect(showError).not.toHaveBeenCalled()
+    expect(isHandled(error)).toBe(false)
+  })
+
+  it('同时到达的 401 只过期一次，不弹失败提示', async () => {
+    let finish = (): void => {}
+    expire.mockReturnValue(new Promise<void>(resolve => (finish = resolve)))
+    await Promise.all([
+      request.get({ url: '/a', adapter: failWith(401) }).catch(() => {}),
+      request.get({ url: '/b', adapter: failWith(401) }).catch(() => {}),
+    ])
+    finish()
+    expect(expire).toHaveBeenCalledTimes(1)
+    expect(showError).not.toHaveBeenCalled()
+  })
+
+  it('主动取消的不弹提示，但算作已处理', async () => {
+    const controller = new AbortController()
+    controller.abort()
+    const error = await request.get({ url: '/anything', signal: controller.signal }).catch(e => e)
+    expect(error).toBeInstanceOf(CanceledError)
+    expect(showError).not.toHaveBeenCalled()
+    expect(isHandled(error)).toBe(true)
+  })
+
+  it('不是请求错误的不算已处理', () => {
+    expect(isHandled(new Error('别处的错误'))).toBe(false)
+    expect(isHandled('不是对象')).toBe(false)
   })
 })

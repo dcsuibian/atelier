@@ -1,11 +1,11 @@
 /**
  * 全局错误兜底：没人处理的错误在这里统一记录，需要接监控平台时也从这里上报
  *
- * 已由 http 层处理过的请求错误（弹过提示、交给了 401 的处理、主动取消）不再重复记录，
+ * 已统一处理过的请求错误（弹过提示、交给了 401 的处理、主动取消）不再重复记录，
  * 列表页之类的地方因此不必为了压掉这条日志到处补 catch
  */
 import type { App } from 'vue'
-import { isHandled } from '@/utils/http'
+import { isHandled } from '@/utils/setup/http'
 
 const IGNORABLE_SCRIPT_ERRORS = [
   'ResizeObserver loop completed with undelivered notifications.',

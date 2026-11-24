@@ -45,3 +45,19 @@ permissions:
     name: 查看权限
     description: 查看权限列表
     enabled: true
+  - code: project:view
+    name: 查看项目
+    description: 查看项目列表与详情
+    enabled: true
+  - code: project:add
+    name: 新增项目
+    description: 创建新项目
+    enabled: true
+  - code: project:edit
+    name: 编辑项目
+    description: 修改项目信息，包括更换负责人
+    enabled: true
+  - code: project:delete
+    name: 删除项目
+    description: 删除项目
+    enabled: true

@@ -24,6 +24,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.dcsuibian.atelier.jooq.generated.Tables.PROJECT;
 import static com.dcsuibian.atelier.jooq.generated.Tables.USER;
 import static com.dcsuibian.atelier.jooq.generated.Tables.USER_ROLE;
 
@@ -184,6 +185,9 @@ public class UserServiceImpl implements UserService {
 		// 删除是谨慎操作，不级联：有关联就要求先手动解除，以免误删
 		if (dsl.fetchExists(USER_ROLE, USER_ROLE.USER_ID.eq(id))) {
 			throw new BusinessException("用户仍分配有角色，请先解除分配", 409);
+		}
+		if (dsl.fetchExists(PROJECT, PROJECT.OWNER_ID.eq(id))) {
+			throw new BusinessException("用户仍是项目负责人，请先更换负责人", 409);
 		}
 		if (0 == dsl.deleteFrom(USER).where(USER.ID.eq(id)).execute()) {
 			throw new BusinessException("用户不存在", 404);

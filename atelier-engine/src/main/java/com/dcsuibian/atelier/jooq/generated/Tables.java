@@ -5,6 +5,7 @@ package com.dcsuibian.atelier.jooq.generated;
 
 
 import com.dcsuibian.atelier.jooq.generated.tables.Permission;
+import com.dcsuibian.atelier.jooq.generated.tables.Project;
 import com.dcsuibian.atelier.jooq.generated.tables.Role;
 import com.dcsuibian.atelier.jooq.generated.tables.RolePermission;
 import com.dcsuibian.atelier.jooq.generated.tables.User;
@@ -21,6 +22,11 @@ public class Tables {
      * 权限表
      */
     public static final Permission PERMISSION = Permission.PERMISSION;
+
+    /**
+     * 项目表
+     */
+    public static final Project PROJECT = Project.PROJECT;
 
     /**
      * 角色表

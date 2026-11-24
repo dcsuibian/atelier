@@ -5,6 +5,7 @@ package com.dcsuibian.atelier.jooq.generated;
 
 
 import com.dcsuibian.atelier.jooq.generated.tables.Permission;
+import com.dcsuibian.atelier.jooq.generated.tables.Project;
 import com.dcsuibian.atelier.jooq.generated.tables.Role;
 import com.dcsuibian.atelier.jooq.generated.tables.RolePermission;
 import com.dcsuibian.atelier.jooq.generated.tables.User;
@@ -36,6 +37,11 @@ public class Public extends SchemaImpl {
      * 权限表
      */
     public final Permission PERMISSION = Permission.PERMISSION;
+
+    /**
+     * 项目表
+     */
+    public final Project PROJECT = Project.PROJECT;
 
     /**
      * 角色表
@@ -74,6 +80,7 @@ public class Public extends SchemaImpl {
     public final List<Table<?>> getTables() {
         return Arrays.asList(
             Permission.PERMISSION,
+            Project.PROJECT,
             Role.ROLE,
             RolePermission.ROLE_PERMISSION,
             User.USER,

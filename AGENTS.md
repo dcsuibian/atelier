@@ -34,3 +34,5 @@ This file provides guidance to AI coding agents (Claude Code, Codex, etc.) when 
 开发端口：前端 **32732**，后端 **32733**。端口取值区间是 **10000–49151**：Windows 的动态端口从 49152 起，WSL2 与 Hyper-V 的保留块都从那里面划。
 
 **推 `main` 即上线。** `.github/workflows/` 按子项目路径分别触发，构建镜像推到 GHCR，再通知服务器更新在线 demo。日常在 `dev` 上开发，上线时把 `main` 快进到 `dev` 再推送。
+
+**版本以 git tag 为准**（如 `v0.2.0`）。`package.json` 的 `0.0.0` 和 pom 的 `0.0.1-SNAPSHOT` 是脚手架默认值，不发布到任何仓库，也就不维护。

@@ -9,10 +9,30 @@
 import type { Router, RouteRecordRaw } from 'vue-router'
 import type { AppRouteRecord } from '@/types/art/router'
 import { usePermissionStore } from '@/stores/permission'
-import { IframeRouteManager } from '@/router/iframe-route-manager'
 
 const AppLayout = () => import('@/components/app-layout/index.vue')
 const Iframe = () => import('@/views/outside/Iframe.vue')
+
+/**
+ * 标出没有子路由的一级菜单（iframe 除外）。侧栏和面包屑对它们特殊处理，注册路由时也要给它们套一层布局
+ *
+ * 返回新对象，不改路由配置本身
+ */
+export function markFirstLevel(routes: AppRouteRecord[]): AppRouteRecord[] {
+  return routes.map(route =>
+    true !== route.meta.isIframe && !route.children?.length
+      ? { ...route, meta: { ...route.meta, isFirstLevel: true } }
+      : route,
+  )
+}
+
+/** 收集路由树里的 iframe 页面 */
+export function collectIframeRoutes(routes: AppRouteRecord[]): AppRouteRecord[] {
+  return routes.flatMap(route => [
+    ...(true === route.meta.isIframe ? [route] : []),
+    ...collectIframeRoutes(route.children ?? []),
+  ])
+}
 
 /**
  * 转成 vue-router 的路由记录。组件在配置里已是真实 import，只有两种情况要改形：
@@ -21,15 +41,9 @@ const Iframe = () => import('@/views/outside/Iframe.vue')
 function toRouteRecord(route: AppRouteRecord, depth = 0): RouteRecordRaw {
   const { children, ...rest } = route
   const isIframe = true === route.meta.isIframe
-  if (isIframe) {
-    IframeRouteManager.getInstance().add(route)
-  }
   const component = isIframe ? Iframe : route.component
 
   if (0 === depth && (isIframe || !children?.length)) {
-    if (!isIframe) {
-      route.meta.isFirstLevel = true
-    }
     const firstSegment = route.path.split('/').find(Boolean)
     return {
       ...rest,
@@ -76,25 +90,16 @@ export function filterByPermission(routes: AppRouteRecord[]): AppRouteRecord[] {
   }, [])
 }
 
+/**
+ * 记录注册了哪些动态路由，以便会话变化时整批撤掉。由 initRouter 创建，传给用到它的守卫与同步逻辑
+ */
 export class DynamicRouteRegistry {
-  private static instance: DynamicRouteRegistry | null = null
-
   private readonly router: Router
   private removeRouteFns: (() => void)[] = []
   private registered = false
 
-  private constructor(router: Router) {
+  constructor(router: Router) {
     this.router = router
-  }
-
-  /**
-   * 守卫初始化时带 router 调一次建立实例；之后路由层各处不带参数取用
-   */
-  static getInstance(router?: Router): DynamicRouteRegistry | null {
-    if (router && null === DynamicRouteRegistry.instance) {
-      DynamicRouteRegistry.instance = new DynamicRouteRegistry(router)
-    }
-    return DynamicRouteRegistry.instance
   }
 
   register(routes: AppRouteRecord[]): void {

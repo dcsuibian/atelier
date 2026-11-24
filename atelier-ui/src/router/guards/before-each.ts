@@ -12,7 +12,7 @@
  * 4. 未登录，送去登录页并带上 redirect
  * 5. 动态路由尚未注册，注册后重新导航
  * 6. 根路径重定向到首页
- * 7. 放行，顺带记录工作标签页与页面标题
+ * 7. 放行。记录工作标签页、设置页面标题是导航成功之后的事，在后置守卫里做
  *
  * @module router/guards/before-each
  */
@@ -24,21 +24,16 @@ import { useSettingStore } from '@/stores/setting'
 import { useSessionStore } from '@/stores/session'
 import { useMenuStore } from '@/stores/menu'
 import { useWorkTabStore } from '@/stores/work-tab'
-import { setWorktab } from '@/utils/art/navigation'
-import { setPageTitle } from '@/utils/art/router'
 import { loadingService } from '@/utils/art/ui'
-import { RoutesAlias } from '../routes-alias'
-import { staticRoutes } from '../routes/static-routes'
+import { isStaticRoute } from '../routes/static-routes'
 import { dynamicRoutes } from '../routes/dynamic-routes'
 import { IframeRouteManager } from '../iframe-route-manager'
 import { MenuProcessor } from '../menu-processor'
-import { DynamicRouteRegistry, filterByPermission } from './route-registry'
+import { type DynamicRouteRegistry, collectIframeRoutes, filterByPermission, markFirstLevel } from './route-registry'
 
 const menuProcessor = new MenuProcessor()
 
-export function setupBeforeEachGuard(router: Router): void {
-  const registry = DynamicRouteRegistry.getInstance(router)
-
+export function setupBeforeEachGuard(router: Router, registry: DynamicRouteRegistry): void {
   router.beforeEach(async (to: RouteLocationNormalized): Promise<NavigationGuardReturn> => {
     const settingStore = useSettingStore()
     if (settingStore.showNprogress) {
@@ -48,12 +43,12 @@ export function setupBeforeEachGuard(router: Router): void {
     // 只有真要等网络时才遮罩。关闭放在 afterEach：守卫放行后还要下载懒加载的布局与页面，
     // 在这里关掉的话，这段时间屏幕会停在旧页面上
     const sessionStore = useSessionStore()
-    if (!sessionStore.ready || !registry?.isRegistered()) {
+    if (!sessionStore.ready || !registry.isRegistered()) {
       loadingService.showLoading()
     }
 
     try {
-      return await resolve(to, router)
+      return await resolve(to, router, registry)
     } catch (error) {
       console.error('[RouteGuard] 路由守卫处理失败', error)
       return { name: 'Exception500', replace: true }
@@ -61,11 +56,15 @@ export function setupBeforeEachGuard(router: Router): void {
   })
 }
 
-async function resolve(to: RouteLocationNormalized, router: Router): Promise<NavigationGuardReturn> {
-  const isLoginRoute = RoutesAlias.Login === to.path
+async function resolve(
+  to: RouteLocationNormalized,
+  router: Router,
+  registry: DynamicRouteRegistry,
+): Promise<NavigationGuardReturn> {
+  const isLoginRoute = 'Login' === to.name
 
   // 1. 静态路由不依赖登录态与菜单权限。登录页除外，它要判断是否已登录
-  if (!isLoginRoute && isStaticRoute(to.path)) {
+  if (!isLoginRoute && isStaticRoute(to)) {
     return true
   }
 
@@ -84,9 +83,8 @@ async function resolve(to: RouteLocationNormalized, router: Router): Promise<Nav
   }
 
   // 5. 首次进入，按权限注册动态路由，再重新走一遍导航
-  const registry = DynamicRouteRegistry.getInstance()
-  if (!registry?.isRegistered()) {
-    const registered = await registerDynamicRoutes(router)
+  if (!registry.isRegistered()) {
+    const registered = await registerDynamicRoutes(router, registry)
     // 一个页面都没有，再往下走只会落到 404，还不如直接说清楚
     if (0 === registered) {
       ElMessage.warning($t('session.noPagePermission'))
@@ -102,9 +100,7 @@ async function resolve(to: RouteLocationNormalized, router: Router): Promise<Nav
     return { path: homePath, replace: true }
   }
 
-  // 7. 放行。静态路由里有 404 兜底，走到这里必然已匹配
-  setWorktab(to)
-  setPageTitle(to)
+  // 7. 放行
   return true
 }
 
@@ -115,38 +111,15 @@ async function resolve(to: RouteLocationNormalized, router: Router): Promise<Nav
  *
  * @returns 实际注册的顶层路由数量，为 0 表示这个账号一个页面都看不到
  */
-async function registerDynamicRoutes(router: Router): Promise<number> {
-  const menuList = await menuProcessor.getMenuList(filterByPermission(dynamicRoutes))
-  const registry = DynamicRouteRegistry.getInstance()
-  registry?.register(menuList)
+async function registerDynamicRoutes(router: Router, registry: DynamicRouteRegistry): Promise<number> {
+  const menuList = markFirstLevel(await menuProcessor.getMenuList(filterByPermission(dynamicRoutes)))
+  registry.register(menuList)
+  useMenuStore().setMenuList(menuList)
 
-  const menuStore = useMenuStore()
-  menuStore.setMenuList(menuList)
-
-  IframeRouteManager.getInstance().save()
+  const iframeRouteManager = IframeRouteManager.getInstance()
+  collectIframeRoutes(menuList).forEach(route => iframeRouteManager.add(route))
+  iframeRouteManager.save()
   useWorkTabStore().validateWorktabs(router)
 
   return menuList.length
-}
-
-/**
- * 判断是否为静态路由
- *
- * 404 的 catch-all 不算，否则未登录时输入任意地址都会直接落到 404，而不是跳去登录页
- */
-function isStaticRoute(path: string): boolean {
-  const match = (routes: readonly { name?: unknown; path: string; children?: unknown }[]): boolean =>
-    routes.some(route => {
-      if ('Exception404' === route.name) {
-        return false
-      }
-      const pattern = route.path.replace(/:[^/]+/g, '[^/]+').replace(/\*/g, '.*')
-      if (new RegExp(`^${pattern}$`).test(path)) {
-        return true
-      }
-      const children = route.children as typeof routes | undefined
-      return children?.length ? match(children) : false
-    })
-
-  return match(staticRoutes)
 }

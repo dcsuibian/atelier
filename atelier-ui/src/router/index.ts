@@ -5,6 +5,7 @@ import { configureNProgress } from '@/utils/art/router'
 import { setupBeforeEachGuard } from './guards/before-each'
 import { setupAfterEachGuard } from './guards/after-each'
 import { setupSessionSync } from './session-sync'
+import { DynamicRouteRegistry } from './guards/route-registry'
 
 // 创建路由实例
 export const router = createRouter({
@@ -15,9 +16,10 @@ export const router = createRouter({
 
 // 初始化路由
 export function initRouter(app: App<Element>): void {
+  const registry = new DynamicRouteRegistry(router)
   configureNProgress() // 顶部进度条
-  setupBeforeEachGuard(router) // 路由前置守卫
+  setupBeforeEachGuard(router, registry) // 路由前置守卫
   setupAfterEachGuard(router) // 路由后置守卫
-  setupSessionSync(router) // 登出、权限变化时同步路由
+  setupSessionSync(router, registry) // 登出、权限变化时同步路由
   app.use(router)
 }

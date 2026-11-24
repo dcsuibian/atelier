@@ -43,7 +43,7 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 | `src/utils/{http,storage,ui,...}` | `src/utils/art/{...}` |
 | `router/routes/asyncRoutes.ts` | `router/routes/dynamic-routes.ts`（导出名一并改为 `dynamicRoutes`） |
 | `router/guards/beforeEach.ts`、`afterEach.ts` | `router/guards/before-each.ts`、`after-each.ts` |
-| `router/routesAlias.ts` | `router/routes-alias.ts` |
+| `router/routesAlias.ts` | 删除，登录页按路由名 `Login` 判断 |
 
 ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名 kebab-case 挪到 `router/` 下，其余随按字符串加载组件一起删了。
 

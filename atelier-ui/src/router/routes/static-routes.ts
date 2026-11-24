@@ -1,4 +1,5 @@
 import type { AppRouteRecordRaw } from '@/utils/art/router'
+import type { RouteLocationNormalized } from 'vue-router'
 
 /**
  * 静态路由配置（不需要权限就能访问的路由）
@@ -70,3 +71,14 @@ export const staticRoutes: AppRouteRecordRaw[] = [
     ],
   },
 ]
+
+/** 404 的 catch-all 不算，否则未登录时输入任意地址都会直接落到 404，而不是跳去登录页 */
+const STATIC_ROUTE_NAMES = new Set(staticRoutes.map(route => route.name).filter(name => 'Exception404' !== name))
+
+/**
+ * 是否落在静态路由上。看匹配到的顶层路由是谁，路径怎么匹配交给 vue-router
+ */
+export function isStaticRoute(to: RouteLocationNormalized): boolean {
+  const rootName = to.matched[0]?.name
+  return undefined !== rootName && STATIC_ROUTE_NAMES.has(rootName)
+}

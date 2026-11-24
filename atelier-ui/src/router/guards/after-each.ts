@@ -3,13 +3,22 @@ import type { Router } from 'vue-router'
 import NProgress from 'nprogress'
 import { scrollToTop } from '@/utils/scroll'
 import { loadingService } from '@/utils/art/ui'
+import { setWorktab } from '@/utils/art/navigation'
+import { setPageTitle } from '@/utils/art/router'
 import { isChunkLoadError, reloadTo } from '@/router/chunk-error'
+import { isStaticRoute } from '@/router/routes/static-routes'
 
 /** 路由全局后置守卫 */
 export function setupAfterEachGuard(router: Router) {
-  router.afterEach((to, from) => {
+  router.afterEach((to, from, failure) => {
     // 前置守卫打开的遮罩在这里关：此时懒加载的组件已经就绪。导航失败、取消时也会走到这里
     loadingService.hideLoading()
+
+    // 导航真的完成了才记标签页、改标题，被重定向、取消的不算。静态页面（登录、异常页）不进标签页
+    if (!failure && !isStaticRoute(to)) {
+      setWorktab(to)
+      setPageTitle(to)
+    }
 
     // 只改 query 的导航（筛选、分页同步到 URL）不算换页，回到顶部会打断操作
     if (to.path !== from.path) {

@@ -11,15 +11,9 @@ import type { Router } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { usePermissionStore } from '@/stores/permission'
 import { useMenuStore } from '@/stores/menu'
-import { DynamicRouteRegistry } from '@/router/guards/route-registry'
+import type { DynamicRouteRegistry } from '@/router/guards/route-registry'
 
-/** 动态路由与菜单是按当前用户的权限注册的，用户或权限一变就得作废 */
-function resetDynamicRoutes(): void {
-  DynamicRouteRegistry.getInstance()?.unregister()
-  useMenuStore().setMenuList([])
-}
-
-export function setupSessionSync(router: Router): void {
+export function setupSessionSync(router: Router, registry: DynamicRouteRegistry): void {
   const sessionStore = useSessionStore()
   const permissionStore = usePermissionStore()
 
@@ -50,7 +44,9 @@ export function setupSessionSync(router: Router): void {
       if (current.userId === previous.userId && current.codes === previous.codes) {
         return
       }
-      resetDynamicRoutes()
+      // 动态路由与菜单是按当前用户的权限注册的，用户或权限一变就得作废
+      registry.unregister()
+      useMenuStore().setMenuList([])
       if (navigating || 'Login' === router.currentRoute.value.name) {
         return
       }

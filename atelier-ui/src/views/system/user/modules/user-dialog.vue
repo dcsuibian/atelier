@@ -96,7 +96,7 @@ import { getRoles } from '@/apis/role'
 import { usePermissionStore } from '@/stores/permission'
 import { useSessionStore } from '@/stores/session'
 import { PERMISSIONS } from '@/constants/permission'
-import { SUPER_ADMIN_ID } from '@/constants/user'
+import { SUPER_ADMIN_USER_ID } from '@/constants/user'
 import type { Role, User, UserGender, UserStatus } from '@/types'
 
 interface Props {
@@ -117,7 +117,7 @@ const permissionStore = usePermissionStore()
 const sessionStore = useSessionStore()
 const { t } = useI18n()
 
-const isSuperAdmin = computed(() => SUPER_ADMIN_ID === props.user?.id)
+const isSuperAdmin = computed(() => SUPER_ADMIN_USER_ID === props.user?.id)
 /** 只有分配角色权限的人也能打开编辑弹窗，这时资料只读 */
 const infoDisabled = computed(() => undefined !== props.user && !permissionStore.check(PERMISSIONS.USER_EDIT))
 const rolesVisible = computed(() => permissionStore.check(PERMISSIONS.USER_ASSIGN_ROLE) && !isSuperAdmin.value)

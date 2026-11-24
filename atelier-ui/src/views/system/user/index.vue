@@ -57,7 +57,7 @@
                   @click="showDialog(row as User)"
                 />
                 <ArtButtonTable
-                  v-if="permissionStore.check(PERMISSIONS.USER_DELETE) && SUPER_ADMIN_ID !== row.id"
+                  v-if="permissionStore.check(PERMISSIONS.USER_DELETE) && SUPER_ADMIN_USER_ID !== row.id"
                   type="delete"
                   @click="deleteUser(row as User)"
                 />
@@ -103,7 +103,7 @@ import { usePermissionStore } from '@/stores/permission'
 import { deleteUserById, getUsers } from '@/apis/user'
 import { formatDateTime } from '@/utils/format'
 import { PERMISSIONS } from '@/constants/permission'
-import { SUPER_ADMIN_ID } from '@/constants/user'
+import { SUPER_ADMIN_USER_ID } from '@/constants/user'
 import type { User, UserQuery, UserStatus } from '@/types'
 import defaultAvatar from '@/assets/images/user/avatar.webp'
 import UserSearch from './modules/user-search.vue'

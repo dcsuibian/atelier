@@ -6,5 +6,5 @@
  */
 
 export * from './jump'
-export * from './worktab'
+export * from './work-tab'
 export * from './route'

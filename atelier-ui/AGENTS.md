@@ -12,9 +12,9 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 
 ## 代码组织：ADP 原件与自有代码
 
-- `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons` 等）、`composables/art/`、`styles/art/`、`utils/art/`
+- `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons` 等）、`composables/art/`、`directives/art/`（`v-ripple`）、`styles/art/`、`utils/art/`
 - 自有代码平铺：如 `components/layout/`、`utils/http.ts`、`types/user.ts`（与后端对接的类型都在 `types/` 根上）
-- 整体接管、不再区分原件的目录：`router/`、`stores/`、`apis/`、`directives/`、`config/`、`constants/`、`locales/`
+- 整体接管、不再区分原件的目录：`router/`、`stores/`、`apis/`、`config/`、`constants/`、`locales/`
 
 几条命名规则：
 
@@ -64,7 +64,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor` 改名 kebab-case 挪到 `rou
 **机制**：
 
 - ADP 的 HTTP 层（`utils/art/http/`），换成 `utils/http.ts`
-- `v-auth`、`v-roles` 指令，`meta.roles`、`info.buttons`；`src/directives/` 只剩 `ripple`
+- `v-auth`、`v-roles` 指令，`meta.roles`、`info.buttons`；`src/directives/` 只剩 `art/ripple.ts`
 - userStore 这个杂物袋：语言、搜索历史、锁屏迁入 `settingStore`，会话归 `stores/session.ts`。锁屏存在偏好里，生命周期却跟着会话，由 `utils/setup/lock-screen.ts` 订阅会话，确认没登录时解除，拆分时容易漏掉
 - `router/core/` 的编排层（`RouteRegistry`、角色过滤、`RoutePermissionValidator`）
 - 后端路由模式与按字符串加载组件（`ComponentLoader`）；`AppRouteRecord.component` 不再接受字符串。布局外壳在 `components/layout/`

@@ -5,7 +5,7 @@ import { setupRouter } from './router' // Router
 import language from './locales' // 国际化
 import '@/styles/art/tailwind.css' // tailwind
 import '@/styles/index.scss' // 样式
-import { vRipple } from '@/directives/ripple'
+import { vRipple } from '@/directives/art/ripple'
 import { setupErrorHandle } from '@/utils/setup/error-handle'
 import { setupHttp } from '@/utils/setup/http'
 import { setupLockScreen } from '@/utils/setup/lock-screen'

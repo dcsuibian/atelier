@@ -105,7 +105,7 @@ import {
   ElTreeSelect,
   type FormInstance,
 } from 'element-plus'
-import { calculateResponsiveSpan, type ResponsiveBreakpoint } from '@/utils/art/form/responsive'
+import { calculateResponsiveSpan, type ResponsiveBreakpoint } from '@/utils/art/form'
 
 defineOptions({ name: 'ArtForm' })
 

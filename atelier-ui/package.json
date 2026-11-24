@@ -10,7 +10,7 @@
     "build:analyze": "cross-env ANALYZE=true vite build",
     "type-check": "vue-tsc --build",
     "serve": "vite preview",
-    "format": "prettier --write --experimental-cli src/",
+    "format": "prettier --write --experimental-cli src/ tests/",
     "test": "vitest run"
   },
   "dependencies": {

@@ -19,7 +19,7 @@
 import { storeToRefs } from 'pinia'
 import SectionTitle from './SectionTitle.vue'
 import { useSettingStore } from '@/stores/setting'
-import { useSettingsConfig } from '@/components/art/layouts/art-settings-panel/composables/useSettingsConfig'
+import { useSettingsConfig } from '../composables/useSettingsConfig'
 import { useTheme } from '@/composables/art/useTheme'
 
 const settingStore = useSettingStore()

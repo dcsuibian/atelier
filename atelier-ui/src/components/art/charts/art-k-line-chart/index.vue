@@ -17,7 +17,7 @@ import ChartView from '@/components/chart-view/index.vue'
 import type { EChartsOption } from 'echarts'
 import { useI18n } from 'vue-i18n'
 import { useChartOps, useChart } from '@/composables/use-chart'
-import type { KLineChartProps } from '@/components/art/charts/types'
+import type { KLineChartProps } from '../types'
 
 use([CandlestickChart, GridComponent, TooltipComponent, DataZoomComponent])
 

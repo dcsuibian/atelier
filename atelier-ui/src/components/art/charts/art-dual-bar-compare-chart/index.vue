@@ -11,7 +11,7 @@ import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/compon
 import ChartView from '@/components/chart-view/index.vue'
 import { useChartOps, useChart } from '@/composables/use-chart'
 import type { EChartsOption, BarSeriesOption } from 'echarts'
-import type { BidirectionalBarChartProps } from '@/components/art/charts/types'
+import type { BidirectionalBarChartProps } from '../types'
 import { useI18n } from 'vue-i18n'
 
 use([BarChart, GridComponent, TooltipComponent, LegendComponent])

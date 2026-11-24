@@ -1,6 +1,6 @@
 // 权限文档：https://www.artd.pro/docs/zh/guide/in-depth/permission.html
 import type { AppRouteRecord } from '@/types/art/router'
-import { routeModules } from '@/router/modules'
+import { routeModules } from '../modules'
 
 /**
  * 动态路由（需要权限才能访问的路由）

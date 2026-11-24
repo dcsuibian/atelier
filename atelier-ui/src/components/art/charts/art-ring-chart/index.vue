@@ -16,7 +16,7 @@ import { TooltipComponent, LegendComponent, TitleComponent } from 'echarts/compo
 import ChartView from '@/components/chart-view/index.vue'
 import type { EChartsOption } from 'echarts'
 import { useChartOps, useChart } from '@/composables/use-chart'
-import type { RingChartProps } from '@/components/art/charts/types'
+import type { RingChartProps } from '../types'
 
 use([PieChart, TooltipComponent, LegendComponent, TitleComponent])
 

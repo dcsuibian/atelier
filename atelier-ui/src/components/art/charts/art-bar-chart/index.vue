@@ -12,7 +12,7 @@ import ChartView from '@/components/chart-view/index.vue'
 import { useChartOps, useChart } from '@/composables/use-chart'
 import { getCssVar } from '@/utils/art/ui'
 import type { EChartsOption } from 'echarts'
-import type { BarChartProps, BarDataItem } from '@/components/art/charts/types'
+import type { BarChartProps, BarDataItem } from '../types'
 
 use([BarChart, GridComponent, TooltipComponent, LegendComponent])
 

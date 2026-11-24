@@ -22,8 +22,8 @@
 <script setup lang="ts">
 import SectionTitle from './SectionTitle.vue'
 import { useSettingStore } from '@/stores/setting'
-import { useSettingsConfig } from '@/components/art/layouts/art-settings-panel/composables/useSettingsConfig'
-import { useSettingsHandlers } from '@/components/art/layouts/art-settings-panel/composables/useSettingsHandlers'
+import { useSettingsConfig } from '../composables/useSettingsConfig'
+import { useSettingsHandlers } from '../composables/useSettingsHandlers'
 import { storeToRefs } from 'pinia'
 import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 

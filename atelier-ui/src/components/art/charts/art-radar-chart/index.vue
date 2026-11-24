@@ -16,7 +16,7 @@ import { RadarComponent, TooltipComponent } from 'echarts/components'
 import ChartView from '@/components/chart-view/index.vue'
 import type { EChartsOption } from 'echarts'
 import { useChartOps, useChart } from '@/composables/use-chart'
-import type { RadarChartProps } from '@/components/art/charts/types'
+import type { RadarChartProps } from '../types'
 
 use([RadarChart, RadarComponent, TooltipComponent])
 

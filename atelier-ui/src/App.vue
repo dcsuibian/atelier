@@ -18,6 +18,7 @@ import { ElConfigProvider } from 'element-plus'
 import { useSettingStore } from '@/stores/setting'
 import zh from 'element-plus/es/locale/lang/zh-cn'
 import en from 'element-plus/es/locale/lang/en'
+import 'dayjs/locale/zh-cn' // 与上面的语言包对应
 import { toggleTransition } from '@/utils/art/ui/animation'
 import { checkStorageCompatibility } from '@/utils/art/storage'
 import { initializeTheme } from '@/composables/art/useTheme'

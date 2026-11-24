@@ -181,6 +181,5 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 - 注册页与忘记密码页后端没有对应接口，链接指向死路，**有意留着作参考**，不要顺手删。
 - 后端只做了认证拦截，没做按权限码的授权拦截，由下游按场景补。
 - 图标经 `@iconify/vue` 运行时从 Iconify 的在线服务加载，模板不做离线化，由下游按部署环境决定。断网时图标只会变成空白、不报错；要离线就启用 `utils/art/ui/iconify-loader.ts`，把用到的图标集打包注册。
-- 日期选择器在中文下一周仍从周日开始：Element Plus 从 dayjs 的 locale 取周起始，要 `import 'dayjs/locale/zh-cn'`。dayjs 已是直接依赖，等日期格式化的方案定下来一起做。
 - `useHeaderBar`、`useLayoutHeight`、`useTableHeight` 只有 1～3 处引用，不单独处理，随对应功能的去留走。
 - ADP 演示页（工作台、个人中心、注册、忘记密码）里仍有写死的中文与演示数据，随这些页面的去留一起处理。

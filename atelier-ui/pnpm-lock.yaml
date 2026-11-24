@@ -225,6 +225,9 @@ importers:
       crypto-js:
         specifier: ^4.2.0
         version: 4.2.0
+      dayjs:
+        specifier: ^1.11.23
+        version: 1.11.23
       echarts:
         specifier: ^6.0.0
         version: 6.0.0
@@ -237,9 +240,6 @@ importers:
       nprogress:
         specifier: ^0.2.0
         version: 0.2.0
-      ohash:
-        specifier: ^2.0.11
-        version: 2.0.11
       pinia:
         specifier: ^3.0.3
         version: 3.0.3(typescript@6.0.3)(vue@3.5.22(typescript@6.0.3))
@@ -252,9 +252,6 @@ importers:
       vue:
         specifier: ^3.5.21
         version: 3.5.22(typescript@6.0.3)
-      vue-draggable-plus:
-        specifier: ^0.6.0
-        version: 0.6.0(@types/sortablejs@1.15.8)
       vue-echarts:
         specifier: ^8.3.2
         version: 8.3.2(echarts@6.0.0)(vue@3.5.22(typescript@6.0.3))
@@ -1029,9 +1026,6 @@ packages:
   '@types/nprogress@0.2.3':
     resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
 
-  '@types/sortablejs@1.15.8':
-    resolution: {integrity: sha512-b79830lW+RZfwaztgs1aVPgbasJ8e7AXtZYHTELNXZPsERt4ymJdjV4OccDbHQAvHrCcFpbF78jkm0R6h/pZVg==}
-
   '@types/web-bluetooth@0.0.21':
     resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
 
@@ -1697,9 +1691,6 @@ packages:
     resolution: {integrity: sha512-5vvB5+W7ePv+p3uqxi+RcW1XAzLW0/hxt3/4X4Lc4qHudzOhmBiBwOY6DRob4WnanAEGvNcLjF+KNOufrUoEQw==}
     engines: {node: '>=12.20.0'}
 
-  ohash@2.0.11:
-    resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
-
   open@11.0.4:
     resolution: {integrity: sha512-++Zlftm0kVLPmzC06t6epuWmcRMDbI4z5P3NNX979WA/k23+NtSOynEGzsVfZwguKw2mi5umVgnBlJQMwRz4Pg==}
     engines: {node: '>=20'}
@@ -2286,15 +2277,6 @@ packages:
   vue-component-type-helpers@3.3.14:
     resolution: {integrity: sha512-Pq3+OnbCiPCHk0R7KSZrx+j/XXaUn2kSQ1epxq60w8CPbByLjC1EJgV51n4WY851sTXUVzsNMuitywdkdVyKjA==}
 
-  vue-draggable-plus@0.6.0:
-    resolution: {integrity: sha512-G5TSfHrt9tX9EjdG49InoFJbt2NYk0h3kgjgKxkFWr3ulIUays0oFObr5KZ8qzD4+QnhtALiRwIqY6qul4egqw==}
-    peerDependencies:
-      '@types/sortablejs': ^1.15.0
-      '@vue/composition-api': '*'
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-
   vue-echarts@8.3.2:
     resolution: {integrity: sha512-FbJD49OZZZv1I8aclHQ+gcQxU+Y9nNWQMuod1sewE7/YjGQUJAaeVcf6WrSfQDBRPke+WoVsUtdRFIqPOsRrnw==}
     peerDependencies:
@@ -2837,8 +2819,6 @@ snapshots:
       undici-types: 7.14.0
 
   '@types/nprogress@0.2.3': {}
-
-  '@types/sortablejs@1.15.8': {}
 
   '@types/web-bluetooth@0.0.21': {}
 
@@ -3464,8 +3444,6 @@ snapshots:
 
   obug@3.0.0: {}
 
-  ohash@2.0.11: {}
-
   open@11.0.4:
     dependencies:
       default-browser: 5.5.1
@@ -4010,10 +3988,6 @@ snapshots:
   vscode-uri@3.1.0: {}
 
   vue-component-type-helpers@3.3.14: {}
-
-  vue-draggable-plus@0.6.0(@types/sortablejs@1.15.8):
-    dependencies:
-      '@types/sortablejs': 1.15.8
 
   vue-echarts@8.3.2(echarts@6.0.0)(vue@3.5.22(typescript@6.0.3)):
     dependencies:

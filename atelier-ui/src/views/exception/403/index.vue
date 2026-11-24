@@ -12,6 +12,6 @@
 
 <script setup lang="ts">
 import imgUrl from '@/assets/images/svg/403.svg'
-import ArtException from '@/components/art/views/exception/ArtException.vue'
-defineOptions({ name: 'Exception403' })
+import ArtException from '@/components/art/views/exception/art-exception.vue'
+defineOptions({ name: 'Forbidden' })
 </script>

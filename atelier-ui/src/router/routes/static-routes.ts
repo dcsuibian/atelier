@@ -20,45 +20,45 @@ export const staticRoutes: AppRouteRecordRaw[] = [
   //   meta: { title: 'menus.dashboard.title' }
   // },
   {
-    path: '/auth/login',
+    path: '/login',
     name: 'Login',
     component: () => import('@/views/auth/login/index.vue'),
     meta: { title: 'menus.login.title', isHideTab: true },
   },
   {
-    path: '/auth/register',
+    path: '/register',
     name: 'Register',
     component: () => import('@/views/auth/register/index.vue'),
     meta: { title: 'menus.register.title', isHideTab: true },
   },
   {
-    path: '/auth/forget-password',
+    path: '/forget-password',
     name: 'ForgetPassword',
     component: () => import('@/views/auth/forget-password/index.vue'),
     meta: { title: 'menus.forgetPassword.title', isHideTab: true },
   },
   {
     path: '/403',
-    name: 'Exception403',
+    name: 'Forbidden',
     component: () => import('@/views/exception/403/index.vue'),
     meta: { title: '403', isHideTab: true },
   },
   {
     path: '/:pathMatch(.*)*',
-    name: 'Exception404',
+    name: 'NotFound',
     component: () => import('@/views/exception/404/index.vue'),
     meta: { title: '404', isHideTab: true },
   },
   {
     path: '/500',
-    name: 'Exception500',
+    name: 'ServerError',
     component: () => import('@/views/exception/500/index.vue'),
     meta: { title: '500', isHideTab: true },
   },
 ]
 
 /** 404 的 catch-all 不算，否则未登录时输入任意地址都会直接落到 404，而不是跳去登录页 */
-const STATIC_ROUTE_NAMES = new Set(staticRoutes.map(route => route.name).filter(name => 'Exception404' !== name))
+const STATIC_ROUTE_NAMES = new Set(staticRoutes.map(route => route.name).filter(name => 'NotFound' !== name))
 
 /**
  * 是否落在静态路由上。看匹配到的顶层路由是谁，路径怎么匹配交给 vue-router

@@ -50,7 +50,7 @@ export function setupBeforeEachGuard(router: Router, registry: DynamicRouteRegis
       return await resolve(to, router, registry)
     } catch (error) {
       console.error('[RouteGuard] 路由守卫处理失败', error)
-      return { name: 'Exception500', replace: true }
+      return { name: 'ServerError', replace: true }
     }
   })
 }

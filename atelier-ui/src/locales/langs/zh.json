@@ -60,7 +60,10 @@
     "saveSuccess": "保存成功",
     "deleteSuccess": "删除成功",
     "lengthBetween": "长度在 {min} 到 {max} 个字符之间",
-    "maxLength": "不能超过 {max} 个字符"
+    "maxLength": "不能超过 {max} 个字符",
+    "view": "查看",
+    "viewMore": "查看更多",
+    "avatar": "用户头像"
   },
   "search": {
     "placeholder": "搜索页面",
@@ -172,7 +175,8 @@
     "subTitle": "输入您的电子邮件来重置您的密码",
     "placeholder": "请输入您的电子邮件",
     "submitBtnText": "提交",
-    "backBtnText": "返回"
+    "backBtnText": "返回",
+    "accountLabel": "账号"
   },
   "register": {
     "title": "创建账号",
@@ -205,6 +209,11 @@
       "inputPlaceholder": "请输入解锁密码",
       "btnText": "解锁",
       "backBtnText": "返回登录"
+    },
+    "devTools": {
+      "title": "系统已锁定",
+      "detected": "检测到开发者工具已打开",
+      "hint": "为了系统安全，请关闭开发者工具后继续使用"
     }
   },
   "greeting": {
@@ -337,6 +346,15 @@
     "permission": {
       "code": "权限码",
       "searchPlaceholder": "权限码 / 名称 / 描述"
+    }
+  },
+  "chart": {
+    "kLine": {
+      "time": "时间：",
+      "open": "开盘：",
+      "close": "收盘：",
+      "low": "最低：",
+      "high": "最高："
     }
   }
 }

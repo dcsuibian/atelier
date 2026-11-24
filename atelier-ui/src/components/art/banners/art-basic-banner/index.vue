@@ -44,7 +44,7 @@
           }"
           @click.stop="emit('buttonClick')"
         >
-          {{ buttonConfig?.text }}
+          {{ buttonConfig?.text ?? $t('common.view') }}
         </div>
       </slot>
 
@@ -58,7 +58,7 @@
         :src="imageConfig.src"
         :style="{ width: imageConfig.width, bottom: imageConfig.bottom, right: imageConfig.right }"
         loading="lazy"
-        alt="背景图片"
+        alt=""
       />
     </div>
   </div>
@@ -87,7 +87,7 @@ interface ButtonConfig {
   /** 是否启用按钮 */
   show: boolean
   /** 按钮文本 */
-  text: string
+  text?: string
   /** 按钮背景色 */
   color?: string
   /** 按钮文字颜色 */
@@ -149,7 +149,6 @@ const props = withDefaults(defineProps<Props>(), {
   decoration: true,
   buttonConfig: () => ({
     show: true,
-    text: '查看',
     color: '#fff',
     textColor: '#333',
     radius: '6px',

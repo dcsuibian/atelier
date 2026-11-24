@@ -15,12 +15,15 @@ import { CandlestickChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, DataZoomComponent } from 'echarts/components'
 import ChartView from '@/components/chart-view/index.vue'
 import type { EChartsOption } from 'echarts'
+import { useI18n } from 'vue-i18n'
 import { useChartOps, useChart } from '@/composables/use-chart'
 import type { KLineChartProps } from '@/components/art/charts/types'
 
 use([CandlestickChart, GridComponent, TooltipComponent, DataZoomComponent])
 
 defineOptions({ name: 'ArtKLineChart' })
+
+const { t } = useI18n()
 
 const props = withDefaults(defineProps<KLineChartProps>(), {
   // 基础配置
@@ -85,11 +88,11 @@ const {
           const data = param.data
           return `
               <div style="padding: 5px;">
-                <div><strong>时间：</strong>${param.name}</div>
-                <div><strong>开盘：</strong>${data[0]}</div>
-                <div><strong>收盘：</strong>${data[1]}</div>
-                <div><strong>最低：</strong>${data[2]}</div>
-                <div><strong>最高：</strong>${data[3]}</div>
+                <div><strong>${t('chart.kLine.time')}</strong>${param.name}</div>
+                <div><strong>${t('chart.kLine.open')}</strong>${data[0]}</div>
+                <div><strong>${t('chart.kLine.close')}</strong>${data[1]}</div>
+                <div><strong>${t('chart.kLine.low')}</strong>${data[2]}</div>
+                <div><strong>${t('chart.kLine.high')}</strong>${data[3]}</div>
               </div>
             `
         },

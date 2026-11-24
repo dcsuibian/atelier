@@ -17,9 +17,9 @@
         <div class="ml-3 text-xs text-g-500">{{ item.time }}</div>
       </div>
     </ElScrollbar>
-    <ElButton class="mt-[25px] w-full text-center" v-if="showMoreButton" v-ripple @click="handleMore"
-      >查看更多</ElButton
-    >
+    <ElButton class="mt-[25px] w-full text-center" v-if="showMoreButton" v-ripple @click="handleMore">
+      {{ $t('common.viewMore') }}
+    </ElButton>
   </div>
 </template>
 

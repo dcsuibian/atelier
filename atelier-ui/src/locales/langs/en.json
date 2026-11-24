@@ -60,7 +60,10 @@
     "saveSuccess": "Saved successfully",
     "deleteSuccess": "Deleted successfully",
     "lengthBetween": "Must be {min} to {max} characters",
-    "maxLength": "Must be at most {max} characters"
+    "maxLength": "Must be at most {max} characters",
+    "view": "View",
+    "viewMore": "View more",
+    "avatar": "Avatar"
   },
   "search": {
     "placeholder": "Search page",
@@ -172,7 +175,8 @@
     "subTitle": "Enter your email to reset your password",
     "placeholder": "Please enter your email",
     "submitBtnText": "Submit",
-    "backBtnText": "Back"
+    "backBtnText": "Back",
+    "accountLabel": "Account"
   },
   "register": {
     "title": "Create account",
@@ -205,6 +209,11 @@
       "inputPlaceholder": "Please input unlock password",
       "btnText": "Unlock",
       "backBtnText": "Back to login"
+    },
+    "devTools": {
+      "title": "System locked",
+      "detected": "Developer tools detected",
+      "hint": "For security, please close developer tools to continue"
     }
   },
   "greeting": {
@@ -337,6 +346,15 @@
     "permission": {
       "code": "Code",
       "searchPlaceholder": "Code / name / description"
+    }
+  },
+  "chart": {
+    "kLine": {
+      "time": "Time: ",
+      "open": "Open: ",
+      "close": "Close: ",
+      "low": "Low: ",
+      "high": "High: "
     }
   }
 }

@@ -8,10 +8,10 @@
     >
       <div class="p-5 text-center select-none">
         <div class="mb-7.5 text-5xl">🔒</div>
-        <h1 class="m-0 mb-5 text-3xl font-semibold text-danger">系统已锁定</h1>
+        <h1 class="m-0 mb-5 text-3xl font-semibold text-danger">{{ $t('lockScreen.devTools.title') }}</h1>
         <p class="max-w-125 m-0 text-lg leading-relaxed text-white">
-          检测到开发者工具已打开<br />
-          为了系统安全，请关闭开发者工具后继续使用
+          {{ $t('lockScreen.devTools.detected') }}<br />
+          {{ $t('lockScreen.devTools.hint') }}
         </p>
         <div class="mt-7.5 text-sm text-gray-400">Security Lock Activated</div>
       </div>
@@ -21,7 +21,7 @@
     <div v-if="!isLocked">
       <ElDialog v-model="visible" :width="370" :show-close="false" @open="handleDialogOpen">
         <div class="flex-c flex-col">
-          <img class="w-16 h-16 rounded-full" src="@/assets/images/user/avatar.webp" alt="用户头像" />
+          <img class="w-16 h-16 rounded-full" src="@/assets/images/user/avatar.webp" :alt="$t('common.avatar')" />
           <div class="mt-7.5 mb-3.5 text-base font-medium">{{ user?.realName }}</div>
           <ElForm ref="formRef" :model="formData" :rules="rules" class="w-[90%]" @submit.prevent="handleLock">
             <ElFormItem prop="password">
@@ -53,7 +53,7 @@
     <!-- 解锁界面 -->
     <div v-else class="unlock-content">
       <div class="flex-c flex-col w-80">
-        <img class="w-16 h-16 mt-5 rounded-full" src="@/assets/images/user/avatar.webp" alt="用户头像" />
+        <img class="w-16 h-16 mt-5 rounded-full" src="@/assets/images/user/avatar.webp" :alt="$t('common.avatar')" />
         <div class="mt-3 mb-3.5 text-base font-medium">
           {{ user?.realName }}
         </div>

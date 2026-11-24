@@ -32,12 +32,14 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { AppRouteRecord } from '@/types/art/router'
 import { getFirstMenuPath } from '@/utils/art'
-import { HOME_PAGE_PATH } from '@/router'
 
 /**
  * 菜单状态管理
- * 管理应用的菜单列表、首页路径、菜单宽度和动态路由移除函数
+ * 管理应用的菜单列表、首页路径与菜单宽度。动态路由的注销归 DynamicRouteRegistry
  */
+// 主页路径，默认使用菜单第一个有效路径，配置后使用此路径
+const HOME_PAGE_PATH = ''
+
 export const useMenuStore = defineStore('menuStore', () => {
   /** 首页路径 */
   const homePath = ref(HOME_PAGE_PATH)
@@ -45,8 +47,6 @@ export const useMenuStore = defineStore('menuStore', () => {
   const menuList = ref<AppRouteRecord[]>([])
   /** 菜单宽度 */
   const menuWidth = ref('')
-  /** 存储路由移除函数的数组 */
-  const removeRouteFns = ref<(() => void)[]>([])
 
   /**
    * 设置菜单列表
@@ -71,39 +71,11 @@ export const useMenuStore = defineStore('menuStore', () => {
     homePath.value = path
   }
 
-  /**
-   * 添加路由移除函数
-   * @param fns 要添加的路由移除函数数组
-   */
-  const addRemoveRouteFns = (fns: (() => void)[]) => {
-    removeRouteFns.value.push(...fns)
-  }
-
-  /**
-   * 移除所有动态路由
-   * 执行所有存储的路由移除函数并清空数组
-   */
-  const removeAllDynamicRoutes = () => {
-    removeRouteFns.value.forEach(fn => fn())
-    removeRouteFns.value = []
-  }
-
-  /**
-   * 清空路由移除函数数组
-   */
-  const clearRemoveRouteFns = () => {
-    removeRouteFns.value = []
-  }
-
   return {
     menuList,
     menuWidth,
-    removeRouteFns,
     setMenuList,
     getHomePath,
     setHomePath,
-    addRemoveRouteFns,
-    removeAllDynamicRoutes,
-    clearRemoveRouteFns,
   }
 })

@@ -1,19 +1,20 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import { ElMessage } from 'element-plus'
 import type { User } from '@/types'
 import { getSession, login as loginApi, logout as logoutApi } from '@/apis/session'
 import { getAvailablePermissionsByUserId } from '@/apis/user'
+import { $t } from '@/locales'
 import { usePermissionStore } from '@/stores/permission'
-import { useMenuStore } from '@/stores/menu'
 import { useSettingStore } from '@/stores/setting'
-import { DynamicRouteRegistry } from '@/router/guards/route-registry'
-import { router } from '@/router'
 
 /**
  * 当前会话。登录态在 Cookie 里，前端不持有凭证，所以服务端才是真相源，这里的状态只是它的副本
  *
  * 权限随会话同生共灭，所以由这里统一编排 permission store 的加载与清空，
  * 不要在别处单独去填或清它——两个 store 各自为政正是登录流程变乱的起点
+ *
+ * 这里只管状态，不碰路由：登出后跳登录页、权限变了重新注册路由，都由路由层订阅这里的变化去做
  */
 export const useSessionStore = defineStore('session', () => {
   const user = ref<User | null>(null)
@@ -53,41 +54,30 @@ export const useSessionStore = defineStore('session', () => {
 
   /**
    * 重新取回当前用户与权限。改了自己的资料、角色，或自己所在角色的权限之后调用，让变化立即生效
-   *
-   * 动态路由与菜单是注册时按权限筛出来的，权限变了只更新权限码不够：
-   * 注销后原地重新导航一次，由守卫按新权限重新注册
    */
   async function refresh(): Promise<void> {
-    const before = new Set(usePermissionStore().codes)
     const session = await getSession()
     await apply(session.user, session.loginTime)
-
-    const after = usePermissionStore().codes
-    if (before.size === after.size && [...before].every(code => after.has(code))) {
-      return
-    }
-    resetRoutes()
-    await router.replace(router.currentRoute.value.fullPath)
   }
 
-  /**
-   * @param toLogin 是否跳转到登录页，并带上当前地址作为 redirect
-   */
-  async function logout(toLogin = true): Promise<void> {
+  async function logout(): Promise<void> {
     try {
       await logoutApi()
     } catch (error) {
       // 登出接口失败不该卡住前端的登出：本地状态照清，服务端的会话交给它自己过期
       console.error('[Session] 登出接口调用失败', error)
     }
-    reset()
-    if (toLogin) {
-      const { fullPath, name } = router.currentRoute.value
-      await router.push({
-        name: 'Login',
-        query: 'Login' === name ? undefined : { redirect: fullPath },
-      })
+    clearLocal()
+  }
+
+  /**
+   * 服务端已经断定没登录（401）。本地还以为登着时提示一句，再按登出处理
+   */
+  async function expire(): Promise<void> {
+    if (isLoggedIn.value) {
+      ElMessage.error($t('httpMsg.sessionExpired'))
     }
+    await logout()
   }
 
   /**
@@ -97,40 +87,27 @@ export const useSessionStore = defineStore('session', () => {
    * 不会留下「有 user 却没有权限」的半截状态
    */
   async function apply(nextUser: User | null, nextLoginTime: number | null): Promise<void> {
-    const permissionStore = usePermissionStore()
     if (null === nextUser) {
-      user.value = null
-      loginTime.value = null
-      permissionStore.clear()
+      clearLocal()
       return
     }
     const permissions = await getAvailablePermissionsByUserId(nextUser.id)
     user.value = nextUser
     loginTime.value = nextLoginTime
-    permissionStore.set(permissions)
+    usePermissionStore().set(permissions)
   }
 
   /**
-   * 清空本地状态，回到「未向服务端确认过」的初始态
+   * 清掉本地与这个用户有关的状态。登出之后已经确认没登录，ready 保持 true，不必再问一遍服务端
    *
-   * 动态路由是按权限注册的，跟着会话一起注销：否则换个人登录会沿用上一个人的路由表。
-   * 锁屏同理，否则重新登录后仍被锁着，还得输入上一个人设的密码。
+   * 锁屏跟着会话走，否则重新登录后仍被锁着，还得输入上一个人设的密码。
    * 工作标签页故意不清，免得误登出丢掉打开中的页面
    */
-  function reset(): void {
+  function clearLocal(): void {
     user.value = null
     loginTime.value = null
-    ready.value = false
     usePermissionStore().clear()
     useSettingStore().unlock()
-    resetRoutes()
-  }
-
-  function resetRoutes(): void {
-    DynamicRouteRegistry.getInstance()?.unregister()
-    const menuStore = useMenuStore()
-    menuStore.removeAllDynamicRoutes()
-    menuStore.setMenuList([])
   }
 
   return {
@@ -141,7 +118,7 @@ export const useSessionStore = defineStore('session', () => {
     ensureLoaded,
     login,
     logout,
+    expire,
     refresh,
-    reset,
   }
 })

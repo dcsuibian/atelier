@@ -90,7 +90,7 @@ async function resolve(to: RouteLocationNormalized, router: Router): Promise<Nav
     // 一个页面都没有，再往下走只会落到 404，还不如直接说清楚
     if (0 === registered) {
       ElMessage.warning($t('session.noPagePermission'))
-      await sessionStore.logout(false)
+      await sessionStore.logout()
       return { name: 'Login' }
     }
     return to.fullPath
@@ -122,7 +122,6 @@ async function registerDynamicRoutes(router: Router): Promise<number> {
 
   const menuStore = useMenuStore()
   menuStore.setMenuList(menuList)
-  menuStore.addRemoveRouteFns(registry?.getRemoveRouteFns() ?? [])
 
   IframeRouteManager.getInstance().save()
   useWorkTabStore().validateWorktabs(router)

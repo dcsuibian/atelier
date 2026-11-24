@@ -35,7 +35,6 @@
 import { ElMessage } from 'element-plus'
 // 只在出错时调用，与 locales 之间的循环引用不影响模块初始化
 import { $t } from '@/locales'
-import { router } from '@/router'
 import { useSessionStore } from '@/stores/session'
 import { StorageConfig } from '@/utils/art/storage/storage-config'
 
@@ -113,8 +112,8 @@ class StorageCompatibilityManager {
     setTimeout(() => {
       try {
         localStorage.clear()
+        // atelier：登出后跳登录页由路由层的会话同步负责，这里不再自己跳
         void useSessionStore().logout()
-        router.push({ name: 'Login' })
         console.info('[Storage] 已执行系统登出')
       } catch (error) {
         console.error('[Storage] 系统登出失败:', error)

@@ -88,9 +88,7 @@ export class DynamicRouteRegistry {
   }
 
   /**
-   * 守卫初始化时带 router 调一次建立实例；之后各处（如登出）不带参数取用
-   *
-   * 做成单例是为了让 sessionStore 能直接注销路由，而不必反过来依赖守卫模块
+   * 守卫初始化时带 router 调一次建立实例；之后路由层各处不带参数取用
    */
   static getInstance(router?: Router): DynamicRouteRegistry | null {
     if (router && null === DynamicRouteRegistry.instance) {
@@ -118,9 +116,5 @@ export class DynamicRouteRegistry {
 
   isRegistered(): boolean {
     return this.registered
-  }
-
-  getRemoveRouteFns(): (() => void)[] {
-    return this.removeRouteFns
   }
 }

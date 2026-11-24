@@ -64,7 +64,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 
 - ADP 的 HTTP 层（`utils/art/http/`），换成 `utils/http.ts`
 - `v-auth`、`v-roles` 指令，`meta.roles`、`info.buttons`；`src/directives/` 只剩 `ripple`
-- userStore 这个杂物袋：语言、搜索历史、锁屏迁入 `settingStore`，会话归 `stores/session.ts`。锁屏存在偏好里，生命周期却跟着会话，登出时由 `session.reset()` 解除，拆分时容易漏掉
+- userStore 这个杂物袋：语言、搜索历史、锁屏迁入 `settingStore`，会话归 `stores/session.ts`。锁屏存在偏好里，生命周期却跟着会话，登出时由 session store 一并解除，拆分时容易漏掉
 - `router/core/` 的编排层（`RouteRegistry`、角色过滤、`RoutePermissionValidator`）
 - 后端路由模式与按字符串加载组件（`ComponentLoader`）；`AppRouteRecord.component` 不再接受字符串。布局外壳在 `components/app-layout/`
 - `useTable` 及配套（`useTableColumns`、`utils/art/table/`、`Api.Common`、`ArtTableHeader`），表格页以用户管理页为准
@@ -121,7 +121,9 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
   - `stores/session.ts` 是登录态的唯一出口（`user`、`isLoggedIn`、`ensureLoaded()`、`login()`、`logout()`），权限由它统一编排，别在别处单独填或清 permission store。
   - 权限码集中在 `constants/permission.ts`，一律引用 `PERMISSIONS.XXX`。按钮级判断写 `v-if="permissionStore.check(...)"`，与路由守卫共用。
   - `PermissionExpression` 只有 and / or。路由由 `filterByPermission(dynamicRoutes)` 筛完才注册。
-  - 401 在 `utils/http.ts` 统一处理，取 session store 要用**动态 `import`**：session store 经 `apis/` 绕回 `utils/http.ts`，静态引用会成环。`GET /session` 未登录时返回 200，守卫的 `ensureLoaded()` 不受 401 处理影响。
+  - **依赖只朝一个方向**：页面 → 路由 → store → apis → `utils/http.ts`，下层不 import 上层。session store 只管状态，不碰路由；登出后跳登录页、权限变了重新注册路由，由 `router/session-sync.ts` 订阅会话与权限的变化去做（原地重新导航，交给守卫决定去哪）。所以 `await logout()` 返回时还不一定已在登录页。
+  - 401 在 `utils/http.ts` 统一拦截，处理由 `main.ts` 经 `onUnauthorized` 接上（调 `sessionStore.expire()`）。失败提示同理，经 `onRequestError` 接上，这些接线都在 `utils/setup/http.ts`（`setupHttp()`），文案由其中的 `messageOf` 翻译。http 层既不依赖会话，也不依赖界面。`utils/setup/` 放启动时调用、把各层接起来的代码，不是通用工具。
+  - 全局错误兜底在 `utils/setup/error-handle.ts`（原 ADP 的 `utils/art/sys/error-handle.ts`，已接管）。没人 catch 的 Promise 失败若已由 http 层处理过（`isHandled`），不再重复记录，列表页不必为此补 catch；传了 `silent` 的不算已处理。`GET /session` 未登录时返回 200，守卫的 `ensureLoaded()` 不受 401 处理影响。
   - 并发去重（会话加载、401 登出）用进行中的 Promise。
 
 ## 现状与待办

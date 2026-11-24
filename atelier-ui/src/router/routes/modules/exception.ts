@@ -1,4 +1,4 @@
-import type { AppRouteRecord } from '@/types/art/router'
+import type { AppRouteRecord } from '@/types'
 
 export const exceptionRoutes: AppRouteRecord = {
   path: '/exception',

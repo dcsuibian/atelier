@@ -33,7 +33,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { MenuThemeType } from '@/types/art/config'
-import type { AppRouteRecord } from '@/types/art/router'
+import type { AppRouteRecord } from '@/types'
 import AppConfig from '@/config'
 import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum, LanguageEnum } from '@/constants/app'
 import { setElementThemeColor } from '@/utils/art/ui'

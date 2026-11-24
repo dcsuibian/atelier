@@ -39,7 +39,7 @@
 <script lang="ts" setup>
 import { ElMenuItem, ElSubMenu } from 'element-plus'
 import { computed, type PropType } from 'vue'
-import type { AppRouteRecord } from '@/types/art/router'
+import type { AppRouteRecord } from '@/types'
 import { handleMenuJump } from '@/utils/art/navigation'
 import { formatMenuTitle } from '@/utils/art/router'
 import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'

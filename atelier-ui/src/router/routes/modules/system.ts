@@ -1,4 +1,4 @@
-import type { AppRouteRecord } from '@/types/art/router'
+import type { AppRouteRecord } from '@/types'
 import { PERMISSIONS } from '@/constants/permission'
 
 export const systemRoutes: AppRouteRecord = {

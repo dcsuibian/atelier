@@ -8,7 +8,7 @@
  * @module router/menu-processor
  */
 
-import type { AppRouteRecord } from '@/types/art/router'
+import type { AppRouteRecord } from '@/types'
 import { dynamicRoutes } from './routes/dynamic-routes'
 import { formatMenuTitle } from '@/utils/art'
 

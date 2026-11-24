@@ -20,7 +20,7 @@
  * @author Art Design Pro Team
  */
 
-import type { AppRouteRecord } from '@/types/art'
+import type { AppRouteRecord } from '@/types'
 
 /**
  * 判断菜单项是否可作为默认导航落点

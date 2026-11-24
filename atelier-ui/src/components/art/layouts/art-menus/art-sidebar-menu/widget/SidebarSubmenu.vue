@@ -49,7 +49,7 @@
 import { storeToRefs } from 'pinia'
 import { ElMenuItem, ElSubMenu } from 'element-plus'
 import { computed } from 'vue'
-import type { AppRouteRecord } from '@/types/art/router'
+import type { AppRouteRecord } from '@/types'
 import { formatMenuTitle } from '@/utils/art/router'
 import { handleMenuJump } from '@/utils/art/navigation'
 import { useSettingStore } from '@/stores/setting'

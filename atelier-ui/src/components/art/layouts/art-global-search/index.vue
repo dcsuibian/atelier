@@ -89,7 +89,7 @@
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingStore } from '@/stores/setting'
-import type { AppRouteRecord } from '@/types/art/router'
+import type { AppRouteRecord } from '@/types'
 import { Search } from '@element-plus/icons-vue'
 import { mittBus } from '@/utils/art/sys'
 import { useMenuStore } from '@/stores/menu'
@@ -318,7 +318,6 @@ const addHistory = (item: AppRouteRecord) => {
 
   const cleanedItem = { ...item }
   delete cleanedItem.children
-  delete cleanedItem.meta.authList
   historyResult.value.unshift(cleanedItem)
   updateHistory()
 }

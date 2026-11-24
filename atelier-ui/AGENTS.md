@@ -12,7 +12,7 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 
 ## 代码组织：ADP 原件与自有代码
 
-- `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons`、`tables` 等）、`composables/art/`、`styles/art/`、`utils/art/`、`types/art/`（只剩路由与系统配置的类型）
+- `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons`、`tables` 等）、`composables/art/`、`styles/art/`、`utils/art/`、`types/art/`（只剩系统配置的类型）
 - 自有代码平铺：如 `components/app-layout/`、`components/chart-view/`、`composables/use-chart.ts`、`utils/http.ts`、`types/user.ts`（与后端对接的类型都在 `types/` 根上）
 - 整体接管、不再区分原件的目录：`router/`、`stores/`、`apis/`、`directives/`、`config/`、`constants/`、`locales/`
 
@@ -23,7 +23,7 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 
 **`art/` 里的小改动标 `atelier：` 注释**，用 `rg -n 'atelier：' src` 能找全。格式化、`import type`、路径别名、`useUserStore()` 按内容改到 `settingStore` / `sessionStore` 这类机械改动不标，标了反而淹没真正的改动。需要多解释的两处：
 
-- `types/art/router.ts` 的 `RouteMeta` 加了 `permission` 字段。这个类型被 `art/` 下的菜单组件大量引用，就地加一个字段比整个挪出来、逼着一堆文件改 import 更省事。
+- 路由类型（`RouteMeta`、`AppRouteRecord`）已接管，挪到 `types/router.ts`，从 `@/types` 导入。ADP 里用于后端菜单模式的字段（`authList`、`authMark`、`isAuthButton`、`parentPath`、`id`）随之删了。
 - `components/art/layouts/art-settings-panel/style.scss` 的 `:deep(.el-drawer__body)` 改为 `.setting-modal .el-drawer__body`。这个文件不是 scoped，`:deep` 本就不该出现；Vite 8 改用 lightningcss 后直接报错。只把 `:deep` 去掉会让所有抽屉都隐藏滚动条，所以限定在设置抽屉内。**下游自行升级 Vite 8 时多半只做了前者**，同步时要检查这一处。
 
 `RouteMeta` 继承了 `Record<string | number | symbol, unknown>`，**路由 meta 里写错字段名永远不会报错**。

@@ -7,7 +7,7 @@
  * @module router/route-registry
  */
 import type { Router, RouteRecordRaw } from 'vue-router'
-import type { AppRouteRecord } from '@/types/art/router'
+import type { AppRouteRecord } from '@/types'
 import { usePermissionStore } from '@/stores/permission'
 
 const AppLayout = () => import('@/components/app-layout/index.vue')

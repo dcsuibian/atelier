@@ -6,8 +6,5 @@
  * @author Art Design Pro Team
  */
 
-/** 路由相关类型定义 */
-export * from './router'
-
 /** 配置相关类型定义 */
 export * from './config'

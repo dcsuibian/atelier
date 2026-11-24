@@ -1,6 +1,13 @@
-node_modules/
-dist/
-.git/
-.idea/
-.vscode/
-.DS_Store
+# 白名单：Dockerfile 只用到下面这些，其余一律不进构建上下文
+*
+!index.html
+!public
+!src
+!vite.config.ts
+!tsconfig*.json
+!.env
+!.env.production
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!nginx.conf

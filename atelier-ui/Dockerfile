@@ -1,3 +1,4 @@
+# Node 与 pnpm 的版本要与 .node-version、package.json 的 devEngines 一致，升级时一起改
 FROM node:24.11.1-alpine AS builder
 
 RUN npm i -g pnpm@11.22.0

@@ -11,7 +11,7 @@ import type { Router } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { usePermissionStore } from '@/stores/permission'
 import { useMenuStore } from '@/stores/menu'
-import type { DynamicRouteRegistry } from '@/router/guards/route-registry'
+import type { DynamicRouteRegistry } from '@/router/route-registry'
 
 export function setupSessionSync(router: Router, registry: DynamicRouteRegistry): void {
   const sessionStore = useSessionStore()

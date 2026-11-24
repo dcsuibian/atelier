@@ -42,7 +42,8 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 | `src/types/{api,common,component,...}` | `src/types/art/`，组件专用的类型挪到了组件旁边 |
 | `src/utils/{http,storage,ui,...}` | `src/utils/art/{...}` |
 | `router/routes/asyncRoutes.ts` | `router/routes/dynamic-routes.ts`（导出名一并改为 `dynamicRoutes`） |
-| `router/guards/beforeEach.ts`、`afterEach.ts` | `router/guards/before-each.ts`、`after-each.ts` |
+| `router/modules/` | `router/routes/modules/`，由 `dynamic-routes.ts` 直接汇总 |
+| `router/guards/beforeEach.ts`、`afterEach.ts` | `router/before-each.ts`、`after-each.ts`（`guards/` 已展平） |
 | `router/routesAlias.ts` | 删除，登录页按路由名 `Login` 判断 |
 
 ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名 kebab-case 挪到 `router/` 下，其余随按字符串加载组件一起删了。
@@ -58,7 +59,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 - 删除的页面：`views/` 下的 article、change、examples、safeguard、template、widgets、dashboard/{analysis,ecommerce}、system/nested、system/menu
 - 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件，以及聊天窗口、消息通知、节日烟花、升级提示、顶栏快速入口
 - **统计卡片与图表组件全部保留**，哪怕只有演示页在引用
-- 删页面时要连带过一遍：路由模块、`router/modules/index.ts`、i18n 的 menus 键、`env.d.ts` 的 declare module、`utils/art/index.ts` 的 re-export
+- 删页面时要连带过一遍：路由模块、`router/routes/dynamic-routes.ts`、i18n 的 menus 键、`env.d.ts` 的 declare module、`utils/art/index.ts` 的 re-export
 
 **机制**：
 

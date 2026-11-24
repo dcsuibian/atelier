@@ -14,7 +14,7 @@
  * 6. 根路径重定向到首页
  * 7. 放行。记录工作标签页、设置页面标题是导航成功之后的事，在后置守卫里做
  *
- * @module router/guards/before-each
+ * @module router/before-each
  */
 import { ElMessage } from 'element-plus'
 import type { NavigationGuardReturn, RouteLocationNormalized, Router } from 'vue-router'
@@ -25,10 +25,10 @@ import { useSessionStore } from '@/stores/session'
 import { useMenuStore } from '@/stores/menu'
 import { useWorkTabStore } from '@/stores/work-tab'
 import { loadingService } from '@/utils/art/ui'
-import { isStaticRoute } from '../routes/static-routes'
-import { dynamicRoutes } from '../routes/dynamic-routes'
-import { IframeRouteManager } from '../iframe-route-manager'
-import { MenuProcessor } from '../menu-processor'
+import { isStaticRoute } from './routes/static-routes'
+import { dynamicRoutes } from './routes/dynamic-routes'
+import { IframeRouteManager } from './iframe-route-manager'
+import { MenuProcessor } from './menu-processor'
 import { type DynamicRouteRegistry, collectIframeRoutes, filterByPermission, markFirstLevel } from './route-registry'
 
 const menuProcessor = new MenuProcessor()

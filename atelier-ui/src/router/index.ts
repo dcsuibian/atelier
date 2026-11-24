@@ -2,10 +2,10 @@ import type { App } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import { staticRoutes } from './routes/static-routes'
 import { configureNProgress } from '@/utils/art/router'
-import { setupBeforeEachGuard } from './guards/before-each'
-import { setupAfterEachGuard } from './guards/after-each'
+import { setupBeforeEachGuard } from './before-each'
+import { setupAfterEachGuard } from './after-each'
 import { setupSessionSync } from './session-sync'
-import { DynamicRouteRegistry } from './guards/route-registry'
+import { DynamicRouteRegistry } from './route-registry'
 
 // 创建路由实例
 export const router = createRouter({

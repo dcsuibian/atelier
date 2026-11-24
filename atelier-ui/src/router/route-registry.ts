@@ -4,7 +4,7 @@
  * 权限在「注册」这一步就落地：没有权限的路由根本不会进入路由表，
  * 于是菜单、可访问的路径、路由表三者天然同源，不需要再单独做一遍路径权限校验
  *
- * @module router/guards/route-registry
+ * @module router/route-registry
  */
 import type { Router, RouteRecordRaw } from 'vue-router'
 import type { AppRouteRecord } from '@/types/art/router'

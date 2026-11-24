@@ -1,9 +1,17 @@
-// 权限文档：https://www.artd.pro/docs/zh/guide/in-depth/permission.html
 import type { AppRouteRecord } from '@/types/art/router'
-import { routeModules } from '../modules'
+import { dashboardRoutes } from './modules/dashboard'
+import { projectRoutes } from './modules/project'
+import { systemRoutes } from './modules/system'
+import { resultRoutes } from './modules/result'
+import { exceptionRoutes } from './modules/exception'
 
 /**
- * 动态路由（需要权限才能访问的路由）
- * 用于渲染菜单以及根据菜单权限动态加载路由，如果没有权限无法访问
+ * 动态路由：按权限筛选后才注册，同时用来渲染菜单。顺序就是菜单的顺序
  */
-export const dynamicRoutes: AppRouteRecord[] = routeModules
+export const dynamicRoutes: AppRouteRecord[] = [
+  dashboardRoutes,
+  projectRoutes,
+  systemRoutes,
+  resultRoutes,
+  exceptionRoutes,
+]

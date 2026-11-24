@@ -32,7 +32,7 @@
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { MenuThemeType } from '@/types/art/config'
+import type { MenuThemeType } from '@/config/types'
 import type { AppRouteRecord } from '@/types'
 import AppConfig from '@/config'
 import { SystemTheme, MenuTheme, MenuType, ContainerWidth, Language } from '@/constants/app'

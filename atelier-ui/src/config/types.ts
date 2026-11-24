@@ -1,7 +1,7 @@
 /**
  * 系统配置（@/config）的类型，以及其中引用的主题、菜单主题、顶部栏功能开关
  *
- * @module types/art/config
+ * @module config/types
  * @author Art Design Pro Team
  */
 

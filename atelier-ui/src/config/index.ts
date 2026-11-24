@@ -29,9 +29,10 @@
  */
 
 import { MenuTheme, MenuType, SystemTheme } from '@/constants/app'
-import type { SystemConfig } from '@/types/art/config'
+import type { SystemConfig } from './types'
 import { configImages } from './images'
 import { headerBarConfig } from './header-bar'
+import { systemMainColors } from './main-colors'
 
 const appConfig: SystemConfig = {
   // 系统信息
@@ -115,7 +116,7 @@ const appConfig: SystemConfig = {
     },
   ],
   // 系统主色
-  systemMainColor: ['#5D87FF', '#B48DF3', '#1D84FF', '#60C041', '#38C0FC', '#F9901F', '#FF80C8'] as const,
+  systemMainColor: systemMainColors,
   // 顶部栏功能配置
   headerBar: headerBarConfig,
 }

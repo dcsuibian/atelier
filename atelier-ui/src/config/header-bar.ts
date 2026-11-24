@@ -8,7 +8,7 @@
  * @author Art Design Pro Team
  */
 
-import type { HeaderBarFeatureConfig } from '@/types/art'
+import type { HeaderBarFeatureConfig } from './types'
 
 /**
  * 顶部栏功能配置对象

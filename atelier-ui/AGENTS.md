@@ -12,7 +12,7 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 
 ## 代码组织：ADP 原件与自有代码
 
-- `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons` 等）、`composables/art/`、`styles/art/`、`utils/art/`、`types/art/`（只剩系统配置的类型）
+- `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons` 等）、`composables/art/`、`styles/art/`、`utils/art/`
 - 自有代码平铺：如 `components/layout/`、`utils/http.ts`、`types/user.ts`（与后端对接的类型都在 `types/` 根上）
 - 整体接管、不再区分原件的目录：`router/`、`stores/`、`apis/`、`directives/`、`config/`、`constants/`、`locales/`
 
@@ -39,7 +39,7 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 | `src/plugins/` | 无，图表组件各自按需注册 ECharts 模块 |
 | `src/assets/styles/` | `src/styles/` |
 | `src/components/core/` | `src/components/art/` |
-| `src/types/{api,common,component,...}` | `src/types/art/`，组件专用的类型挪到了组件旁边 |
+| `src/types/{api,common,component,...}` | 系统配置的类型在 `config/types.ts`，组件专用的类型挪到了组件旁边 |
 | `src/utils/{http,storage,ui,...}` | `src/utils/art/{...}` |
 | `router/routes/asyncRoutes.ts` | `router/routes/dynamic-routes.ts`（导出名一并改为 `dynamicRoutes`） |
 | `router/modules/` | `router/routes/modules/`，由 `dynamic-routes.ts` 直接汇总 |

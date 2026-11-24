@@ -36,7 +36,7 @@ import { headerBarConfig } from './header-bar'
 const appConfig: SystemConfig = {
   // 系统信息
   systemInfo: {
-    name: 'Art Design Pro', // 系统名称
+    name: 'Atelier', // 系统名称
   },
   // 系统主题
   systemThemeStyles: {

@@ -89,7 +89,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor` 改名 kebab-case 挪到 `rou
 
 **`LICENSE` 必须保留**：清理上游痕迹时最容易误删。
 
-**尚未清理的上游痕迹**：`index.html` 的 `<title>` 和 description、系统名称（`config` 里的 `systemInfo.name`）还是上游的，仪表盘「关于项目」卡片的文案也是。**有意留着**，等决定好要显示什么再一起换。
+**上游痕迹**：系统名称、页面标题、登录页与「关于项目」卡片的文案已换成 Atelier 自己的。logo 图片仍是 ADP 的，**有意留着**。
 
 ## 命令
 

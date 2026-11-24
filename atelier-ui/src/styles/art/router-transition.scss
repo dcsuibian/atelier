@@ -9,7 +9,7 @@ $transition: (
   // 默认缓动函数
   easing: cubic-bezier(0.25, 0.1, 0.25, 1),
   // 淡入淡出专用的缓动函数
-  fade-easing: cubic-bezier(0.4, 0, 0.6, 1)
+  fade-easing: cubic-bezier(0.4, 0, 0.6, 1),
 );
 
 // 抽取配置值函数，提高可复用性

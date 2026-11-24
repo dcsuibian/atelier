@@ -98,8 +98,9 @@
               <p>
                 {{ $t('topBar.guide.title')
                 }}<span :style="{ color: systemThemeColor }"> {{ $t('topBar.guide.theme') }} </span>、
-                <span :style="{ color: systemThemeColor }"> {{ $t('topBar.guide.menu') }} </span
-                >{{ $t('topBar.guide.description') }}
+                <span :style="{ color: systemThemeColor }"> {{ $t('topBar.guide.menu') }} </span>{{
+                  $t('topBar.guide.description')
+                }}
               </p>
             </template>
           </ElPopover>

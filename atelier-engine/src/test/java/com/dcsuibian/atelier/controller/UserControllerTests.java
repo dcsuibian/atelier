@@ -252,7 +252,7 @@ public class UserControllerTests extends IntegrationTests {
 	}
 
 	@Test
-	@DisplayName("删除用户：连同其角色分配一起删除；再删返回 404")
+	@DisplayName("删除用户：仍分配有角色时返回 409；解除后可删，再删返回 404")
 	void deleteById() throws Exception {
 		long id = addUser("ut_del", null);
 		long roleId = dsl.insertInto(ROLE, ROLE.NAME, ROLE.DESCRIPTION, ROLE.STATUS)
@@ -261,8 +261,12 @@ public class UserControllerTests extends IntegrationTests {
 		dsl.insertInto(USER_ROLE, USER_ROLE.USER_ID, USER_ROLE.ROLE_ID).values(id, roleId).execute();
 
 		mockMvc.perform(delete("/users/" + id))
+				.andExpect(jsonPath("$.code").value(409));
+		assertThat(dsl.fetchExists(USER, USER.ID.eq(id))).isTrue();
+
+		dsl.deleteFrom(USER_ROLE).where(USER_ROLE.USER_ID.eq(id)).execute();
+		mockMvc.perform(delete("/users/" + id))
 				.andExpect(jsonPath("$.code").value(200));
-		assertThat(dsl.fetchExists(USER_ROLE, USER_ROLE.USER_ID.eq(id))).isFalse();
 		mockMvc.perform(get("/users/" + id))
 				.andExpect(jsonPath("$.code").value(404));
 		mockMvc.perform(delete("/users/" + id))

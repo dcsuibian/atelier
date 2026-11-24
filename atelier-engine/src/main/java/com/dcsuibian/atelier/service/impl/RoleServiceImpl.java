@@ -128,11 +128,13 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	@Transactional
 	public void deleteById(long id) {
-		// 静默收回用户的角色会让他们的权限悄悄变少，所以要求先解除分配
+		// 删除是谨慎操作，不级联：有关联就要求先手动解除，以免误删
 		if (dsl.fetchExists(USER_ROLE, USER_ROLE.ROLE_ID.eq(id))) {
 			throw new BusinessException("角色仍分配给用户，请先解除分配", 409);
 		}
-		dsl.deleteFrom(ROLE_PERMISSION).where(ROLE_PERMISSION.ROLE_ID.eq(id)).execute();
+		if (dsl.fetchExists(ROLE_PERMISSION, ROLE_PERMISSION.ROLE_ID.eq(id))) {
+			throw new BusinessException("角色仍拥有权限，请先取消分配", 409);
+		}
 		if (0 == dsl.deleteFrom(ROLE).where(ROLE.ID.eq(id)).execute()) {
 			throw new BusinessException("角色不存在", 404);
 		}

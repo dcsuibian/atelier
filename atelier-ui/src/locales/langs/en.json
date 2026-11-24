@@ -323,7 +323,7 @@
       "rolesPlaceholder": "Type a name to search",
       "roleDisabled": "{name} (disabled)",
       "searchPlaceholder": "Username / full name / phone",
-      "deleteConfirm": "Delete user \"{name}\"? Their role assignments will also be removed."
+      "deleteConfirm": "Delete user \"{name}\"?"
     },
     "role": {
       "add": "Add Role",
@@ -335,7 +335,7 @@
       "description": "Description",
       "status": "Status",
       "searchPlaceholder": "Role name / description",
-      "deleteConfirm": "Delete role \"{name}\"? Its permission assignments will also be removed.",
+      "deleteConfirm": "Delete role \"{name}\"?",
       "assignPermission": "Assign Permissions",
       "assignPermissionTitle": "Assign Permissions: {name}",
       "expandAll": "Expand All",

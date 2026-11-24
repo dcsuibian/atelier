@@ -181,7 +181,10 @@ public class UserServiceImpl implements UserService {
 		if (UserConstants.SUPER_ADMIN_ID == id) {
 			throw new BusinessException("不能删除超级管理员");
 		}
-		dsl.deleteFrom(USER_ROLE).where(USER_ROLE.USER_ID.eq(id)).execute();
+		// 删除是谨慎操作，不级联：有关联就要求先手动解除，以免误删
+		if (dsl.fetchExists(USER_ROLE, USER_ROLE.USER_ID.eq(id))) {
+			throw new BusinessException("用户仍分配有角色，请先解除分配", 409);
+		}
 		if (0 == dsl.deleteFrom(USER).where(USER.ID.eq(id)).execute()) {
 			throw new BusinessException("用户不存在", 404);
 		}

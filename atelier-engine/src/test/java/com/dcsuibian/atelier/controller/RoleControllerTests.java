@@ -160,14 +160,18 @@ public class RoleControllerTests extends IntegrationTests {
 	}
 
 	@Test
-	@DisplayName("删除角色：权限分配随之删除；仍分配给用户时返回 409；不存在返回 404")
+	@DisplayName("删除角色：仍拥有权限或仍分配给用户时返回 409；解除后可删，不存在返回 404")
 	void deleteById() throws Exception {
 		long free = addRole("rt_del_free");
 		dsl.insertInto(ROLE_PERMISSION, ROLE_PERMISSION.ROLE_ID, ROLE_PERMISSION.PERMISSION_ID)
 				.values(free, permissionId("user:view")).execute();
 		mockMvc.perform(delete("/roles/" + free))
+				.andExpect(jsonPath("$.code").value(409));
+		assertThat(dsl.fetchExists(ROLE, ROLE.ID.eq(free))).isTrue();
+
+		dsl.deleteFrom(ROLE_PERMISSION).where(ROLE_PERMISSION.ROLE_ID.eq(free)).execute();
+		mockMvc.perform(delete("/roles/" + free))
 				.andExpect(jsonPath("$.code").value(200));
-		assertThat(dsl.fetchExists(ROLE_PERMISSION, ROLE_PERMISSION.ROLE_ID.eq(free))).isFalse();
 		mockMvc.perform(delete("/roles/" + free))
 				.andExpect(jsonPath("$.code").value(404));
 

@@ -323,7 +323,7 @@
       "rolesPlaceholder": "输入名称搜索",
       "roleDisabled": "{name}（已禁用）",
       "searchPlaceholder": "用户名 / 真实姓名 / 手机号",
-      "deleteConfirm": "确定要删除用户「{name}」吗？其角色分配会一并删除。"
+      "deleteConfirm": "确定要删除用户「{name}」吗？"
     },
     "role": {
       "add": "新增角色",
@@ -335,7 +335,7 @@
       "description": "角色描述",
       "status": "角色状态",
       "searchPlaceholder": "角色名称 / 描述",
-      "deleteConfirm": "确定删除角色「{name}」吗？其权限分配会一并删除。",
+      "deleteConfirm": "确定要删除角色「{name}」吗？",
       "assignPermission": "分配权限",
       "assignPermissionTitle": "分配权限：{name}",
       "expandAll": "全部展开",

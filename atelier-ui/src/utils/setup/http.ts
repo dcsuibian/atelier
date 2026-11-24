@@ -27,15 +27,18 @@ const STATUS_MESSAGE_KEYS: Record<number, string> = {
  */
 export function messageOf(error: unknown): string {
   if (error instanceof BusinessError) {
-    // body 不是 ResponseWrapper 时（比如接口地址配错，拿到的是前端的 index.html）message 为空，
-    // 不兜底就会弹一个空白提示
-    return error.message || $t('httpMsg.invalidResponse')
+    // 后端理应总给文案，空的时候兜个底，免得弹一个空白提示
+    return error.message || $t('httpMsg.requestFailed')
   }
   if (!axios.isAxiosError(error)) {
     return error instanceof Error ? error.message : $t('httpMsg.requestFailed')
   }
   const { response } = error
   if (response) {
+    // 2xx 还算失败，只能是响应格式不对
+    if (200 <= response.status && response.status < 300) {
+      return $t('httpMsg.invalidResponse')
+    }
     // 非 2xx 但带了 ResponseWrapper 的，后端给的文案更具体
     const message = (response.data as Partial<ResponseWrapper<unknown>> | undefined)?.message
     if ('string' === typeof message && message) {

@@ -1,4 +1,4 @@
-import type { AxiosAdapter } from 'axios'
+import { AxiosError, type AxiosAdapter } from 'axios'
 import { describe, expect, it } from 'vitest'
 import request, { BusinessError } from '@/utils/http'
 
@@ -21,5 +21,14 @@ describe('request', () => {
     expect(error.message).toBe('名称已存在')
     expect(error.code).toBe(409)
     expect(error.response.config.silent).toBe(true)
+  })
+
+  it('响应不是 ResponseWrapper 时抛出 AxiosError，而不是 BusinessError', async () => {
+    const error = await request
+      .get<never>({ url: '/anything', adapter: respondWith('<!doctype html>') })
+      .catch((e: AxiosError) => e)
+    expect(error).toBeInstanceOf(AxiosError)
+    expect(error.code).toBe(AxiosError.ERR_BAD_RESPONSE)
+    expect(error.response?.status).toBe(200)
   })
 })

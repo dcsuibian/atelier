@@ -7,7 +7,7 @@
  * 不带 token：登录态在 Cookie 里，凭证由浏览器管。
  * 不重试：该不该重试由调用方按场景决定，放在这层只会误伤
  */
-import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import axios, { AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import type { ResponseWrapper } from '@/types'
 
 declare module 'axios' {
@@ -18,14 +18,14 @@ declare module 'axios' {
 }
 
 /**
- * 业务失败：HTTP 200，但业务码不是 200。message 是后端给的文案，可能为空
+ * 业务失败：后端回答了，但业务码不是 200。message 是后端给的文案
  */
 class BusinessError extends Error {
-  readonly code: number | undefined
+  readonly code: number
   /** 与 AxiosError 一样带上响应，出错后的处理能拿到这次请求的配置 */
   readonly response: AxiosResponse
 
-  constructor(message: string, code: number | undefined, response: AxiosResponse) {
+  constructor(message: string, code: number, response: AxiosResponse) {
     super(message)
     this.name = 'BusinessError'
     this.code = code
@@ -35,12 +35,24 @@ class BusinessError extends Error {
 
 const axiosInstance = axios.create({ baseURL: import.meta.env.VITE_API_URL })
 
-axiosInstance.interceptors.response.use((response: AxiosResponse<ResponseWrapper<unknown>>) => {
-  const { code, message } = response.data
-  if (200 === code) {
+axiosInstance.interceptors.response.use((response: AxiosResponse<Partial<ResponseWrapper<unknown>> | null>) => {
+  const { data } = response
+  // 不是 ResponseWrapper 就不是后端的回答，比如接口地址配错，拿到的是前端的 index.html
+  if ('number' !== typeof data?.code) {
+    return Promise.reject(
+      new AxiosError(
+        '响应不是 ResponseWrapper',
+        AxiosError.ERR_BAD_RESPONSE,
+        response.config,
+        response.request,
+        response,
+      ),
+    )
+  }
+  if (200 === data.code) {
     return response
   }
-  return Promise.reject(new BusinessError(message ?? '', code, response))
+  return Promise.reject(new BusinessError(data.message ?? '', data.code, response))
 })
 
 /** 给应用挂出错后的处理用。后挂的排在拆包装之后，业务失败也会经过它 */

@@ -31,7 +31,7 @@ function responseError(status: number, data: unknown = ''): AxiosError {
   )
 }
 
-function businessError(message: string, code: number | undefined): BusinessError {
+function businessError(message: string, code: number): BusinessError {
   return new BusinessError(message, code, fakeResponse(200))
 }
 
@@ -60,9 +60,13 @@ describe('messageOf', () => {
     )
   })
 
-  it('业务失败用后端的文案，文案为空时说明响应格式不对', () => {
+  it('业务失败用后端的文案，文案为空时给通用提示', () => {
     expect(messageOf(businessError('角色名称已存在', 409))).toBe('角色名称已存在')
-    expect(messageOf(businessError('', undefined))).toBe('httpMsg.invalidResponse')
+    expect(messageOf(businessError('', 400))).toBe('httpMsg.requestFailed')
+  })
+
+  it('2xx 还失败的，说明响应格式不对', () => {
+    expect(messageOf(responseError(200, '<!doctype html>'))).toBe('httpMsg.invalidResponse')
   })
 
   it('其他错误沿用自身的 message', () => {

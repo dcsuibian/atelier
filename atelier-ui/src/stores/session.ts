@@ -6,7 +6,6 @@ import { getSession, login as loginApi, logout as logoutApi } from '@/apis/sessi
 import { getAvailablePermissionsByUserId } from '@/apis/user'
 import { $t } from '@/locales'
 import { usePermissionStore } from '@/stores/permission'
-import { useSettingStore } from '@/stores/setting'
 
 /**
  * 当前会话。登录态在 Cookie 里，前端不持有凭证，所以服务端才是真相源，这里的状态只是它的副本
@@ -25,16 +24,14 @@ export const useSessionStore = defineStore('session', () => {
   const isLoggedIn = computed(() => null !== user.value)
 
   /**
-   * 清掉本地与这个用户有关的状态。登出之后已经确认没登录，ready 保持 true，不必再问一遍服务端
+   * 清掉本地的会话与权限，不通知服务端。已经确认没登录，ready 保持 true，不必再问一遍服务端
    *
-   * 锁屏跟着会话走，否则重新登录后仍被锁着，还得输入上一个人设的密码。
    * 工作标签页故意不清，免得误登出丢掉打开中的页面
    */
-  function clearLocal(): void {
+  function clear(): void {
     user.value = null
     loginTime.value = null
     usePermissionStore().clear()
-    useSettingStore().unlock()
   }
 
   /**
@@ -45,7 +42,7 @@ export const useSessionStore = defineStore('session', () => {
    */
   async function apply(nextUser: User | null, nextLoginTime: number | null): Promise<void> {
     if (null === nextUser) {
-      clearLocal()
+      clear()
       return
     }
     const permissions = await getAvailablePermissionsByUserId(nextUser.id)
@@ -97,7 +94,7 @@ export const useSessionStore = defineStore('session', () => {
       // 登出接口失败不该卡住前端的登出：本地状态照清，服务端的会话交给它自己过期
       console.error('[Session] 登出接口调用失败', error)
     }
-    clearLocal()
+    clear()
   }
 
   /**

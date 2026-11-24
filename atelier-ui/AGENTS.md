@@ -64,7 +64,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 
 - ADP 的 HTTP 层（`utils/art/http/`），换成 `utils/http.ts`
 - `v-auth`、`v-roles` 指令，`meta.roles`、`info.buttons`；`src/directives/` 只剩 `ripple`
-- userStore 这个杂物袋：语言、搜索历史、锁屏迁入 `settingStore`，会话归 `stores/session.ts`。锁屏存在偏好里，生命周期却跟着会话，登出时由 session store 一并解除，拆分时容易漏掉
+- userStore 这个杂物袋：语言、搜索历史、锁屏迁入 `settingStore`，会话归 `stores/session.ts`。锁屏存在偏好里，生命周期却跟着会话，由 `utils/setup/lock-screen.ts` 订阅会话，确认没登录时解除，拆分时容易漏掉
 - `router/core/` 的编排层（`RouteRegistry`、角色过滤、`RoutePermissionValidator`）
 - 后端路由模式与按字符串加载组件（`ComponentLoader`）；`AppRouteRecord.component` 不再接受字符串。布局外壳在 `components/app-layout/`
 - `useTable` 及配套（`useTableColumns`、`utils/art/table/`、`Api.Common`、`ArtTableHeader`），表格页以用户管理页为准

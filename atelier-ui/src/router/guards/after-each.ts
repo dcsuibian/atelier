@@ -3,6 +3,7 @@ import type { Router } from 'vue-router'
 import NProgress from 'nprogress'
 import { scrollToTop } from '@/utils/scroll'
 import { loadingService } from '@/utils/art/ui'
+import { isChunkLoadError, reloadTo } from '@/router/chunk-error'
 
 /** 路由全局后置守卫 */
 export function setupAfterEachGuard(router: Router) {
@@ -28,7 +29,10 @@ export function setupAfterEachGuard(router: Router) {
 
   // 懒加载组件下载失败等异常不会触发 afterEach，遮罩得另外关。
   // 注册了 onError 后 vue-router 不再自己打印错误，这里补上
-  router.onError(error => {
+  router.onError((error, to) => {
+    if (isChunkLoadError(error) && reloadTo(to.fullPath)) {
+      return
+    }
     loadingService.hideLoading()
     console.error('[Router] 导航出错', error)
   })

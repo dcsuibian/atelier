@@ -55,7 +55,7 @@ import { useI18n } from 'vue-i18n'
 import type { ButtonMoreItem } from '@/components/art/forms/art-button-more/index.vue'
 import ArtButtonMore from '@/components/art/forms/art-button-more/index.vue'
 import { usePermissionStore } from '@/stores/permission'
-import { deleteProjectById, getProjects, type ProjectQuery } from '@/apis/project'
+import { deleteProjectById, getProjects, type ProjectQo } from '@/apis/project'
 import { formatDateTime } from '@/utils/format'
 import { PERMISSIONS } from '@/constants/permission'
 import type { Project } from '@/types'
@@ -83,7 +83,7 @@ const OPERATIONS: ButtonMoreItem[] = [
   },
 ]
 
-const searchForm = ref<ProjectQuery>({
+const searchForm = ref<ProjectQo>({
   searchText: undefined,
   ownerId: undefined,
 })

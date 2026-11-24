@@ -76,7 +76,7 @@ import { useI18n } from 'vue-i18n'
 import type { ButtonMoreItem } from '@/components/art/forms/art-button-more/index.vue'
 import ArtButtonMore from '@/components/art/forms/art-button-more/index.vue'
 import { usePermissionStore } from '@/stores/permission'
-import { deleteRoleById, getRoles, type RoleQuery } from '@/apis/role'
+import { deleteRoleById, getRoles, type RoleQo } from '@/apis/role'
 import { formatDateTime } from '@/utils/format'
 import { PERMISSIONS } from '@/constants/permission'
 import type { Role, RoleStatus } from '@/types'
@@ -116,7 +116,7 @@ const OPERATIONS: ButtonMoreItem[] = [
   },
 ]
 
-const searchForm = ref<RoleQuery>({
+const searchForm = ref<RoleQo>({
   searchText: undefined,
   status: undefined,
 })

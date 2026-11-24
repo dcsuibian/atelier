@@ -4,32 +4,43 @@ import request from '@/utils/http'
 /**
  * 角色列表的查询条件，对应后端 RoleQo
  */
-interface RoleQuery {
+interface RoleQo {
   status?: RoleStatus | null
   /** 模糊匹配角色名称、描述，不区分大小写 */
   searchText?: string | null
 }
 
 /**
- * 新增与编辑时提交的角色。编辑走 PATCH，字段为 undefined 表示不修改
+ * 新增角色时提交的数据
  */
-type RoleForm = Partial<Omit<Role, 'id' | 'createTime' | 'updateTime'>>
+interface RoleAddDto {
+  name: string
+  /** 不传当作空串 */
+  description?: string
+  /** 不传默认启用 */
+  status?: RoleStatus
+}
 
-export function getRoles(query: RoleQuery, pageNumber: number, pageSize: number): Promise<PageWrapper<Role>> {
+/**
+ * 部分更新角色时提交的数据。字段为 undefined 表示不修改
+ */
+type RoleEditPartiallyDto = Partial<RoleAddDto>
+
+export function getRoles(query: RoleQo, pageNumber: number, pageSize: number): Promise<PageWrapper<Role>> {
   return request.get({
     url: '/roles',
     params: { ...query, pageNumber, pageSize },
   })
 }
 
-export function addRole(data: RoleForm): Promise<Role> {
+export function addRole(data: RoleAddDto): Promise<Role> {
   return request.post({
     url: '/roles',
     data,
   })
 }
 
-export function editRolePartially(id: number, data: RoleForm): Promise<Role> {
+export function editRolePartially(id: number, data: RoleEditPartiallyDto): Promise<Role> {
   return request.patch({
     url: `/roles/${id}`,
     data,
@@ -61,4 +72,4 @@ export function setPermissionsByRoleId(roleId: number, permissionIds: number[]):
   })
 }
 
-export type { RoleQuery, RoleForm }
+export type { RoleQo, RoleAddDto, RoleEditPartiallyDto }

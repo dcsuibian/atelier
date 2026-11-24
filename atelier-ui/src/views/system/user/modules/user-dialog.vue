@@ -91,7 +91,14 @@ import {
 } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { type UserForm, addUser, editUserPartially, getRolesByUserId, setRolesByUserId } from '@/apis/user'
+import {
+  type UserAddDto,
+  type UserEditPartiallyDto,
+  addUser,
+  editUserPartially,
+  getRolesByUserId,
+  setRolesByUserId,
+} from '@/apis/user'
 import { getRoles } from '@/apis/role'
 import { usePermissionStore } from '@/stores/permission'
 import { useSessionStore } from '@/stores/session'
@@ -220,15 +227,18 @@ const handleOpen = async () => {
 /** 空字符串不提交：PATCH 里 undefined 才表示不修改，而空串过不了后端的长度校验 */
 const toOptional = (value: string) => ('' === value ? undefined : value)
 
-const toUserForm = (): UserForm => ({
+const toAddDto = (): UserAddDto => ({
   name: form.name,
-  password: toOptional(form.password),
+  password: form.password,
   realName: form.realName,
   phoneNumber: toOptional(form.phoneNumber),
   email: toOptional(form.email),
   gender: form.gender,
   status: form.status,
 })
+
+// 编辑时密码留空表示不改
+const toEditPartiallyDto = (): UserEditPartiallyDto => ({ ...toAddDto(), password: toOptional(form.password) })
 
 const handleSubmit = async () => {
   const valid = await formRef.value?.validate().catch(() => false)
@@ -240,9 +250,9 @@ const handleSubmit = async () => {
   try {
     let user: User
     if (!props.user) {
-      user = await addUser(toUserForm())
+      user = await addUser(toAddDto())
     } else if (!infoDisabled.value) {
-      user = await editUserPartially(props.user.id, toUserForm())
+      user = await editUserPartially(props.user.id, toEditPartiallyDto())
     } else {
       user = props.user
     }

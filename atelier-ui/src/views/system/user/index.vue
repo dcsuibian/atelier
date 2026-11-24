@@ -100,7 +100,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import ArtButtonTable from '@/components/art/forms/art-button-table/index.vue'
 import { usePermissionStore } from '@/stores/permission'
-import { deleteUserById, getUsers, type UserQuery } from '@/apis/user'
+import { deleteUserById, getUsers, type UserQo } from '@/apis/user'
 import { formatDateTime } from '@/utils/format'
 import { PERMISSIONS } from '@/constants/permission'
 import { SUPER_ADMIN_USER_ID } from '@/constants/user'
@@ -119,7 +119,7 @@ const STATUS_TAG: Record<UserStatus, { type: 'success' | 'danger'; text: string 
   DISABLED: { type: 'danger', text: t('common.disabled') },
 }
 
-const searchForm = ref<UserQuery>({
+const searchForm = ref<UserQo>({
   searchText: undefined,
   status: undefined,
 })

@@ -48,7 +48,7 @@
 import { onMounted, ref } from 'vue'
 import { ElCard, ElPagination, ElTable, ElTableColumn, ElTag, vLoading } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { getPermissions, type PermissionQuery } from '@/apis/permission'
+import { getPermissions, type PermissionQo } from '@/apis/permission'
 import { formatDateTime } from '@/utils/format'
 import type { Permission, PermissionStatus } from '@/types'
 import PermissionSearch from './modules/permission-search.vue'
@@ -63,7 +63,7 @@ const STATUS_TAG: Record<PermissionStatus, { type: 'success' | 'info'; text: str
   DISABLED: { type: 'info', text: t('common.disabled') },
 }
 
-const searchForm = ref<PermissionQuery>({
+const searchForm = ref<PermissionQo>({
   searchText: undefined,
   status: undefined,
 })

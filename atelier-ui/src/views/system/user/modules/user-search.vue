@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { UserQuery } from '@/apis/user'
+import type { UserQo } from '@/apis/user'
 import ArtSearchBar from '@/components/art/forms/art-search-bar/index.vue'
 
 interface Emits {
@@ -22,7 +22,7 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
-const formData = defineModel<UserQuery>({ required: true })
+const formData = defineModel<UserQo>({ required: true })
 
 const { t } = useI18n()
 

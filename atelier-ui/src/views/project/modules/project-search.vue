@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { ProjectQuery } from '@/apis/project'
+import type { ProjectQo } from '@/apis/project'
 import ArtSearchBar from '@/components/art/forms/art-search-bar/index.vue'
 import OwnerSelect from './owner-select.vue'
 
@@ -26,7 +26,7 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
-const formData = defineModel<ProjectQuery>({ required: true })
+const formData = defineModel<ProjectQo>({ required: true })
 
 const { t } = useI18n()
 

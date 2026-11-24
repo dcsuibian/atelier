@@ -4,32 +4,42 @@ import request from '@/utils/http'
 /**
  * 项目列表的查询条件，对应后端 ProjectQo
  */
-interface ProjectQuery {
+interface ProjectQo {
   ownerId?: number | null
   /** 模糊匹配项目名称、描述，不区分大小写 */
   searchText?: string | null
 }
 
 /**
- * 新增与编辑时提交的项目。负责人只传 id；编辑走 PATCH，字段为 undefined 表示不修改
+ * 新增项目时提交的数据。负责人只传 id
  */
-type ProjectForm = Partial<Pick<Project, 'name' | 'description'> & { owner: { id: number } }>
+interface ProjectAddDto {
+  name: string
+  owner: { id: number }
+  /** 不传当作空串 */
+  description?: string
+}
 
-export function getProjects(query: ProjectQuery, pageNumber: number, pageSize: number): Promise<PageWrapper<Project>> {
+/**
+ * 部分更新项目时提交的数据。字段为 undefined 表示不修改
+ */
+type ProjectEditPartiallyDto = Partial<ProjectAddDto>
+
+export function getProjects(query: ProjectQo, pageNumber: number, pageSize: number): Promise<PageWrapper<Project>> {
   return request.get({
     url: '/projects',
     params: { ...query, pageNumber, pageSize },
   })
 }
 
-export function addProject(data: ProjectForm): Promise<Project> {
+export function addProject(data: ProjectAddDto): Promise<Project> {
   return request.post({
     url: '/projects',
     data,
   })
 }
 
-export function editProjectPartially(id: number, data: ProjectForm): Promise<Project> {
+export function editProjectPartially(id: number, data: ProjectEditPartiallyDto): Promise<Project> {
   return request.patch({
     url: `/projects/${id}`,
     data,
@@ -42,4 +52,4 @@ export function deleteProjectById(id: number): Promise<void> {
   })
 }
 
-export type { ProjectQuery, ProjectForm }
+export type { ProjectQo, ProjectAddDto, ProjectEditPartiallyDto }

@@ -1,23 +1,36 @@
-import type { PageWrapper, Permission, Role, User, UserStatus } from '@/types'
+import type { PageWrapper, Permission, Role, User, UserGender, UserStatus } from '@/types'
 import request from '@/utils/http'
 
 /**
  * 用户列表的查询条件，对应后端 UserQo
  */
-interface UserQuery {
+interface UserQo {
   status?: UserStatus | null
   /** 模糊匹配用户名、真实姓名、手机号，不区分大小写 */
   searchText?: string | null
 }
 
 /**
- * 新增与编辑时提交的用户。password 只进不出，响应里的 User 没有这个字段
- *
- * 编辑走 PATCH，字段为 undefined 表示不修改——所以可空字段一旦有值就清不回空
+ * 新增用户时提交的数据。password 只进不出，响应里的 User 没有这个字段
  */
-type UserForm = Partial<Omit<User, 'id' | 'createTime' | 'updateTime'> & { password: string }>
+interface UserAddDto {
+  name: string
+  password: string
+  realName: string
+  gender: UserGender
+  phoneNumber?: string | null
+  email?: string | null
+  avatar?: string | null
+  /** 不传默认启用 */
+  status?: UserStatus
+}
 
-export function getUsers(query: UserQuery, pageNumber: number, pageSize: number): Promise<PageWrapper<User>> {
+/**
+ * 部分更新用户时提交的数据。字段为 undefined 表示不修改——所以可空字段一旦有值就清不回空
+ */
+type UserEditPartiallyDto = Partial<UserAddDto>
+
+export function getUsers(query: UserQo, pageNumber: number, pageSize: number): Promise<PageWrapper<User>> {
   return request.get({
     url: '/users',
     params: { ...query, pageNumber, pageSize },
@@ -30,14 +43,14 @@ export function getUserById(id: number): Promise<User> {
   })
 }
 
-export function addUser(data: UserForm): Promise<User> {
+export function addUser(data: UserAddDto): Promise<User> {
   return request.post({
     url: '/users',
     data,
   })
 }
 
-export function editUserPartially(id: number, data: UserForm): Promise<User> {
+export function editUserPartially(id: number, data: UserEditPartiallyDto): Promise<User> {
   return request.patch({
     url: `/users/${id}`,
     data,
@@ -80,4 +93,4 @@ export function getAvailablePermissionsByUserId(userId: number): Promise<Permiss
   })
 }
 
-export type { UserQuery, UserForm }
+export type { UserQo, UserAddDto, UserEditPartiallyDto }

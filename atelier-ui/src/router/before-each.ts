@@ -2,7 +2,7 @@
  * 路由全局前置守卫
  *
  * 这里只做路由决策，数据加载都委托出去：会话与权限归 sessionStore（它自己保证幂等与
- * 并发去重），菜单树处理归 MenuProcessor，权限过滤与注册归 DynamicRouteRegistry
+ * 并发去重），路由树的整理、权限过滤与注册归 route-registry
  *
  * ## 流程
  *
@@ -27,10 +27,7 @@ import { useWorkTabStore } from '@/stores/work-tab'
 import { loadingService } from '@/utils/art/ui'
 import { isStaticRoute } from './routes/static-routes'
 import { dynamicRoutes } from './routes/dynamic-routes'
-import { MenuProcessor } from './menu-processor'
-import { type DynamicRouteRegistry, filterByPermission, markFirstLevel } from './route-registry'
-
-const menuProcessor = new MenuProcessor()
+import { type DynamicRouteRegistry, filterByPermission, markFirstLevel, normalizeRoutes } from './route-registry'
 
 export function setupBeforeEachGuard(router: Router, registry: DynamicRouteRegistry): void {
   router.beforeEach(async (to: RouteLocationNormalized): Promise<NavigationGuardReturn> => {
@@ -83,7 +80,7 @@ async function resolve(
 
   // 5. 首次进入，按权限注册动态路由，再重新走一遍导航
   if (!registry.isRegistered()) {
-    const registered = await registerDynamicRoutes(router, registry)
+    const registered = registerDynamicRoutes(router, registry)
     // 一个页面都没有，再往下走只会落到 404，还不如直接说清楚
     if (0 === registered) {
       ElMessage.warning($t('session.noPagePermission'))
@@ -106,12 +103,12 @@ async function resolve(
 /**
  * 按当前用户的权限注册动态路由，并同步菜单数据
  *
- * 先过滤权限再交给菜单处理：被筛空的目录会在 filterEmptyMenus 那步一并清掉
+ * 先过滤权限再整理：被筛空的目录在过滤那步就一并去掉了
  *
  * @returns 实际注册的顶层路由数量，为 0 表示这个账号一个页面都看不到
  */
-async function registerDynamicRoutes(router: Router, registry: DynamicRouteRegistry): Promise<number> {
-  const menuList = markFirstLevel(await menuProcessor.getMenuList(filterByPermission(dynamicRoutes)))
+function registerDynamicRoutes(router: Router, registry: DynamicRouteRegistry): number {
+  const menuList = markFirstLevel(normalizeRoutes(filterByPermission(dynamicRoutes)))
   registry.register(menuList)
   useMenuStore().setMenuList(menuList)
 

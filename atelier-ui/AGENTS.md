@@ -46,7 +46,7 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 | `router/guards/beforeEach.ts`、`afterEach.ts` | `router/before-each.ts`、`after-each.ts`（`guards/` 已展平） |
 | `router/routesAlias.ts` | 删除，登录页按路由名 `Login` 判断 |
 
-ADP 的 `router/core/` 已拆散：`MenuProcessor` 改名 kebab-case 挪到 `router/` 下，`IframeRouteManager` 随 iframe 页面一起删了，其余随按字符串加载组件一起删了。
+ADP 的 `router/core/` 已拆散：`MenuProcessor` 改成普通函数并进了 `router/route-registry.ts`（`normalizeRoutes`），`IframeRouteManager` 随 iframe 页面一起删了，其余随按字符串加载组件一起删了。
 
 ## 跟进 ADP 时不要带回来的东西
 

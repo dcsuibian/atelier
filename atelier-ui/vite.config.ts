@@ -15,6 +15,8 @@ export default ({ mode }: { mode: string }) => {
     base: VITE_BASE_URL,
     server: {
       port: Number(VITE_PORT),
+      // 端口被占用时直接报错，不要顺延到下一个：下一个往往就是后端的端口
+      strictPort: true,
       proxy: {
         '/api': {
           target: VITE_API_PROXY_URL,

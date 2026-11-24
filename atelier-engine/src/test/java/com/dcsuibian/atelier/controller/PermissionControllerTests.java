@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 
 import static com.dcsuibian.atelier.jooq.generated.Tables.PERMISSION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -42,6 +43,17 @@ public class PermissionControllerTests extends IntegrationTests {
 				.andExpect(jsonPath("$.result.total").value(5))
 				.andExpect(jsonPath("$.result.data[0].code").value("user:view"))
 				.andExpect(jsonPath("$.result.data[0].status").value("ENABLED"));
+	}
+
+	@Test
+	@DisplayName("不带页码时返回全部，同样能按条件筛选；只给页码不给每页数量返回 400")
+	void getAll() throws Exception {
+		mockMvc.perform(get("/permissions").param("searchText", "USER:"))
+				.andExpect(jsonPath("$.code").value(200))
+				.andExpect(jsonPath("$.result", hasSize(5)))
+				.andExpect(jsonPath("$.result[0].code").value("user:view"));
+		mockMvc.perform(get("/permissions").param("pageNumber", "1"))
+				.andExpect(jsonPath("$.code").value(400));
 	}
 
 	@Test

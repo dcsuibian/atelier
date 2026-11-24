@@ -70,6 +70,15 @@ public class PermissionServiceImpl implements PermissionService {
 		return PageWrapper.of(permissions, total, pageNumber, pageSize);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<Permission> get(PermissionQo qo) {
+		return dsl.selectFrom(PERMISSION)
+				.where(buildCondition(qo))
+				.orderBy(PERMISSION.ID.asc())
+				.fetch(converter::toDomain);
+	}
+
 	private record Definition(String code, String name, String description, boolean enabled) {
 	}
 

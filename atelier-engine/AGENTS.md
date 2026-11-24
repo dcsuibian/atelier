@@ -24,6 +24,7 @@ atelier 的后端。仓库层面的约束（公开仓库须脱敏、文档分工
 决策与理由见 `docs/` 的「接口约定」「后端约定」。动手时要注意的：
 
 - 响应用 `ResponseWrapper { code, message, result, timestamp }`，分页用 `PageWrapper { data, total, pageNumber, pageSize }`。时间序列化在 `JacksonConfig`。
+- 同一路径既要分页又要全量时，写两个方法，用 `@GetMapping(params = "pageNumber")` 与 `@GetMapping(params = "!pageNumber")` 区分（见 `PermissionController`）。只看 `pageNumber`：只给页码不给每页数量时报缺少参数，而不是落到全量查询。
 - BCrypt 上限 72 字节，按字节数校验，超了返回 400。领域模型的 `password` 标注 `WRITE_ONLY`。
 - **权限点**写在 `permissions.yml`，由 `DataInitializer` 每次启动同步。**超级管理员**固定为 id 1，初始密码取 `atelier.super-admin.initial-password`，生产环境对应环境变量 `ATELIER_PASSWORD`。
 - 计算「某人有哪些权限」的逻辑只在 `RbacServiceImpl` 一处。权限缓存的清理要等事务提交后（`TransactionUtil.runAfterCommit`）。

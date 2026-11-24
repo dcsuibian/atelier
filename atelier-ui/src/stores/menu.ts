@@ -40,7 +40,7 @@ import { getFirstMenuPath } from '@/utils/art'
 // 主页路径，默认使用菜单第一个有效路径，配置后使用此路径
 const HOME_PAGE_PATH = ''
 
-export const useMenuStore = defineStore('menuStore', () => {
+export const useMenuStore = defineStore('menu', () => {
   /** 首页路径 */
   const homePath = ref(HOME_PAGE_PATH)
   /** 菜单列表 */

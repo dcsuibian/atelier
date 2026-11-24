@@ -7,15 +7,11 @@ import { visualizer } from 'rollup-plugin-visualizer'
 export default ({ mode }: { mode: string }) => {
   const root = process.cwd()
   const env = loadEnv(mode, root)
-  const { VITE_VERSION, VITE_PORT, VITE_BASE_URL, VITE_API_URL, VITE_API_PROXY_URL } = env
+  const { VITE_PORT, VITE_BASE_URL, VITE_API_URL, VITE_API_PROXY_URL } = env
 
   console.log(`🚀 API_URL = ${VITE_API_URL}`)
-  console.log(`🚀 VERSION = ${VITE_VERSION}`)
 
   return defineConfig({
-    define: {
-      __APP_VERSION__: JSON.stringify(VITE_VERSION)
-    },
     base: VITE_BASE_URL,
     server: {
       port: Number(VITE_PORT),
@@ -24,24 +20,24 @@ export default ({ mode }: { mode: string }) => {
           target: VITE_API_PROXY_URL,
           changeOrigin: true,
           // 后端没有 context-path，接口路径就是 /session、/users，转发时去掉 /api 前缀
-          rewrite: path => path.replace(/^\/api/, '')
-        }
+          rewrite: path => path.replace(/^\/api/, ''),
+        },
       },
-      host: true
+      host: true,
     },
     // 路径别名
     resolve: {
       alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
-      }
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
     },
     build: {
       chunkSizeWarningLimit: 2000,
       dynamicImportVarsOptions: {
         warnOnError: true,
         exclude: [],
-        include: ['src/views/**/*.vue']
-      }
+        include: ['src/views/**/*.vue'],
+      },
     },
     plugins: [
       vue(),
@@ -52,10 +48,10 @@ export default ({ mode }: { mode: string }) => {
             visualizer({
               filename: 'dist/stats.html',
               gzipSize: true,
-              brotliSize: true
-            })
+              brotliSize: true,
+            }),
           ]
-        : [])
+        : []),
     ],
     css: {
       preprocessorOptions: {
@@ -64,9 +60,9 @@ export default ({ mode }: { mode: string }) => {
           additionalData: `
             @use "@/styles/art/el-light.scss" as *;
             @use "@/styles/art/mixin.scss" as *;
-          `
-        }
-      }
-    }
+          `,
+        },
+      },
+    },
   })
 }

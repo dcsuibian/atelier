@@ -5,7 +5,7 @@ import { useBreakpoints } from '@vueuse/core'
 import AppConfig from '@/config'
 import { SystemThemeEnum, MenuTypeEnum } from '@/constants/app'
 import { mittBus } from '@/utils/art/sys'
-import { StorageConfig } from '@/utils/art'
+import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
 import { useTheme } from '@/composables/art/useTheme'
 import { useSettingsState } from './useSettingsState'
 import { useSettingsHandlers } from './useSettingsHandlers'
@@ -31,18 +31,22 @@ export function useSettingsPanel() {
 
   // 记录窗口宽度变化前的菜单类型
   const getStoredDesktopMenuType = (): MenuTypeEnum | undefined => {
-    const storedMenuType = localStorage.getItem(StorageConfig.RESPONSIVE_MENU_TYPE_KEY)
-    return Object.values(MenuTypeEnum).includes(storedMenuType as MenuTypeEnum)
-      ? (storedMenuType as MenuTypeEnum)
-      : undefined
+    try {
+      const storedMenuType: unknown = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.DESKTOP_MENU_TYPE) ?? 'null')
+      return Object.values<unknown>(MenuTypeEnum).includes(storedMenuType)
+        ? (storedMenuType as MenuTypeEnum)
+        : undefined
+    } catch {
+      return undefined
+    }
   }
 
   const setStoredDesktopMenuType = (type: MenuTypeEnum) => {
-    localStorage.setItem(StorageConfig.RESPONSIVE_MENU_TYPE_KEY, type)
+    localStorage.setItem(LOCAL_STORAGE_KEYS.DESKTOP_MENU_TYPE, JSON.stringify(type))
   }
 
   const clearStoredDesktopMenuType = () => {
-    localStorage.removeItem(StorageConfig.RESPONSIVE_MENU_TYPE_KEY)
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.DESKTOP_MENU_TYPE)
   }
 
   const storedDesktopMenuType = getStoredDesktopMenuType()

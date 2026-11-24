@@ -29,7 +29,8 @@
             return
           }
 
-          const themeType = localStorage.getItem('sys-theme')
+          // 键名与 constants/storage-keys.ts 的 THEME 一致，值是 JSON
+          const themeType = JSON.parse(localStorage.getItem('theme'))
           if (themeType === 'dark') {
             document.documentElement.classList.add('dark')
           }

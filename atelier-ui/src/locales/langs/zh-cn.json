@@ -297,8 +297,7 @@
     "headerBackground": "表头背景"
   },
   "session": {
-    "noPagePermission": "当前账号没有任何页面权限，请联系管理员分配",
-    "storageCorrupted": "系统检测到本地数据异常，请重新登录系统恢复使用！"
+    "noPagePermission": "当前账号没有任何页面权限，请联系管理员分配"
   },
   "system": {
     "user": {

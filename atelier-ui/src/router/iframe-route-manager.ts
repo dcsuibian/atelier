@@ -7,6 +7,7 @@
  */
 
 import type { AppRouteRecord } from '@/types/art/router'
+import { SESSION_STORAGE_KEYS } from '@/constants/storage-keys'
 
 export class IframeRouteManager {
   private static instance: IframeRouteManager
@@ -56,7 +57,7 @@ export class IframeRouteManager {
    */
   save(): void {
     if (this.iframeRoutes.length > 0) {
-      sessionStorage.setItem('iframeRoutes', JSON.stringify(this.iframeRoutes))
+      sessionStorage.setItem(SESSION_STORAGE_KEYS.IFRAME_ROUTES, JSON.stringify(this.iframeRoutes))
     }
   }
 
@@ -65,7 +66,7 @@ export class IframeRouteManager {
    */
   load(): void {
     try {
-      const data = sessionStorage.getItem('iframeRoutes')
+      const data = sessionStorage.getItem(SESSION_STORAGE_KEYS.IFRAME_ROUTES)
       if (data) {
         this.iframeRoutes = JSON.parse(data)
       }

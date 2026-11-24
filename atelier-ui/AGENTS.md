@@ -69,6 +69,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 - 后端路由模式与按字符串加载组件（`ComponentLoader`）；`AppRouteRecord.component` 不再接受字符串。布局外壳在 `components/app-layout/`
 - `useTable` 及配套（`useTableColumns`、`utils/art/table/`、`Api.Common`、`ArtTableHeader`），表格页以用户管理页为准
 - 自动导入插件（`unplugin-auto-import`、`unplugin-vue-components`、`unplugin-element-plus`）
+- 版本化存储键与存储兼容性检查（`utils/art/storage/`），连同 `__APP_VERSION__`；控制台宣传语（`utils/art/sys/console.ts`）
 - `useChart` 与 `plugins/echarts.ts`，换成 vue-echarts 加自有的 `ChartView`；`composables/use-chart.ts` 只剩按明暗主题生成样式的函数
 - `useAuth`、`useCommon`
 
@@ -111,7 +112,8 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 - **路径**：引用全局的东西用 `@/`，只在一块内部共享的（如某个组件目录下的 composables、几个页面共用的模块）用相对路径。不要新增其它别名。
 - **递归类型用对象，别用元组。** 自引用的元组一旦进了 `RouteMeta`，模板推导路由对象时会撞上 `TS2589: Type instantiation is excessively deep`；对象的自引用是惰性解析的，不会触发。
 - **别用 `<!-- @vue-ignore -->` 压 TS2589**：那个元素上所有表达式会一起失去检查，治本是让类型推导得动。
-- **i18n**：`zh.json` 与 `en.json` 的键保持一致，AI 写的要把英文一并补上。脚本里用 `useI18n()` 的 `t`，组件外用 `@/locales` 导出的 `$t`。
+- **i18n**：`zh-cn.json` 与 `en-us.json` 的键保持一致，AI 写的要把英文一并补上。脚本里用 `useI18n()` 的 `t`，组件外用 `@/locales` 导出的 `$t`。
+- **本地存储**：键一律登记在 `constants/storage-keys.ts`。store 要持久化就声明 `persist: { key: LOCAL_STORAGE_KEYS.XXX }`，读回时由 `stores/persist.ts` 按默认值逐字段检查类型，对不上的丢掉；字段里嵌着对象的（如标签页列表），在 `afterHydrate` 里自己逐项查。语言要在 store 建立前定下来，`locales/index.ts` 直接读设置 store 存的那份。
 - **日期时间**：展示时用 `utils/format.ts` 的 `formatDateTime` 等，目前是固定格式、不随语言切换。需要月份名、星期名这类本地化文字时，可以用 `Intl.DateTimeFormat`。
 - **列表接口**：写成 `getXxxs(query, pageNumber, pageSize)`，返回 `PageWrapper`。后端另有不分页的全量接口时，再加一个 `getXxxs(query)` 重载返回数组（如 `getPermissions`）。重载只区分分页与全量；一个资源只用一种分页方式，真要另一种（如游标）就起别的名字，别靠参数类型区分。
 - **查询条件的可选字段写成 `?: X | null`**：请求都走 axios，`null` 与 `undefined` 在查询参数里都会被丢掉，两者等价。这是 axios 文档写明的行为，不用另写测试。

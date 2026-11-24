@@ -37,7 +37,8 @@ import type { AppRouteRecord } from '@/types/art/router'
 import AppConfig from '@/config'
 import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum, LanguageEnum } from '@/constants/app'
 import { setElementThemeColor } from '@/utils/art/ui'
-import { StorageConfig } from '@/utils/art'
+import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
+import { isObject, isString } from '@/utils/is'
 import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
 
 /**
@@ -45,7 +46,7 @@ import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
  * 管理应用的菜单、主题、界面显示等各项设置
  */
 export const useSettingStore = defineStore(
-  'settingStore',
+  'setting',
   () => {
     // 用户偏好。这些跟着浏览器走，与登录与否无关，所以不放在会话里
     /**
@@ -53,7 +54,7 @@ export const useSettingStore = defineStore(
      *
      * 刻意不提供 setLanguage()：下面已经有一个同名函数，管的是语言按钮的显隐，不是语言本身
      */
-    const language = ref<LanguageEnum>(LanguageEnum.ZH)
+    const language = ref<LanguageEnum>(LanguageEnum.ZH_CN)
     /** 是否锁屏 */
     const isLocked = ref(false)
     /** 锁屏密码（已加密） */
@@ -193,7 +194,7 @@ export const useSettingStore = defineStore(
     const setGlopTheme = (theme: SystemThemeEnum, themeMode: SystemThemeEnum) => {
       systemThemeType.value = theme
       systemThemeMode.value = themeMode
-      localStorage.setItem(StorageConfig.THEME_KEY, theme)
+      localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, JSON.stringify(theme))
     }
 
     /**
@@ -424,8 +425,11 @@ export const useSettingStore = defineStore(
   },
   {
     persist: {
-      key: 'setting',
-      storage: localStorage,
+      key: LOCAL_STORAGE_KEYS.SETTING,
+      // 搜索历史每项都是对象，第一层的类型检查管不到，缺了 path 的项点了也没法跳转
+      afterHydrate: ({ store }) => {
+        store.searchHistory = store.searchHistory.filter((item: unknown) => isObject(item) && isString(item.path))
+      },
     },
   },
 )

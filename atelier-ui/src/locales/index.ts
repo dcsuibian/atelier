@@ -24,24 +24,19 @@
 import { createI18n } from 'vue-i18n'
 import type { I18n, I18nOptions } from 'vue-i18n'
 import { LanguageEnum } from '@/constants/app'
-import { getSystemStorage } from '@/utils/art/storage'
-import { StorageKeyManager } from '@/utils/art/storage/storage-key-manager'
+import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
+import { isObject } from '@/utils/is'
 
 // 同步导入语言文件
-import enMessages from './langs/en.json'
-import zhMessages from './langs/zh.json'
-
-/**
- * 存储键管理器实例
- */
-const storageKeyManager = new StorageKeyManager()
+import enMessages from './langs/en-us.json'
+import zhMessages from './langs/zh-cn.json'
 
 /**
  * 语言消息对象
  */
 const messages = {
-  [LanguageEnum.EN]: enMessages,
-  [LanguageEnum.ZH]: zhMessages,
+  [LanguageEnum.EN_US]: enMessages,
+  [LanguageEnum.ZH_CN]: zhMessages,
 }
 
 /**
@@ -49,46 +44,24 @@ const messages = {
  * 用于语言切换下拉框
  */
 export const languageOptions = [
-  { value: LanguageEnum.ZH, label: '简体中文' },
-  { value: LanguageEnum.EN, label: 'English' },
+  { value: LanguageEnum.ZH_CN, label: '简体中文' },
+  { value: LanguageEnum.EN_US, label: 'English' },
 ]
 
 /**
- * 从存储中获取语言设置
- * @returns 语言设置，如果获取失败则返回默认语言
+ * 读出上次选的语言。i18n 要在 store 建立之前就定好语言，所以直接读设置 store 持久化的那份
  */
 const getDefaultLanguage = (): LanguageEnum => {
-  // 尝试从版本化的存储中获取语言设置
   try {
-    const storageKey = storageKeyManager.getStorageKey('setting')
-    const settingStore = localStorage.getItem(storageKey)
-
-    if (settingStore) {
-      const { language } = JSON.parse(settingStore)
-      if (language && Object.values(LanguageEnum).includes(language)) {
-        return language
-      }
+    const setting: unknown = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.SETTING) ?? 'null')
+    const language = isObject(setting) ? setting.language : undefined
+    if (Object.values<unknown>(LanguageEnum).includes(language)) {
+      return language as LanguageEnum
     }
-  } catch (error) {
-    console.warn('[i18n] 从版本化存储获取语言设置失败:', error)
+  } catch {
+    // 存坏了就当没存过
   }
-
-  // 尝试从系统存储中获取语言设置
-  try {
-    const sys = getSystemStorage()
-    if (sys) {
-      const { setting } = JSON.parse(sys)
-      if (setting?.language && Object.values(LanguageEnum).includes(setting.language)) {
-        return setting.language
-      }
-    }
-  } catch (error) {
-    console.warn('[i18n] 从系统存储获取语言设置失败:', error)
-  }
-
-  // 返回默认语言
-  console.debug('[i18n] 使用默认语言:', LanguageEnum.ZH)
-  return LanguageEnum.ZH
+  return LanguageEnum.ZH_CN
 }
 
 /**
@@ -98,7 +71,7 @@ const i18nOptions: I18nOptions = {
   locale: getDefaultLanguage(),
   legacy: false,
   globalInjection: true,
-  fallbackLocale: LanguageEnum.ZH,
+  fallbackLocale: LanguageEnum.ZH_CN,
   messages,
 }
 

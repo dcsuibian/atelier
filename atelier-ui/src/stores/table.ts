@@ -28,10 +28,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { TableSizeEnum } from '@/constants/table'
+import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
 
 // 表格
 export const useTableStore = defineStore(
-  'tableStore',
+  'table',
   () => {
     // 表格大小
     const tableSize = ref<TableSizeEnum>(TableSizeEnum.DEFAULT)
@@ -90,8 +91,7 @@ export const useTableStore = defineStore(
   },
   {
     persist: {
-      key: 'table',
-      storage: localStorage,
+      key: LOCAL_STORAGE_KEYS.TABLE,
     },
   },
 )

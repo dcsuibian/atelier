@@ -69,9 +69,9 @@ export type MenuWidth = (typeof MenuWidth)[keyof typeof MenuWidth]
  */
 export const LanguageEnum = {
   /** 中文 */
-  ZH: 'zh',
+  ZH_CN: 'zh-CN',
   /** 英文 */
-  EN: 'en',
+  EN_US: 'en-US',
 } as const
 export type LanguageEnum = (typeof LanguageEnum)[keyof typeof LanguageEnum]
 

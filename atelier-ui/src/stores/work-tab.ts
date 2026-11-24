@@ -42,6 +42,8 @@ import { ref, computed } from 'vue'
 import { router } from '@/router'
 import type { LocationQueryRaw, Router } from 'vue-router'
 import { useMenuStore } from '@/stores/menu'
+import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
+import { isObject, isString } from '@/utils/is'
 
 // 多标签
 export interface WorkTab {
@@ -77,7 +79,7 @@ interface WorktabState {
  * 工作台标签页管理 Store
  */
 export const useWorkTabStore = defineStore(
-  'worktabStore',
+  'workTab',
   () => {
     // 状态定义
     const current = ref<Partial<WorkTab>>({})
@@ -580,8 +582,14 @@ export const useWorkTabStore = defineStore(
   },
   {
     persist: {
-      key: 'worktab',
-      storage: localStorage,
+      key: LOCAL_STORAGE_KEYS.WORK_TAB,
+      // 标签页每项都是对象，第一层的类型检查管不到。缺了 path 的标签既打不开也关不掉
+      afterHydrate: ({ store }) => {
+        store.opened = store.opened.filter((item: unknown) => isObject(item) && isString(item.path))
+        if (!isObject(store.current)) {
+          store.current = {}
+        }
+      },
     },
   },
 )

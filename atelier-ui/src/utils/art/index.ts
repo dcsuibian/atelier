@@ -21,9 +21,6 @@ export * from './sys'
 // 常量定义相关
 export * from './constants'
 
-// 存储相关
-export * from './storage'
-
 // atelier：ADP 在这里还导出了 http 与 socket，两个模块已移除
 
 // 表单相关

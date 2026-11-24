@@ -297,8 +297,7 @@
     "headerBackground": "Header BG"
   },
   "session": {
-    "noPagePermission": "This account has no page permissions. Please contact an administrator.",
-    "storageCorrupted": "Local data appears to be corrupted. Please sign in again to restore access."
+    "noPagePermission": "This account has no page permissions. Please contact an administrator."
   },
   "system": {
     "user": {

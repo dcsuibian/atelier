@@ -100,16 +100,14 @@
 import { Lock, Unlock } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import CryptoJS from 'crypto-js'
+import { sha256 } from '@noble/hashes/sha2.js'
+import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js'
 import { useSessionStore } from '@/stores/session'
 import { useSettingStore } from '@/stores/setting'
 import { mittBus } from '@/utils/art/sys'
 
 // 国际化
 const { t } = useI18n()
-
-// 环境变量
-const ENCRYPT_KEY = import.meta.env.VITE_LOCK_ENCRYPT_KEY
 
 // Store
 const sessionStore = useSessionStore()
@@ -311,16 +309,8 @@ const disableDevTools = () => {
   }
 }
 
-// 工具函数
-const verifyPassword = (inputPassword: string, storedPassword: string): boolean => {
-  try {
-    const decryptedPassword = CryptoJS.AES.decrypt(storedPassword, ENCRYPT_KEY).toString(CryptoJS.enc.Utf8)
-    return inputPassword === decryptedPassword
-  } catch (error) {
-    console.error('密码解密失败:', error)
-    return false
-  }
-}
+// 只存哈希，localStorage 里不留可还原的密码
+const hashPassword = (password: string): string => bytesToHex(sha256(utf8ToBytes(password)))
 
 // 事件处理函数
 const handleKeydown = (event: KeyboardEvent) => {
@@ -341,8 +331,7 @@ const handleLock = async () => {
 
   await formRef.value.validate((valid, fields) => {
     if (valid) {
-      const encryptedPassword = CryptoJS.AES.encrypt(formData.password, ENCRYPT_KEY).toString()
-      settingStore.lock(encryptedPassword)
+      settingStore.lock(hashPassword(formData.password))
       visible.value = false
       formData.password = ''
     } else {
@@ -356,7 +345,7 @@ const handleUnlock = async () => {
 
   await unlockFormRef.value.validate((valid, fields) => {
     if (valid) {
-      const isValid = verifyPassword(unlockForm.password, lockPassword.value)
+      const isValid = hashPassword(unlockForm.password) === lockPassword.value
 
       if (isValid) {
         try {

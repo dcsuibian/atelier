@@ -81,7 +81,6 @@ export default ({ mode }: { mode: string }) => {
         'echarts/charts',
         'echarts/components',
         'echarts/renderers',
-        'crypto-js',
         'element-plus/es',
         'element-plus/es/components/*/style/css',
         'element-plus/es/components/*/style/index'

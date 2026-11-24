@@ -19,7 +19,7 @@ export const usePermissionStore = defineStore('permission', () => {
   }
 
   /**
-   * 求值权限表达式。传 undefined / null 视为不设限，返回 true
+   * 求值权限表达式
    *
    * 判断依据是权限码，不是角色：角色是库里的数据、名字随时可改，权限码写在后端的
    * permissions.yml 里、发布后不改名，只有它才适合写进前端代码。
@@ -27,17 +27,21 @@ export const usePermissionStore = defineStore('permission', () => {
    *
    * 按钮级判断直接在模板里调：`v-if="permissionStore.check(PERMISSIONS.USER_ADD)"`
    */
-  function check(expression: PermissionExpression | undefined | null): boolean {
-    if (undefined === expression || null === expression) {
-      return true
-    }
+  function check(expression: PermissionExpression): boolean {
     if ('string' === typeof expression) {
       return codes.value.has(expression)
     }
     if ('and' in expression) {
       return expression.and.every(item => check(item))
     }
-    return expression.or.some(item => check(item))
+    if ('or' in expression) {
+      return expression.or.some(item => check(item))
+    }
+    // 运算符都处理完了，这里只剩 never：以后加了运算符却忘了处理，类型检查会在这里报错。
+    // 运行时万一走到这里（比如配置里写错了键），按没有权限处理，不抛异常拖垮路由注册
+    const unknownExpression: never = expression
+    console.error('[Permission] 无法识别的权限表达式', unknownExpression)
+    return false
   }
 
   return {

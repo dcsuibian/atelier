@@ -55,7 +55,9 @@ export function filterByPermission(routes: AppRouteRecord[]): AppRouteRecord[] {
   const permissionStore = usePermissionStore()
 
   return routes.reduce<AppRouteRecord[]>((accumulator, route) => {
-    if (!permissionStore.check(route.meta.permission)) {
+    // 没写 permission 表示不设限。check 本身不接受空值：别处漏传时宁可看不见，也不要谁都能看
+    const { permission } = route.meta
+    if (undefined !== permission && !permissionStore.check(permission)) {
       return accumulator
     }
 

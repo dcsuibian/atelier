@@ -1,7 +1,7 @@
 import App from './App.vue'
 import { createApp } from 'vue'
 import { pinia } from '@/stores'
-import { initRouter } from './router' // Router
+import { setupRouter } from './router' // Router
 import language from './locales' // 国际化
 import '@/styles/art/tailwind.css' // tailwind
 import '@/styles/index.scss' // 样式
@@ -16,7 +16,7 @@ const app = createApp(App)
 app.use(pinia)
 setupHttp() // http 层的失败提示与 401 处理
 setupLockScreen()
-initRouter(app)
+setupRouter(app)
 app.directive('ripple', vRipple)
 setupErrorHandle(app)
 

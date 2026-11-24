@@ -79,7 +79,7 @@ export function filterByPermission(routes: AppRouteRecord[]): AppRouteRecord[] {
 }
 
 /**
- * 记录注册了哪些动态路由，以便会话变化时整批撤掉。由 initRouter 创建，传给用到它的守卫与同步逻辑
+ * 记录注册了哪些动态路由，以便会话变化时整批撤掉。由 setupRouter 创建，传给用到它的守卫与同步逻辑
  */
 export class DynamicRouteRegistry {
   private readonly router: Router

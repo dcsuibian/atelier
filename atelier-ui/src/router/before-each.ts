@@ -27,9 +27,8 @@ import { useWorkTabStore } from '@/stores/work-tab'
 import { loadingService } from '@/utils/art/ui'
 import { isStaticRoute } from './routes/static-routes'
 import { dynamicRoutes } from './routes/dynamic-routes'
-import { IframeRouteManager } from './iframe-route-manager'
 import { MenuProcessor } from './menu-processor'
-import { type DynamicRouteRegistry, collectIframeRoutes, filterByPermission, markFirstLevel } from './route-registry'
+import { type DynamicRouteRegistry, filterByPermission, markFirstLevel } from './route-registry'
 
 const menuProcessor = new MenuProcessor()
 
@@ -116,9 +115,6 @@ async function registerDynamicRoutes(router: Router, registry: DynamicRouteRegis
   registry.register(menuList)
   useMenuStore().setMenuList(menuList)
 
-  const iframeRouteManager = IframeRouteManager.getInstance()
-  collectIframeRoutes(menuList).forEach(route => iframeRouteManager.add(route))
-  iframeRouteManager.save()
   useWorkTabStore().validateWorktabs(router)
 
   return menuList.length

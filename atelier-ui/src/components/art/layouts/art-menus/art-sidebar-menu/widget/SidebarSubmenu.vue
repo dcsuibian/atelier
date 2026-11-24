@@ -121,8 +121,8 @@ const closeMenu = (): void => {
 const isNavigableRoute = (item: AppRouteRecord): boolean => {
   return !!(
     !item.meta.isHide &&
-    ((item.path && item.path.trim()) || item.meta.link || item.meta.isIframe === true) &&
-    (item.component || item.meta.link || item.meta.isIframe === true)
+    ((item.path && item.path.trim()) || item.meta.link) &&
+    (item.component || item.meta.link)
   )
 }
 
@@ -176,7 +176,7 @@ const hasChildren = (item: AppRouteRecord): boolean => {
  * @returns 是否为外部链接
  */
 const isExternalLink = (item: AppRouteRecord): boolean => {
-  return !!(item.meta.link && !item.meta.isIframe)
+  return !!item.meta.link
 }
 
 /**

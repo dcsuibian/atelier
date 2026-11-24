@@ -119,7 +119,6 @@ import AppConfig from '@/config'
 import { useSettingStore } from '@/stores/setting'
 import { MenuTypeEnum, MenuWidth } from '@/constants/app'
 import { useMenuStore } from '@/stores/menu'
-import { isIframe } from '@/utils/art/navigation'
 import { handleMenuJump } from '@/utils/art/navigation'
 import SidebarSubmenu from './widget/SidebarSubmenu.vue'
 import { useWindowSize, useTimeoutFn } from '@vueuse/core'
@@ -177,11 +176,6 @@ const menuList = computed(() => {
     return allMenus
   }
 
-  // 处理 iframe 路径
-  if (isIframe(route.path)) {
-    return findIframeMenuList(route.path, allMenus)
-  }
-
   // 处理一级菜单
   if (route.meta.isFirstLevel) {
     return []
@@ -213,32 +207,6 @@ const { start: delayHideMobileModal } = useTimeoutFn(
   ANIMATION_DELAY,
   { immediate: false },
 )
-
-/**
- * 查找 iframe 对应的二级菜单列表
- */
-const findIframeMenuList = (currentPath: string, menuList: any[]) => {
-  // 递归查找包含当前路径的菜单项
-  const hasPath = (items: any[]): boolean => {
-    for (const item of items) {
-      if (item.path === currentPath) {
-        return true
-      }
-      if (item.children && hasPath(item.children)) {
-        return true
-      }
-    }
-    return false
-  }
-
-  // 遍历一级菜单查找匹配的子菜单
-  for (const menu of menuList) {
-    if (menu.children && hasPath(menu.children)) {
-      return menu.children
-    }
-  }
-  return []
-}
 
 /**
  * 导航到首页

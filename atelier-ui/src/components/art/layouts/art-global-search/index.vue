@@ -184,10 +184,7 @@ const flattenAndFilterMenuItems = (items: AppRouteRecord[], val: string): AppRou
       return
     }
 
-    if (
-      lowerItemTitle.includes(lowerVal) &&
-      ((item.path && item.path.trim()) || item.meta.link || item.meta.isIframe)
-    ) {
+    if (lowerItemTitle.includes(lowerVal) && ((item.path && item.path.trim()) || item.meta.link)) {
       result.push({ ...item, children: undefined })
     }
   }

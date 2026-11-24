@@ -238,9 +238,6 @@
     "forgetPassword": {
       "title": "忘记密码"
     },
-    "outside": {
-      "title": "内嵌页面"
-    },
     "dashboard": {
       "title": "仪表盘",
       "console": "工作台"

@@ -20,6 +20,4 @@ export const LOCAL_STORAGE_KEYS = {
 export const SESSION_STORAGE_KEYS = {
   /** 发版后加载不到旧 chunk 时自动刷新的时间，防止反复刷新 */
   CHUNK_RELOAD_TIME: 'chunk-reload-time',
-  /** iframe 路由 */
-  IFRAME_ROUTES: 'iframe-routes',
 } as const

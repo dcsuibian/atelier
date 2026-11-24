@@ -4,9 +4,7 @@
     <ul class="flex-c h-full">
       <li v-for="(item, index) in breadcrumbItems" :key="item.path" class="box-border flex-c h-7 text-sm leading-7">
         <div
-          :class="
-            isClickable(item, index) ? 'c-p py-1 rounded tad-200 hover:bg-active-color hover:[&_span]:text-g-600' : ''
-          "
+          :class="!isLastItem(index) ? 'c-p py-1 rounded tad-200 hover:bg-active-color hover:[&_span]:text-g-600' : ''"
           @click="handleBreadcrumbClick(item, index)"
         >
           <span
@@ -57,25 +55,9 @@ const breadcrumbItems = computed<BreadcrumbItem[]>(() => {
   const isFirstLevel = firstRoute.meta?.isFirstLevel
   const lastIndex = matchedLength - 1
   const currentRoute = matched[lastIndex]
-  const currentRouteMeta = currentRoute.meta
 
-  let items = isFirstLevel ? [createBreadcrumbItem(currentRoute)] : matched.map(createBreadcrumbItem)
-
-  // 过滤包裹容器：如果有多个项目且第一个是容器路由（如 /outside），则移除它
-  if (items.length > 1 && isWrapperContainer(items[0])) {
-    items = items.slice(1)
-  }
-
-  // IFrame 页面特殊处理：如果过滤后只剩一个 iframe 页面，或者所有项都是包裹容器，则仅展示当前页
-  if (currentRouteMeta?.isIframe && (items.length === 1 || items.every(isWrapperContainer))) {
-    return [createBreadcrumbItem(currentRoute)]
-  }
-
-  return items
+  return isFirstLevel ? [createBreadcrumbItem(currentRoute)] : matched.map(createBreadcrumbItem)
 })
-
-// 辅助函数：判断是否为包裹容器路由
-const isWrapperContainer = (item: BreadcrumbItem): boolean => item.path === '/outside' && !!item.meta?.isIframe
 
 // 辅助函数：创建面包屑项目
 const createBreadcrumbItem = (route: RouteLocationMatched): BreadcrumbItem => ({
@@ -92,9 +74,6 @@ const isLastItem = (index: number): boolean => {
   return index === itemsLength - 1
 }
 
-// 辅助函数：判断是否可点击
-const isClickable = (item: BreadcrumbItem, index: number): boolean => item.path !== '/outside' && !isLastItem(index)
-
 // 辅助函数：查找路由的第一个有效子路由
 const findFirstValidChild = (route: RouteRecordRaw) =>
   route.children?.find(child => !child.redirect && !child.meta?.isHide)
@@ -104,8 +83,8 @@ const buildFullPath = (childPath: string): string => `/${childPath}`.replace('//
 
 // 处理面包屑点击事件
 async function handleBreadcrumbClick(item: BreadcrumbItem, index: number): Promise<void> {
-  // 如果是最后一项或外部链接，不处理
-  if (isLastItem(index) || item.path === '/outside') {
+  // 最后一项就是当前页，不处理
+  if (isLastItem(index)) {
     return
   }
 

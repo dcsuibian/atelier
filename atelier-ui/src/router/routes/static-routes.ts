@@ -55,21 +55,6 @@ export const staticRoutes: AppRouteRecordRaw[] = [
     component: () => import('@/views/exception/500/index.vue'),
     meta: { title: '500', isHideTab: true },
   },
-  {
-    path: '/outside',
-    component: () => import('@/components/app-layout/index.vue'),
-    name: 'Outside',
-    meta: { title: 'menus.outside.title' },
-    children: [
-      // iframe 内嵌页面
-      {
-        path: '/outside/iframe/:path',
-        name: 'Iframe',
-        component: () => import('@/views/outside/Iframe.vue'),
-        meta: { title: 'iframe' },
-      },
-    ],
-  },
 ]
 
 /** 404 的 catch-all 不算，否则未登录时输入任意地址都会直接落到 404，而不是跳去登录页 */

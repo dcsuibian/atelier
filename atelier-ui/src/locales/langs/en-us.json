@@ -238,9 +238,6 @@
     "forgetPassword": {
       "title": "Forget Password"
     },
-    "outside": {
-      "title": "Outside"
-    },
     "dashboard": {
       "title": "Dashboard",
       "console": "Console"

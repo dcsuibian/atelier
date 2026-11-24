@@ -42,8 +42,6 @@ export interface RouteMeta extends Record<string | number | symbol, unknown> {
   isHideTab?: boolean
   /** 外部链接 */
   link?: string
-  /** 是否为iframe */
-  isIframe?: boolean
   /** 是否缓存 */
   keepAlive?: boolean
   /** 操作权限 */

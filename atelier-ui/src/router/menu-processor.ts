@@ -50,8 +50,8 @@ export class MenuProcessor {
           return true
         }
 
-        // 如果有外链或 iframe，保留
-        if (item.meta?.isIframe === true || item.meta?.link) {
+        // 外链菜单没有组件，也要保留
+        if (item.meta?.link) {
           return true
         }
 
@@ -121,9 +121,7 @@ export class MenuProcessor {
    * 判断子路由是否可以作为默认落点
    */
   private isNavigableRoute(route: AppRouteRecord): boolean {
-    return Boolean(
-      route.path && route.path !== '/' && !route.meta?.link && route.meta?.isIframe !== true && route.component,
-    )
+    return Boolean(route.path && route.path !== '/' && !route.meta?.link && route.component)
   }
 
   /**
@@ -143,7 +141,7 @@ export class MenuProcessor {
       route.children.forEach(child => {
         const childPath = child.path || ''
 
-        // 跳过合法的绝对路径：外部链接和 iframe 路由
+        // 跳过合法的绝对路径：外部链接
         if (this.isValidAbsolutePath(childPath)) return
 
         // 检测非法的绝对路径
@@ -161,7 +159,7 @@ export class MenuProcessor {
    * 判断是否为合法的绝对路径
    */
   private isValidAbsolutePath(path: string): boolean {
-    return path.startsWith('http://') || path.startsWith('https://') || path.startsWith('/outside/iframe/')
+    return path.startsWith('http://') || path.startsWith('https://')
   }
 
   /**

@@ -46,7 +46,7 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 | `router/guards/beforeEach.ts`、`afterEach.ts` | `router/before-each.ts`、`after-each.ts`（`guards/` 已展平） |
 | `router/routesAlias.ts` | 删除，登录页按路由名 `Login` 判断 |
 
-ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名 kebab-case 挪到 `router/` 下，其余随按字符串加载组件一起删了。
+ADP 的 `router/core/` 已拆散：`MenuProcessor` 改名 kebab-case 挪到 `router/` 下，`IframeRouteManager` 随 iframe 页面一起删了，其余随按字符串加载组件一起删了。
 
 ## 跟进 ADP 时不要带回来的东西
 
@@ -70,6 +70,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 - 后端路由模式与按字符串加载组件（`ComponentLoader`）；`AppRouteRecord.component` 不再接受字符串。布局外壳在 `components/app-layout/`
 - `useTable` 及配套（`useTableColumns`、`utils/art/table/`、`Api.Common`、`ArtTableHeader`），表格页以用户管理页为准
 - 自动导入插件（`unplugin-auto-import`、`unplugin-vue-components`、`unplugin-element-plus`）
+- iframe 内嵌页面（`meta.isIframe`、`/outside` 路由、`views/outside/`、`IframeRouteManager`）。外链菜单（`meta.link`）保留
 - 版本化存储键与存储兼容性检查（`utils/art/storage/`），连同 `__APP_VERSION__`；控制台宣传语（`utils/art/sys/console.ts`）
 - `useChart` 与 `plugins/echarts.ts`，换成 vue-echarts 加自有的 `ChartView`；`composables/use-chart.ts` 只剩按明暗主题生成样式的函数
 - `useAuth`、`useCommon`

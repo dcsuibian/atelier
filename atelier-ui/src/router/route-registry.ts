@@ -11,39 +11,27 @@ import type { AppRouteRecord } from '@/types/art/router'
 import { usePermissionStore } from '@/stores/permission'
 
 const AppLayout = () => import('@/components/app-layout/index.vue')
-const Iframe = () => import('@/views/outside/Iframe.vue')
 
 /**
- * 标出没有子路由的一级菜单（iframe 除外）。侧栏和面包屑对它们特殊处理，注册路由时也要给它们套一层布局
+ * 标出没有子路由的一级菜单。侧栏和面包屑对它们特殊处理，注册路由时也要给它们套一层布局
  *
  * 返回新对象，不改路由配置本身
  */
 export function markFirstLevel(routes: AppRouteRecord[]): AppRouteRecord[] {
   return routes.map(route =>
-    true !== route.meta.isIframe && !route.children?.length
-      ? { ...route, meta: { ...route.meta, isFirstLevel: true } }
-      : route,
+    !route.children?.length ? { ...route, meta: { ...route.meta, isFirstLevel: true } } : route,
   )
 }
 
-/** 收集路由树里的 iframe 页面 */
-export function collectIframeRoutes(routes: AppRouteRecord[]): AppRouteRecord[] {
-  return routes.flatMap(route => [
-    ...(true === route.meta.isIframe ? [route] : []),
-    ...collectIframeRoutes(route.children ?? []),
-  ])
-}
-
 /**
- * 转成 vue-router 的路由记录。组件在配置里已是真实 import，只有两种情况要改形：
- * iframe 页面统一由 Iframe.vue 渲染；没有子路由的一级菜单要套一层布局，否则页面没有侧栏和顶栏
+ * 转成 vue-router 的路由记录。组件在配置里已是真实 import，只有一种情况要改形：
+ * 没有子路由的一级菜单要套一层布局，否则页面没有侧栏和顶栏
  */
 function toRouteRecord(route: AppRouteRecord, depth = 0): RouteRecordRaw {
   const { children, ...rest } = route
-  const isIframe = true === route.meta.isIframe
-  const component = isIframe ? Iframe : route.component
+  const { component } = route
 
-  if (0 === depth && (isIframe || !children?.length)) {
+  if (0 === depth && !children?.length) {
     const firstSegment = route.path.split('/').find(Boolean)
     return {
       ...rest,

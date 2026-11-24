@@ -57,7 +57,7 @@ import { useSettingStore } from '@/stores/setting'
 import { useHeaderBar } from '@/composables/art/use-header-bar'
 import { themeAnimation } from '@/utils/art/ui/animation'
 import { languageOptions } from '@/locales'
-import { LanguageEnum } from '@/constants/app'
+import { Language } from '@/constants/app'
 import AppConfig from '@/config'
 import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 import ArtLogo from '@/components/art/layouts/art-logo/index.vue'
@@ -72,7 +72,7 @@ const { locale } = useI18n()
 const mainColors = AppConfig.systemMainColor
 const color = systemThemeColor // css v-bind 使用
 
-const changeLanguage = (lang: LanguageEnum) => {
+const changeLanguage = (lang: Language) => {
   if (locale.value === lang) return
   locale.value = lang
   settingStore.language = lang

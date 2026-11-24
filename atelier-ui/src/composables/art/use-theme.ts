@@ -18,13 +18,13 @@
  * const { switchThemeStyles } = useTheme()
  *
  * // 切换到暗色主题
- * switchThemeStyles(SystemThemeEnum.DARK)
+ * switchThemeStyles(SystemTheme.DARK)
  *
  * // 切换到亮色主题
- * switchThemeStyles(SystemThemeEnum.LIGHT)
+ * switchThemeStyles(SystemTheme.LIGHT)
  *
  * // 切换到自动模式（跟随系统）
- * switchThemeStyles(SystemThemeEnum.AUTO)
+ * switchThemeStyles(SystemTheme.AUTO)
  * ```
  *
  * @module useTheme
@@ -32,7 +32,7 @@
  */
 
 import { useSettingStore } from '@/stores/setting'
-import { SystemThemeEnum } from '@/constants/app'
+import { SystemTheme } from '@/constants/app'
 import AppConfig from '@/config'
 import type { SystemThemeTypes } from '@/types/art/config'
 import { getDarkColor, getLightColor, setElementThemeColor } from '@/utils/art/ui'
@@ -59,12 +59,12 @@ export function useTheme() {
   }
 
   // 设置系统主题
-  const setSystemTheme = (theme: SystemThemeEnum, themeMode?: SystemThemeEnum) => {
+  const setSystemTheme = (theme: SystemTheme, themeMode?: SystemTheme) => {
     // 临时禁用过渡效果
     disableTransitions()
 
     const el = document.getElementsByTagName('html')[0]
-    const isDark = theme === SystemThemeEnum.DARK
+    const isDark = theme === SystemTheme.DARK
 
     if (!themeMode) {
       themeMode = theme
@@ -102,13 +102,13 @@ export function useTheme() {
 
   // 自动设置系统主题
   const setSystemAutoTheme = () => {
-    const theme = prefersDark.value ? SystemThemeEnum.DARK : SystemThemeEnum.LIGHT
-    setSystemTheme(theme, SystemThemeEnum.AUTO)
+    const theme = prefersDark.value ? SystemTheme.DARK : SystemTheme.LIGHT
+    setSystemTheme(theme, SystemTheme.AUTO)
   }
 
   // 切换主题
-  const switchThemeStyles = (theme: SystemThemeEnum) => {
-    if (theme === SystemThemeEnum.AUTO) {
+  const switchThemeStyles = (theme: SystemTheme) => {
+    if (theme === SystemTheme.AUTO) {
       setSystemAutoTheme()
     } else {
       setSystemTheme(theme)
@@ -136,8 +136,8 @@ export function initializeTheme() {
     let actualTheme = settingStore.systemThemeType
 
     // 如果是 AUTO 模式，检测系统偏好
-    if (settingStore.systemThemeMode === SystemThemeEnum.AUTO) {
-      actualTheme = prefersDark.value ? SystemThemeEnum.DARK : SystemThemeEnum.LIGHT
+    if (settingStore.systemThemeMode === SystemTheme.AUTO) {
+      actualTheme = prefersDark.value ? SystemTheme.DARK : SystemTheme.LIGHT
       // 更新实际应用的主题类型
       settingStore.systemThemeType = actualTheme
     }
@@ -159,12 +159,12 @@ export function initializeTheme() {
   applyThemeByMode()
 
   // 如果是 AUTO 模式，监听系统主题变化（使用 VueUse 的响应式特性）
-  if (settingStore.systemThemeMode === SystemThemeEnum.AUTO) {
+  if (settingStore.systemThemeMode === SystemTheme.AUTO) {
     watch(
       prefersDark,
       () => {
         // 只有在 AUTO 模式下才响应系统主题变化
-        if (settingStore.systemThemeMode === SystemThemeEnum.AUTO) {
+        if (settingStore.systemThemeMode === SystemTheme.AUTO) {
           applyThemeByMode()
         }
       },

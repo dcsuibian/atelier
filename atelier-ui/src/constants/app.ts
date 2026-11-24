@@ -17,7 +17,7 @@
 /**
  * 菜单类型
  */
-export const MenuTypeEnum = {
+export const MenuType = {
   /** 左侧菜单 */
   LEFT: 'left',
   /** 顶部菜单 */
@@ -27,12 +27,12 @@ export const MenuTypeEnum = {
   /** 双栏菜单 */
   DUAL_MENU: 'dual-menu',
 } as const
-export type MenuTypeEnum = (typeof MenuTypeEnum)[keyof typeof MenuTypeEnum]
+export type MenuType = (typeof MenuType)[keyof typeof MenuType]
 
 /**
  * 系统主题
  */
-export const SystemThemeEnum = {
+export const SystemTheme = {
   /** 暗色主题 */
   DARK: 'dark',
   /** 亮色主题 */
@@ -40,12 +40,12 @@ export const SystemThemeEnum = {
   /** 自动主题（跟随系统） */
   AUTO: 'auto',
 } as const
-export type SystemThemeEnum = (typeof SystemThemeEnum)[keyof typeof SystemThemeEnum]
+export type SystemTheme = (typeof SystemTheme)[keyof typeof SystemTheme]
 
 /**
  * 菜单主题
  */
-export const MenuThemeEnum = {
+export const MenuTheme = {
   /** 暗色主题 */
   DARK: 'dark',
   /** 亮色主题 */
@@ -53,7 +53,7 @@ export const MenuThemeEnum = {
   /** 设计主题 */
   DESIGN: 'design',
 } as const
-export type MenuThemeEnum = (typeof MenuThemeEnum)[keyof typeof MenuThemeEnum]
+export type MenuTheme = (typeof MenuTheme)[keyof typeof MenuTheme]
 
 /**
  * 菜单宽度
@@ -67,21 +67,21 @@ export type MenuWidth = (typeof MenuWidth)[keyof typeof MenuWidth]
 /**
  * 语言类型
  */
-export const LanguageEnum = {
+export const Language = {
   /** 中文 */
   ZH_CN: 'zh-CN',
   /** 英文 */
   EN_US: 'en-US',
 } as const
-export type LanguageEnum = (typeof LanguageEnum)[keyof typeof LanguageEnum]
+export type Language = (typeof Language)[keyof typeof Language]
 
 /**
  * 容器宽度
  */
-export const ContainerWidthEnum = {
+export const ContainerWidth = {
   /** 全屏宽度 */
   FULL: '100%',
   /** 固定宽度 */
   BOXED: '1200px',
 } as const
-export type ContainerWidthEnum = (typeof ContainerWidthEnum)[keyof typeof ContainerWidthEnum]
+export type ContainerWidth = (typeof ContainerWidth)[keyof typeof ContainerWidth]

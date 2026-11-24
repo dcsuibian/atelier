@@ -20,19 +20,19 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import AppConfig from '@/config'
 import SectionTitle from './section-title.vue'
-import { MenuTypeEnum, type MenuThemeEnum } from '@/constants/app'
+import { MenuType, type MenuTheme } from '@/constants/app'
 import { useSettingStore } from '@/stores/setting'
 
 const menuThemeList = AppConfig.themeList
 const settingStore = useSettingStore()
 const { menuThemeType, menuType, isDark } = storeToRefs(settingStore)
-const isTopMenu = computed(() => menuType.value === MenuTypeEnum.TOP)
-const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
+const isTopMenu = computed(() => menuType.value === MenuType.TOP)
+const isDualMenu = computed(() => menuType.value === MenuType.DUAL_MENU)
 
 const disabled = computed(() => isTopMenu.value || isDualMenu.value || isDark.value)
 
 // 菜单样式切换
-const switchMenuStyles = (theme: MenuThemeEnum) => {
+const switchMenuStyles = (theme: MenuTheme) => {
   if (isDualMenu.value || isTopMenu.value || isDark.value) {
     return
   }

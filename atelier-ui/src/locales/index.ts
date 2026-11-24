@@ -23,7 +23,7 @@
 
 import { createI18n } from 'vue-i18n'
 import type { I18n, I18nOptions } from 'vue-i18n'
-import { LanguageEnum } from '@/constants/app'
+import { Language } from '@/constants/app'
 import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
 import { isObject } from '@/utils/is'
 
@@ -35,8 +35,8 @@ import zhMessages from './langs/zh-cn.json'
  * 语言消息对象
  */
 const messages = {
-  [LanguageEnum.EN_US]: enMessages,
-  [LanguageEnum.ZH_CN]: zhMessages,
+  [Language.EN_US]: enMessages,
+  [Language.ZH_CN]: zhMessages,
 }
 
 /**
@@ -44,24 +44,24 @@ const messages = {
  * 用于语言切换下拉框
  */
 export const languageOptions = [
-  { value: LanguageEnum.ZH_CN, label: '简体中文' },
-  { value: LanguageEnum.EN_US, label: 'English' },
+  { value: Language.ZH_CN, label: '简体中文' },
+  { value: Language.EN_US, label: 'English' },
 ]
 
 /**
  * 读出上次选的语言。i18n 要在 store 建立之前就定好语言，所以直接读设置 store 持久化的那份
  */
-const getDefaultLanguage = (): LanguageEnum => {
+const getDefaultLanguage = (): Language => {
   try {
     const setting: unknown = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.SETTING) ?? 'null')
     const language = isObject(setting) ? setting.language : undefined
-    if (Object.values<unknown>(LanguageEnum).includes(language)) {
-      return language as LanguageEnum
+    if (Object.values<unknown>(Language).includes(language)) {
+      return language as Language
     }
   } catch {
     // 存坏了就当没存过
   }
-  return LanguageEnum.ZH_CN
+  return Language.ZH_CN
 }
 
 /**
@@ -71,7 +71,7 @@ const i18nOptions: I18nOptions = {
   locale: getDefaultLanguage(),
   legacy: false,
   globalInjection: true,
-  fallbackLocale: LanguageEnum.ZH_CN,
+  fallbackLocale: Language.ZH_CN,
   messages,
 }
 

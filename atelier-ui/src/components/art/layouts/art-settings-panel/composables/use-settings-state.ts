@@ -1,5 +1,5 @@
 import { useSettingStore } from '@/stores/setting'
-import { MenuThemeEnum, MenuTypeEnum } from '@/constants/app'
+import { MenuTheme, MenuType } from '@/constants/app'
 
 /**
  * 设置状态管理
@@ -18,13 +18,13 @@ export function useSettingsState() {
   }
 
   // 菜单布局切换
-  const switchMenuLayouts = (type: MenuTypeEnum) => {
-    if (type === MenuTypeEnum.LEFT || type === MenuTypeEnum.TOP_LEFT) {
+  const switchMenuLayouts = (type: MenuType) => {
+    if (type === MenuType.LEFT || type === MenuType.TOP_LEFT) {
       settingStore.setMenuOpen(true)
     }
     settingStore.switchMenuLayouts(type)
-    if (type === MenuTypeEnum.DUAL_MENU) {
-      settingStore.switchMenuStyles(MenuThemeEnum.DESIGN)
+    if (type === MenuType.DUAL_MENU) {
+      settingStore.switchMenuStyles(MenuTheme.DESIGN)
       settingStore.setMenuOpen(true)
     }
   }

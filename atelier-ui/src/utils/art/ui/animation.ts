@@ -28,9 +28,9 @@
  * @author Art Design Pro Team
  */
 import { useTheme } from '@/composables/art/use-theme'
-import { SystemThemeEnum } from '@/constants/app'
+import { SystemTheme } from '@/constants/app'
 import { useSettingStore } from '@/stores/setting'
-const { LIGHT, DARK } = SystemThemeEnum
+const { LIGHT, DARK } = SystemTheme
 
 /**
  * 主题切换动画

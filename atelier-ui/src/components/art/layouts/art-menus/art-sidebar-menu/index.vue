@@ -117,7 +117,7 @@ import { storeToRefs } from 'pinia'
 import { ElMenu, ElScrollbar, ElTooltip } from 'element-plus'
 import AppConfig from '@/config'
 import { useSettingStore } from '@/stores/setting'
-import { MenuTypeEnum, MenuWidth } from '@/constants/app'
+import { MenuType, MenuWidth } from '@/constants/app'
 import { useMenuStore } from '@/stores/menu'
 import { handleMenuJump } from '@/utils/art/navigation'
 import SidebarSubmenu from './widget/sidebar-submenu.vue'
@@ -151,9 +151,9 @@ const menuopenwidth = computed(() => getMenuOpenWidth.value)
 const menuclosewidth = computed(() => MENU_CLOSE_WIDTH)
 
 // 菜单类型判断
-const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT)
-const showLeftMenu = computed(() => menuType.value === MenuTypeEnum.LEFT || menuType.value === MenuTypeEnum.TOP_LEFT)
-const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
+const isTopLeftMenu = computed(() => menuType.value === MenuType.TOP_LEFT)
+const showLeftMenu = computed(() => menuType.value === MenuType.LEFT || menuType.value === MenuType.TOP_LEFT)
+const isDualMenu = computed(() => menuType.value === MenuType.DUAL_MENU)
 
 // 移动端屏幕判断（使用 computed 避免重复计算）
 const isMobileScreen = computed(() => width.value < MOBILE_BREAKPOINT)

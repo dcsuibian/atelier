@@ -5,7 +5,7 @@
  * @author Art Design Pro Team
  */
 
-import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/constants/app'
+import { MenuTheme, MenuType, SystemTheme } from '@/constants/app'
 
 // 系统主题样式（light | dark）
 export interface SystemThemeType {
@@ -15,13 +15,13 @@ export interface SystemThemeType {
 
 // 定义包含多个主题的类型
 export type SystemThemeTypes = {
-  [key in Exclude<SystemThemeEnum, typeof SystemThemeEnum.AUTO>]: SystemThemeType
+  [key in Exclude<SystemTheme, typeof SystemTheme.AUTO>]: SystemThemeType
 }
 
 // 菜单主题样式
 export interface MenuThemeType {
   /** 主题类型 */
-  theme: MenuThemeEnum
+  theme: MenuTheme
   /** 背景颜色 */
   background: string
   /** 系统名称颜色 */
@@ -39,7 +39,7 @@ export interface ThemeSetting {
   /** 主题名称 */
   name: string
   /** 系统主题类型 */
-  theme: SystemThemeEnum
+  theme: SystemTheme
   /** 主题颜色数组 */
   color: string[]
   /** 左侧线条颜色 */
@@ -55,7 +55,7 @@ export interface MenuLayout {
   /** 布局名称 */
   name: string
   /** 菜单类型值 */
-  value: MenuTypeEnum
+  value: MenuType
   /** 布局预览图 */
   img: string
   /** 布局描述 */

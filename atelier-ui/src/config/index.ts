@@ -28,7 +28,7 @@
  * @author Art Design Pro Team
  */
 
-import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/constants/app'
+import { MenuTheme, MenuType, SystemTheme } from '@/constants/app'
 import type { SystemConfig } from '@/types/art/config'
 import { configImages } from './images'
 import { headerBarConfig } from './header-bar'
@@ -40,14 +40,14 @@ const appConfig: SystemConfig = {
   },
   // 系统主题
   systemThemeStyles: {
-    [SystemThemeEnum.LIGHT]: { className: '' },
-    [SystemThemeEnum.DARK]: { className: SystemThemeEnum.DARK },
+    [SystemTheme.LIGHT]: { className: '' },
+    [SystemTheme.DARK]: { className: SystemTheme.DARK },
   },
   // 系统主题列表
   settingThemeList: [
     {
       name: 'Light',
-      theme: SystemThemeEnum.LIGHT,
+      theme: SystemTheme.LIGHT,
       color: ['#fff', '#fff'],
       leftLineColor: '#EDEEF0',
       rightLineColor: '#EDEEF0',
@@ -55,7 +55,7 @@ const appConfig: SystemConfig = {
     },
     {
       name: 'Dark',
-      theme: SystemThemeEnum.DARK,
+      theme: SystemTheme.DARK,
       color: ['#22252A'],
       leftLineColor: '#3F4257',
       rightLineColor: '#3F4257',
@@ -63,7 +63,7 @@ const appConfig: SystemConfig = {
     },
     {
       name: 'System',
-      theme: SystemThemeEnum.AUTO,
+      theme: SystemTheme.AUTO,
       color: ['#fff', '#22252A'],
       leftLineColor: '#EDEEF0',
       rightLineColor: '#3F4257',
@@ -72,15 +72,15 @@ const appConfig: SystemConfig = {
   ],
   // 菜单布局列表
   menuLayoutList: [
-    { name: 'Left', value: MenuTypeEnum.LEFT, img: configImages.menuLayouts.vertical },
-    { name: 'Top', value: MenuTypeEnum.TOP, img: configImages.menuLayouts.horizontal },
-    { name: 'Mixed', value: MenuTypeEnum.TOP_LEFT, img: configImages.menuLayouts.mixed },
-    { name: 'Dual Column', value: MenuTypeEnum.DUAL_MENU, img: configImages.menuLayouts.dualColumn },
+    { name: 'Left', value: MenuType.LEFT, img: configImages.menuLayouts.vertical },
+    { name: 'Top', value: MenuType.TOP, img: configImages.menuLayouts.horizontal },
+    { name: 'Mixed', value: MenuType.TOP_LEFT, img: configImages.menuLayouts.mixed },
+    { name: 'Dual Column', value: MenuType.DUAL_MENU, img: configImages.menuLayouts.dualColumn },
   ],
   // 菜单主题列表
   themeList: [
     {
-      theme: MenuThemeEnum.DESIGN,
+      theme: MenuTheme.DESIGN,
       background: '#FFFFFF',
       systemNameColor: 'var(--art-gray-800)',
       iconColor: '#6B6B6B',
@@ -88,7 +88,7 @@ const appConfig: SystemConfig = {
       img: configImages.menuStyles.design,
     },
     {
-      theme: MenuThemeEnum.DARK,
+      theme: MenuTheme.DARK,
       background: '#191A23',
       systemNameColor: '#D9DADB',
       iconColor: '#BABBBD',
@@ -96,7 +96,7 @@ const appConfig: SystemConfig = {
       img: configImages.menuStyles.dark,
     },
     {
-      theme: MenuThemeEnum.LIGHT,
+      theme: MenuTheme.LIGHT,
       background: '#ffffff',
       systemNameColor: 'var(--art-gray-800)',
       iconColor: '#6B6B6B',
@@ -107,7 +107,7 @@ const appConfig: SystemConfig = {
   // 暗黑模式菜单样式
   darkMenuStyles: [
     {
-      theme: MenuThemeEnum.DARK,
+      theme: MenuTheme.DARK,
       background: 'var(--default-box-color)',
       systemNameColor: '#DDDDDD',
       iconColor: '#BABBBD',

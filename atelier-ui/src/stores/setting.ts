@@ -35,7 +35,7 @@ import { ref, computed } from 'vue'
 import type { MenuThemeType } from '@/types/art/config'
 import type { AppRouteRecord } from '@/types'
 import AppConfig from '@/config'
-import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum, LanguageEnum } from '@/constants/app'
+import { SystemTheme, MenuTheme, MenuType, ContainerWidth, Language } from '@/constants/app'
 import { setElementThemeColor } from '@/utils/art/ui'
 import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
 import { isObject, isString } from '@/utils/is'
@@ -54,7 +54,7 @@ export const useSettingStore = defineStore(
      *
      * 刻意不提供 setLanguage()：下面已经有一个同名函数，管的是语言按钮的显隐，不是语言本身
      */
-    const language = ref<LanguageEnum>(LanguageEnum.ZH_CN)
+    const language = ref<Language>(Language.ZH_CN)
     /** 是否锁屏 */
     const isLocked = ref(false)
     /** 锁屏密码（已加密） */
@@ -78,7 +78,7 @@ export const useSettingStore = defineStore(
 
     // 菜单相关设置
     /** 菜单类型 */
-    const menuType = ref<MenuTypeEnum>(SETTING_DEFAULT_CONFIG.menuType)
+    const menuType = ref<MenuType>(SETTING_DEFAULT_CONFIG.menuType)
     /** 菜单展开宽度 */
     const menuOpenWidth = ref(SETTING_DEFAULT_CONFIG.menuOpenWidth)
     /** 菜单是否展开 */
@@ -88,11 +88,11 @@ export const useSettingStore = defineStore(
 
     // 主题相关设置
     /** 系统主题类型 */
-    const systemThemeType = ref<SystemThemeEnum>(SETTING_DEFAULT_CONFIG.systemThemeType)
+    const systemThemeType = ref<SystemTheme>(SETTING_DEFAULT_CONFIG.systemThemeType)
     /** 系统主题模式 */
-    const systemThemeMode = ref<SystemThemeEnum>(SETTING_DEFAULT_CONFIG.systemThemeMode)
+    const systemThemeMode = ref<SystemTheme>(SETTING_DEFAULT_CONFIG.systemThemeMode)
     /** 菜单主题类型 */
-    const menuThemeType = ref<MenuThemeEnum>(SETTING_DEFAULT_CONFIG.menuThemeType)
+    const menuThemeType = ref<MenuTheme>(SETTING_DEFAULT_CONFIG.menuThemeType)
     /** 系统主题颜色 */
     const systemThemeColor = ref(SETTING_DEFAULT_CONFIG.systemThemeColor)
 
@@ -134,7 +134,7 @@ export const useSettingStore = defineStore(
     /** 自定义圆角 */
     const customRadius = ref(SETTING_DEFAULT_CONFIG.customRadius)
     /** 容器宽度 */
-    const containerWidth = ref<ContainerWidthEnum>(SETTING_DEFAULT_CONFIG.containerWidth)
+    const containerWidth = ref<ContainerWidth>(SETTING_DEFAULT_CONFIG.containerWidth)
 
     /**
      * 获取菜单主题
@@ -153,7 +153,7 @@ export const useSettingStore = defineStore(
      * 判断是否为暗色模式
      */
     const isDark = computed((): boolean => {
-      return systemThemeType.value === SystemThemeEnum.DARK
+      return systemThemeType.value === SystemTheme.DARK
     })
 
     /**
@@ -174,7 +174,7 @@ export const useSettingStore = defineStore(
      * 切换菜单布局
      * @param type 菜单类型
      */
-    const switchMenuLayouts = (type: MenuTypeEnum) => {
+    const switchMenuLayouts = (type: MenuType) => {
       menuType.value = type
     }
 
@@ -191,7 +191,7 @@ export const useSettingStore = defineStore(
      * @param theme 主题类型
      * @param themeMode 主题模式
      */
-    const setGlopTheme = (theme: SystemThemeEnum, themeMode: SystemThemeEnum) => {
+    const setGlopTheme = (theme: SystemTheme, themeMode: SystemTheme) => {
       systemThemeType.value = theme
       systemThemeMode.value = themeMode
       localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, JSON.stringify(theme))
@@ -201,7 +201,7 @@ export const useSettingStore = defineStore(
      * 切换菜单样式
      * @param theme 菜单主题
      */
-    const switchMenuStyles = (theme: MenuThemeEnum) => {
+    const switchMenuStyles = (theme: MenuTheme) => {
       menuThemeType.value = theme
     }
 
@@ -225,7 +225,7 @@ export const useSettingStore = defineStore(
      * 设置容器宽度
      * @param width 容器宽度枚举值
      */
-    const setContainerWidth = (width: ContainerWidthEnum) => {
+    const setContainerWidth = (width: ContainerWidth) => {
       containerWidth.value = width
     }
 

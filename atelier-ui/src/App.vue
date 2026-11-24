@@ -16,7 +16,7 @@ import { onBeforeMount, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { ElConfigProvider } from 'element-plus'
 import { useSettingStore } from '@/stores/setting'
-import { LanguageEnum } from '@/constants/app'
+import { Language } from '@/constants/app'
 import zh from 'element-plus/es/locale/lang/zh-cn'
 import en from 'element-plus/es/locale/lang/en'
 import 'dayjs/locale/zh-cn' // 与上面的语言包对应
@@ -27,8 +27,8 @@ const settingStore = useSettingStore()
 const { language } = storeToRefs(settingStore)
 
 const locales = {
-  [LanguageEnum.ZH_CN]: zh,
-  [LanguageEnum.EN_US]: en,
+  [Language.ZH_CN]: zh,
+  [Language.EN_US]: en,
 }
 
 onBeforeMount(() => {

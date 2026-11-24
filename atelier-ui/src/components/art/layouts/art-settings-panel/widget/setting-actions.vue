@@ -17,7 +17,7 @@ import { useSettingStore } from '@/stores/setting'
 import { SETTING_DEFAULT_CONFIG } from '@/config/setting'
 import { useClipboard } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
-import { MenuThemeEnum } from '@/constants/app'
+import { MenuTheme } from '@/constants/app'
 import { useTheme } from '@/composables/art/use-theme'
 
 defineOptions({ name: 'SettingActions' })
@@ -30,24 +30,24 @@ const { switchThemeStyles } = useTheme()
 /** 枚举映射表 */
 const ENUM_MAPS = {
   menuType: {
-    left: 'MenuTypeEnum.LEFT',
-    top: 'MenuTypeEnum.TOP',
-    'top-left': 'MenuTypeEnum.TOP_LEFT',
-    'dual-menu': 'MenuTypeEnum.DUAL_MENU',
+    left: 'MenuType.LEFT',
+    top: 'MenuType.TOP',
+    'top-left': 'MenuType.TOP_LEFT',
+    'dual-menu': 'MenuType.DUAL_MENU',
   },
   systemTheme: {
-    auto: 'SystemThemeEnum.AUTO',
-    light: 'SystemThemeEnum.LIGHT',
-    dark: 'SystemThemeEnum.DARK',
+    auto: 'SystemTheme.AUTO',
+    light: 'SystemTheme.LIGHT',
+    dark: 'SystemTheme.DARK',
   },
   menuTheme: {
-    design: 'MenuThemeEnum.DESIGN',
-    light: 'MenuThemeEnum.LIGHT',
-    dark: 'MenuThemeEnum.DARK',
+    design: 'MenuTheme.DESIGN',
+    light: 'MenuTheme.LIGHT',
+    dark: 'MenuTheme.DARK',
   },
   containerWidth: {
-    '100%': 'ContainerWidthEnum.FULL',
-    '1200px': 'ContainerWidthEnum.BOXED',
+    '100%': 'ContainerWidth.FULL',
+    '1200px': 'ContainerWidth.BOXED',
   },
 } as const
 
@@ -169,7 +169,7 @@ const handleResetConfig = async () => {
 
     // 等待主题切换完成后，根据实际应用的主题设置菜单主题
     await nextTick()
-    const menuTheme = settingStore.isDark ? MenuThemeEnum.DARK : config.menuThemeType
+    const menuTheme = settingStore.isDark ? MenuTheme.DARK : config.menuThemeType
     settingStore.switchMenuStyles(menuTheme)
 
     settingStore.setElementTheme(config.systemThemeColor)

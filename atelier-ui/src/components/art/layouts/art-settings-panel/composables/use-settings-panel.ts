@@ -3,7 +3,7 @@ import { useSettingStore } from '@/stores/setting'
 import { storeToRefs } from 'pinia'
 import { useBreakpoints } from '@vueuse/core'
 import AppConfig from '@/config'
-import { SystemThemeEnum, MenuTypeEnum } from '@/constants/app'
+import { SystemTheme, MenuType } from '@/constants/app'
 import { mittBus } from '@/utils/art/sys'
 import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
 import { useTheme } from '@/composables/art/use-theme'
@@ -30,18 +30,16 @@ export function useSettingsPanel() {
   const isMobile = breakpoints.smaller('tablet')
 
   // 记录窗口宽度变化前的菜单类型
-  const getStoredDesktopMenuType = (): MenuTypeEnum | undefined => {
+  const getStoredDesktopMenuType = (): MenuType | undefined => {
     try {
       const storedMenuType: unknown = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.DESKTOP_MENU_TYPE) ?? 'null')
-      return Object.values<unknown>(MenuTypeEnum).includes(storedMenuType)
-        ? (storedMenuType as MenuTypeEnum)
-        : undefined
+      return Object.values<unknown>(MenuType).includes(storedMenuType) ? (storedMenuType as MenuType) : undefined
     } catch {
       return undefined
     }
   }
 
-  const setStoredDesktopMenuType = (type: MenuTypeEnum) => {
+  const setStoredDesktopMenuType = (type: MenuType) => {
     localStorage.setItem(LOCAL_STORAGE_KEYS.DESKTOP_MENU_TYPE, JSON.stringify(type))
   }
 
@@ -50,7 +48,7 @@ export function useSettingsPanel() {
   }
 
   const storedDesktopMenuType = getStoredDesktopMenuType()
-  const beforeMenuType = ref<MenuTypeEnum | undefined>(storedDesktopMenuType)
+  const beforeMenuType = ref<MenuType | undefined>(storedDesktopMenuType)
   const hasChangedMenu = ref(Boolean(storedDesktopMenuType))
 
   // 计算属性
@@ -68,7 +66,7 @@ export function useSettingsPanel() {
 
     // 初始化系统主题
     const initSystemTheme = () => {
-      if (systemThemeMode.value === SystemThemeEnum.AUTO) {
+      if (systemThemeMode.value === SystemTheme.AUTO) {
         setSystemAutoTheme()
       } else {
         setSystemTheme(systemThemeType.value)
@@ -101,9 +99,9 @@ export function useSettingsPanel() {
           // 切换到移动端布局
           if (!hasChangedMenu.value) {
             beforeMenuType.value = menuType.value
-            if (menuType.value !== MenuTypeEnum.LEFT) {
+            if (menuType.value !== MenuType.LEFT) {
               setStoredDesktopMenuType(menuType.value)
-              useSettingsState().switchMenuLayouts(MenuTypeEnum.LEFT)
+              useSettingsState().switchMenuLayouts(MenuType.LEFT)
               hasChangedMenu.value = true
             }
           }
@@ -112,7 +110,7 @@ export function useSettingsPanel() {
         } else {
           // 恢复桌面端布局
           if (hasChangedMenu.value && beforeMenuType.value) {
-            if (menuType.value === MenuTypeEnum.LEFT) {
+            if (menuType.value === MenuType.LEFT) {
               useSettingsState().switchMenuLayouts(beforeMenuType.value)
             }
 

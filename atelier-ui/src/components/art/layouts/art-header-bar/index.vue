@@ -129,7 +129,7 @@ import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElPopover } from 'element-p
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useFullscreen, useWindowSize } from '@vueuse/core'
-import { LanguageEnum, MenuTypeEnum } from '@/constants/app'
+import { Language, MenuType } from '@/constants/app'
 import { useSettingStore } from '@/stores/setting'
 import { useMenuStore } from '@/stores/menu'
 import AppConfig from '@/config'
@@ -176,10 +176,10 @@ const { language } = storeToRefs(settingStore)
 const { menuList } = storeToRefs(menuStore)
 
 // 菜单类型判断
-const isLeftMenu = computed(() => menuType.value === MenuTypeEnum.LEFT)
-const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
-const isTopMenu = computed(() => menuType.value === MenuTypeEnum.TOP)
-const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT)
+const isLeftMenu = computed(() => menuType.value === MenuType.LEFT)
+const isDualMenu = computed(() => menuType.value === MenuType.DUAL_MENU)
+const isTopMenu = computed(() => menuType.value === MenuType.TOP)
+const isTopLeftMenu = computed(() => menuType.value === MenuType.TOP_LEFT)
 
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen()
 
@@ -227,9 +227,9 @@ const initLanguage = (): void => {
 
 /**
  * 切换系统语言
- * @param {LanguageEnum} lang - 目标语言类型
+ * @param {Language} lang - 目标语言类型
  */
-const changeLanguage = (lang: LanguageEnum): void => {
+const changeLanguage = (lang: Language): void => {
   if (locale.value === lang) return
   locale.value = lang
   settingStore.language = lang

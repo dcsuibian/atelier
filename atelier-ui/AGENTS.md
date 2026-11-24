@@ -121,6 +121,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor` 改名 kebab-case 挪到 `rou
 - **日期时间**：展示时用 `utils/format.ts` 的 `formatDateTime` 等，目前是固定格式、不随语言切换。需要月份名、星期名这类本地化文字时，可以用 `Intl.DateTimeFormat`。
 - **列表接口**：写成 `getXxxs(query, pageNumber, pageSize)`，返回 `PageWrapper`。后端另有不分页的全量接口时，再加一个 `getXxxs(query)` 重载返回数组（如 `getPermissions`）。重载只区分分页与全量；一个资源只用一种分页方式，真要另一种（如游标）就起别的名字，别靠参数类型区分。
 - **查询条件的可选字段写成 `?: X | null`**：请求都走 axios，`null` 与 `undefined` 在查询参数里都会被丢掉，两者等价。这是 axios 文档写明的行为，不用另写测试。
+- **`as const` 枚举的命名**：对象和从它推出的类型同名、用单数、不加 `Enum` 后缀，如 `MenuType.LEFT` 与 `type MenuType`。
 - **类型放哪**：`types/` 只放没有唯一归属的类型：与后端约定的数据结构、`ResponseWrapper` / `PageWrapper` 这类协议外壳、多处共用的概念（如 `Tensor`）。接口的查询条件与请求体跟着接口放在 `apis/`；组件、store 自己的类型写在自己文件里。
 - **接口类型的命名与后端一致**：查询条件叫 `XxxQo`，请求体叫 `XxxDto`，带动作的资源名在前（`ProjectAddDto`、`ProjectEditPartiallyDto`），返回的数据直接用 `types/` 里的 `Project` 等，不加 `Vo`。新增与部分更新分成两个类型：新增的必填字段写成必填，部分更新是它的 `Partial`。
 - **会话与权限**：

@@ -21,14 +21,14 @@
  */
 
 import AppConfig from '@/config'
-import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from '@/constants/app'
+import { SystemTheme, MenuTheme, MenuType, ContainerWidth } from '@/constants/app'
 
 /**
  * 系统设置默认值配置
  */
 export const SETTING_DEFAULT_CONFIG = {
   /** 菜单类型 */
-  menuType: MenuTypeEnum.LEFT,
+  menuType: MenuType.LEFT,
   /** 菜单展开宽度 */
   menuOpenWidth: 230,
   /** 菜单是否展开 */
@@ -36,11 +36,11 @@ export const SETTING_DEFAULT_CONFIG = {
   /** 双菜单是否显示文本 */
   dualMenuShowText: false,
   /** 系统主题类型 */
-  systemThemeType: SystemThemeEnum.LIGHT,
+  systemThemeType: SystemTheme.LIGHT,
   /** 系统主题模式 */
-  systemThemeMode: SystemThemeEnum.LIGHT,
+  systemThemeMode: SystemTheme.LIGHT,
   /** 菜单风格 */
-  menuThemeType: MenuThemeEnum.DESIGN,
+  menuThemeType: MenuTheme.DESIGN,
   /** 系统主题颜色 */
   systemThemeColor: AppConfig.systemMainColor[0],
   /** 是否显示菜单按钮 */
@@ -76,7 +76,7 @@ export const SETTING_DEFAULT_CONFIG = {
   /** 自定义圆角 */
   customRadius: '0.75',
   /** 容器宽度 */
-  containerWidth: ContainerWidthEnum.FULL,
+  containerWidth: ContainerWidth.FULL,
 }
 
 /**

@@ -165,8 +165,8 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - `pnpm build:analyze`：构建并输出体积分析到 `dist/stats.html`
 - `pnpm type-check`：`vue-tsc --build`
 - `pnpm serve`：预览构建产物
-- `pnpm format`：Prettier 格式化，**范围仅 `src/`**，根目录的配置文件不在其中
-- `pnpm test`：vitest 跑一遍单元测试。测试文件 `*.test.ts` 放在 `tests/` 下，目录结构对照 `src`，只测纯逻辑，跑在 node 环境；依赖浏览器的协作方用 `vi.mock` 替换
+- `pnpm format`：Prettier 格式化，**范围仅 `src/` 与 `tests/`**，根目录的配置文件不在其中
+- `pnpm test`：vitest 跑一遍单元测试，配置在独立的 `vitest.config.ts`，不加载 Vite 插件以求快。测试文件 `*.test.ts` 放在 `tests/` 下，目录结构对照 `src`，只测能在 node 环境里直接跑的逻辑。不写组件测试，页面流程靠实际操作验证。需要一堆 `vi.mock` 才测得了时，先把逻辑抽成纯函数再测
 
 开发环境前端跑在 **32732**，后端 `development` 跑在 **32733**。前端请求带 `/api` 前缀，由 vite 代理 rewrite 掉——后端没有 context-path，接口路径就是 `/session`、`/users`，前缀属于部署层的事。端口取值区间是 **10000–49151**：Windows 的动态端口从 49152 起，WSL2 与 Hyper-V 的保留块都从那里面划，避开就不会撞上。
 

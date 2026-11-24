@@ -35,11 +35,11 @@ function isIgnorableScriptError(message: Event | string, source?: string): boole
   return 'Script error.' === normalizedMessage && '' === source
 }
 
-function vueErrorHandler(err: unknown, instance: unknown, info: string): void {
+function handleVueError(err: unknown, instance: unknown, info: string): void {
   console.error('[VueError]', err, info, instance)
 }
 
-function scriptErrorHandler(
+function handleScriptError(
   message: Event | string,
   source?: string,
   lineno?: number,
@@ -54,39 +54,31 @@ function scriptErrorHandler(
   return true
 }
 
-function registerPromiseErrorHandler(): void {
-  window.addEventListener('unhandledrejection', event => {
-    if (isHandled(event.reason)) {
-      event.preventDefault()
-      return
-    }
-    console.error('[PromiseError]', event.reason)
-  })
+function handlePromiseError(event: PromiseRejectionEvent): void {
+  if (isHandled(event.reason)) {
+    event.preventDefault()
+    return
+  }
+  console.error('[PromiseError]', event.reason)
 }
 
 /**
- * 资源加载失败（img、script、link）。只在捕获阶段才监听得到
+ * 资源加载失败（img、script、link）
  */
-function registerResourceErrorHandler(): void {
-  window.addEventListener(
-    'error',
-    (event: Event) => {
-      const target = event.target as HTMLElement
-      if (target && ('IMG' === target.tagName || 'SCRIPT' === target.tagName || 'LINK' === target.tagName)) {
-        console.error('[ResourceError]', {
-          tagName: target.tagName,
-          src:
-            (target as HTMLImageElement).src || (target as HTMLScriptElement).src || (target as HTMLLinkElement).href,
-        })
-      }
-    },
-    true,
-  )
+function handleResourceError(event: Event): void {
+  const target = event.target as HTMLElement
+  if (target && ('IMG' === target.tagName || 'SCRIPT' === target.tagName || 'LINK' === target.tagName)) {
+    console.error('[ResourceError]', {
+      tagName: target.tagName,
+      src: (target as HTMLImageElement).src || (target as HTMLScriptElement).src || (target as HTMLLinkElement).href,
+    })
+  }
 }
 
 export function setupErrorHandle(app: App): void {
-  app.config.errorHandler = vueErrorHandler
-  window.onerror = scriptErrorHandler
-  registerPromiseErrorHandler()
-  registerResourceErrorHandler()
+  app.config.errorHandler = handleVueError
+  window.onerror = handleScriptError
+  window.addEventListener('unhandledrejection', handlePromiseError)
+  // 资源加载失败不冒泡，只在捕获阶段才监听得到
+  window.addEventListener('error', handleResourceError, true)
 }

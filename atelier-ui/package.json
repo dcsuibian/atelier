@@ -39,7 +39,7 @@
     "@types/nprogress": "^0.2.3",
     "@vitejs/plugin-vue": "^6.0.11",
     "@vue/tsconfig": "^0.9.1",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "npm-run-all2": "^9.1.0",
     "prettier": "3.10.1",
     "rollup-plugin-visualizer": "^7.1.3",

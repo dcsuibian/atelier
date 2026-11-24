@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, toRefs } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 defineOptions({ name: 'ArtDragVerify' })
 
@@ -81,8 +82,6 @@ const props = withDefaults(defineProps<PropsType>(), {
   value: false,
   width: '100%',
   height: 40,
-  text: '按住滑块拖动',
-  successText: 'success',
   background: '#eee',
   progressBarBg: '#1385FF',
   completedBg: '#57D187',
@@ -94,6 +93,8 @@ const props = withDefaults(defineProps<PropsType>(), {
   textSize: '13px',
   textColor: '#333',
 })
+
+const { t } = useI18n()
 
 // 组件状态接口定义
 interface StateType {
@@ -219,7 +220,7 @@ const textStyle = computed(() => ({
 
 // 显示消息计算属性
 const message = computed(() => {
-  return props.value ? props.successText : props.text
+  return props.value ? (props.successText ?? t('login.sliderSuccessText')) : (props.text ?? t('login.sliderText'))
 })
 
 /**

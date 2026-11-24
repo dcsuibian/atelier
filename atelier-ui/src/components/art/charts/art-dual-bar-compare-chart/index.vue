@@ -4,6 +4,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components'
@@ -11,6 +12,7 @@ import ChartView from '@/components/chart-view/index.vue'
 import { useChartOps, useChart } from '@/composables/use-chart'
 import type { EChartsOption, BarSeriesOption } from 'echarts'
 import type { BidirectionalBarChartProps } from '@/components/art/charts/types'
+import { useI18n } from 'vue-i18n'
 
 use([BarChart, GridComponent, TooltipComponent, LegendComponent])
 
@@ -27,8 +29,6 @@ const props = withDefaults(defineProps<BidirectionalBarChartProps>(), {
   positiveData: () => [],
   negativeData: () => [],
   xAxisData: () => [],
-  positiveName: '正向数据',
-  negativeName: '负向数据',
   barWidth: 16,
   yAxisMin: -100,
   yAxisMax: 100,
@@ -48,6 +48,10 @@ const props = withDefaults(defineProps<BidirectionalBarChartProps>(), {
   showLegend: false,
   legendPosition: 'bottom',
 })
+
+const { t } = useI18n()
+const positiveName = computed(() => props.positiveName ?? t('chart.dualBar.positive'))
+const negativeName = computed(() => props.negativeName ?? t('chart.dualBar.negative'))
 
 // 创建系列配置的辅助函数
 const createSeriesConfig = (config: {
@@ -140,7 +144,7 @@ const {
       legend: props.showLegend
         ? {
             ...getLegendStyle(props.legendPosition),
-            data: [props.negativeName, props.positiveName],
+            data: [negativeName.value, positiveName.value],
           }
         : undefined,
 
@@ -168,7 +172,7 @@ const {
       series: [
         // 负向数据系列
         createSeriesConfig({
-          name: props.negativeName,
+          name: negativeName.value,
           data: processedNegativeData,
           borderRadius: props.negativeBorderRadius,
           labelPosition: 'bottom',
@@ -177,7 +181,7 @@ const {
         }),
         // 正向数据系列
         createSeriesConfig({
-          name: props.positiveName,
+          name: positiveName.value,
           data: props.positiveData,
           borderRadius: props.positiveBorderRadius,
           labelPosition: 'top',

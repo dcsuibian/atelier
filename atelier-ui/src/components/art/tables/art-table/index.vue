@@ -48,7 +48,7 @@
 
       <template #empty>
         <div v-if="loading"></div>
-        <ElEmpty v-else :description="emptyText" :image-size="120" />
+        <ElEmpty v-else :description="emptyText ?? $t('common.noData')" :image-size="120" />
       </template>
     </ElTable>
 
@@ -188,7 +188,6 @@ const props = withDefaults(defineProps<ArtTableProps>(), {
   border: undefined,
   size: undefined,
   emptyHeight: '100%',
-  emptyText: '暂无数据',
   showTableHeader: true,
 })
 const instance = getCurrentInstance()

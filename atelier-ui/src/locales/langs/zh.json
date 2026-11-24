@@ -1,6 +1,5 @@
 {
   "httpMsg": {
-    "unauthorized": "未授权访问，请重新登录",
     "forbidden": "禁止访问该资源",
     "notFound": "请求的资源不存在",
     "methodNotAllowed": "请求方法不允许",
@@ -9,7 +8,6 @@
     "badGateway": "网关错误，请稍后重试",
     "serviceUnavailable": "服务暂时不可用，请稍后重试",
     "gatewayTimeout": "网关超时，请稍后重试",
-    "requestCancelled": "请求已取消",
     "networkError": "网络连接异常，请检查网络连接",
     "requestFailed": "请求失败",
     "requestConfigError": "请求配置错误",
@@ -63,7 +61,8 @@
     "maxLength": "不能超过 {max} 个字符",
     "view": "查看",
     "viewMore": "查看更多",
-    "avatar": "用户头像"
+    "avatar": "用户头像",
+    "viewDetail": "查看详情"
   },
   "search": {
     "placeholder": "搜索页面",
@@ -197,7 +196,8 @@
     "privacyPolicy": "《隐私政策》",
     "submitBtnText": "注册",
     "hasAccount": "已有账号？",
-    "toLogin": "去登录"
+    "toLogin": "去登录",
+    "success": "注册成功"
   },
   "lockScreen": {
     "pwdError": "密码错误",
@@ -293,7 +293,8 @@
     "headerBackground": "表头背景"
   },
   "session": {
-    "noPagePermission": "当前账号没有任何页面权限，请联系管理员分配"
+    "noPagePermission": "当前账号没有任何页面权限，请联系管理员分配",
+    "storageCorrupted": "系统检测到本地数据异常，请重新登录系统恢复使用！"
   },
   "system": {
     "user": {
@@ -355,6 +356,10 @@
       "close": "收盘：",
       "low": "最低：",
       "high": "最高："
+    },
+    "dualBar": {
+      "positive": "正向数据",
+      "negative": "负向数据"
     }
   }
 }

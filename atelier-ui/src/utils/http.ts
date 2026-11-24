@@ -8,7 +8,7 @@
  * 这不是调用方能按场景判断的事，交给几十个调用点各自处理只会漏
  */
 import { ElMessage } from 'element-plus'
-import axios, { type AxiosRequestConfig, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
+import axios, { AxiosError, type AxiosRequestConfig, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import type { ResponseWrapper } from '@/types'
 // 只在拦截器里调用，与 locales 之间的循环引用不影响模块初始化
 import { $t } from '@/locales'
@@ -83,6 +83,45 @@ axiosInstance.interceptors.response.use(
   },
 )
 
+/**
+ * 后端的业务错误走 HTTP 200 加业务码，能落到这张表里的多半是代理、网关出错，或者接口地址写错
+ */
+const STATUS_MESSAGE_KEYS: Record<number, string> = {
+  403: 'httpMsg.forbidden',
+  404: 'httpMsg.notFound',
+  405: 'httpMsg.methodNotAllowed',
+  408: 'httpMsg.requestTimeout',
+  500: 'httpMsg.internalServerError',
+  502: 'httpMsg.badGateway',
+  503: 'httpMsg.serviceUnavailable',
+  504: 'httpMsg.gatewayTimeout',
+}
+
+/**
+ * 把请求失败转成给用户看的提示。axios 自带的 message 是给开发者看的英文，比如 `Network Error`
+ */
+export function messageOf(error: unknown): string {
+  if (!axios.isAxiosError(error)) {
+    return error instanceof Error ? error.message : $t('httpMsg.requestFailed')
+  }
+  const { response } = error
+  if (response) {
+    // 非 2xx 但带了 ResponseWrapper 的，后端给的文案更具体
+    const message = (response.data as Partial<ResponseWrapper<unknown>> | undefined)?.message
+    if ('string' === typeof message && message) {
+      return message
+    }
+    return $t(STATUS_MESSAGE_KEYS[response.status] ?? 'httpMsg.requestFailed')
+  }
+  if (!error.request) {
+    return $t('httpMsg.requestConfigError')
+  }
+  if (AxiosError.ETIMEDOUT === error.code || AxiosError.ECONNABORTED === error.code) {
+    return $t('httpMsg.requestTimeout')
+  }
+  return $t('httpMsg.networkError')
+}
+
 type RequestConfig = AxiosRequestConfig & {
   /** 失败时不弹提示，交给调用方自己处理 */
   silent?: boolean
@@ -94,13 +133,9 @@ async function call<T = unknown>(config: RequestConfig): Promise<T> {
     const response = await axiosInstance.request<ResponseWrapper<T>>(axiosConfig)
     return response.data.result
   } catch (error) {
-    // 401 的提示与跳转已由 handleUnauthorized 统一做过，这里再弹一次只是噪音
-    if (!silent && !isUnauthorized(error)) {
-      if (error instanceof Error) {
-        ElMessage.error(error.message)
-      } else {
-        console.error(error)
-      }
+    // 主动取消不算失败；401 的提示与跳转已由 handleUnauthorized 统一做过，这里再弹一次只是噪音
+    if (!silent && !axios.isCancel(error) && !isUnauthorized(error)) {
+      ElMessage.error(messageOf(error))
     }
     return Promise.reject(error)
   }

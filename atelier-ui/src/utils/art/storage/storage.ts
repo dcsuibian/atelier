@@ -33,6 +33,8 @@
  * @author Art Design Pro Team
  */
 import { ElMessage } from 'element-plus'
+// 只在出错时调用，与 locales 之间的循环引用不影响模块初始化
+import { $t } from '@/locales'
 import { router } from '@/router'
 import { useSessionStore } from '@/stores/session'
 import { StorageConfig } from '@/utils/art/storage/storage-config'
@@ -100,7 +102,7 @@ class StorageCompatibilityManager {
       type: 'error',
       offset: 40,
       duration: 5000,
-      message: '系统检测到本地数据异常，请重新登录系统恢复使用！',
+      message: $t('session.storageCorrupted'),
     })
   }
 

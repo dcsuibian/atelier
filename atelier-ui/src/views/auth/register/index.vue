@@ -200,7 +200,7 @@ const register = async () => {
     // 模拟注册请求
     setTimeout(() => {
       loading.value = false
-      ElMessage.success('注册成功')
+      ElMessage.success(t('register.success'))
       toLogin()
     }, REDIRECT_DELAY)
   } catch (error) {

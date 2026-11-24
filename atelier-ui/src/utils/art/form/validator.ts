@@ -31,12 +31,12 @@
  */
 
 /**
- * 密码强度级别枚举
+ * 密码强度级别枚举。值是标识而不是文案，要显示的地方自己走 i18n
  */
 export const PasswordStrength = {
-  WEAK: '弱',
-  MEDIUM: '中',
-  STRONG: '强',
+  WEAK: 'WEAK',
+  MEDIUM: 'MEDIUM',
+  STRONG: 'STRONG',
 } as const
 export type PasswordStrength = (typeof PasswordStrength)[keyof typeof PasswordStrength]
 

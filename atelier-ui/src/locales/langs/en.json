@@ -1,6 +1,5 @@
 {
   "httpMsg": {
-    "unauthorized": "Unauthorized access, please login again",
     "forbidden": "Access to this resource is forbidden",
     "notFound": "The requested resource does not exist",
     "methodNotAllowed": "Request method not allowed",
@@ -9,7 +8,6 @@
     "badGateway": "Bad gateway error, please try again later",
     "serviceUnavailable": "Service temporarily unavailable, please try again later",
     "gatewayTimeout": "Gateway timeout, please try again later",
-    "requestCancelled": "Request cancelled",
     "networkError": "Network connection error, please check your connection",
     "requestFailed": "Request failed",
     "requestConfigError": "Request configuration error",
@@ -63,7 +61,8 @@
     "maxLength": "Must be at most {max} characters",
     "view": "View",
     "viewMore": "View more",
-    "avatar": "Avatar"
+    "avatar": "Avatar",
+    "viewDetail": "View details"
   },
   "search": {
     "placeholder": "Search page",
@@ -197,7 +196,8 @@
     "privacyPolicy": "Privacy policy",
     "submitBtnText": "Register",
     "hasAccount": "Already have an account?",
-    "toLogin": "To login"
+    "toLogin": "To login",
+    "success": "Registration successful"
   },
   "lockScreen": {
     "pwdError": "Password error",
@@ -293,7 +293,8 @@
     "headerBackground": "Header BG"
   },
   "session": {
-    "noPagePermission": "This account has no page permissions. Please contact an administrator."
+    "noPagePermission": "This account has no page permissions. Please contact an administrator.",
+    "storageCorrupted": "Local data appears to be corrupted. Please sign in again to restore access."
   },
   "system": {
     "user": {
@@ -355,6 +356,10 @@
       "close": "Close: ",
       "low": "Low: ",
       "high": "High: "
+    },
+    "dualBar": {
+      "positive": "Positive",
+      "negative": "Negative"
     }
   }
 }

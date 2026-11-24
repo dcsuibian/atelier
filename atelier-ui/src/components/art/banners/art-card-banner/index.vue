@@ -19,7 +19,7 @@
           }"
           @click="handleCancel"
         >
-          {{ cancelButton?.text }}
+          {{ cancelButton?.text ?? $t('common.cancel') }}
         </div>
         <div
           v-if="button?.show"
@@ -27,7 +27,7 @@
           :style="{ backgroundColor: button?.color, color: button?.textColor }"
           @click="handleClick"
         >
-          {{ button?.text }}
+          {{ button?.text ?? $t('common.viewDetail') }}
         </div>
       </div>
     </div>
@@ -83,14 +83,12 @@ withDefaults(defineProps<CardBannerProps>(), {
   // 主按钮默认配置
   button: () => ({
     show: true,
-    text: '查看详情',
     color: 'var(--theme-color)',
     textColor: '#fff',
   }),
   // 取消按钮默认配置
   cancelButton: () => ({
     show: false,
-    text: '取消',
     color: '#f5f5f5',
     textColor: '#666',
   }),

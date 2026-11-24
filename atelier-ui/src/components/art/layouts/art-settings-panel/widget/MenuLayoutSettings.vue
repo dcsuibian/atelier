@@ -22,8 +22,8 @@ import { storeToRefs } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import SectionTitle from './SectionTitle.vue'
 import { useSettingStore } from '@/stores/setting'
-import { useSettingsConfig } from '../composables/useSettingsConfig'
-import { useSettingsState } from '../composables/useSettingsState'
+import { useSettingsConfig } from '@/components/art/layouts/art-settings-panel/composables/useSettingsConfig'
+import { useSettingsState } from '@/components/art/layouts/art-settings-panel/composables/useSettingsState'
 
 const { width } = useWindowSize()
 const settingStore = useSettingStore()

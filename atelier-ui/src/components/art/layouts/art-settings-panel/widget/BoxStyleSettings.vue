@@ -22,8 +22,8 @@
 <script setup lang="ts">
 import SectionTitle from './SectionTitle.vue'
 import { useSettingStore } from '@/stores/setting'
-import { useSettingsConfig } from '../composables/useSettingsConfig'
-import { useSettingsHandlers } from '../composables/useSettingsHandlers'
+import { useSettingsConfig } from '@/components/art/layouts/art-settings-panel/composables/useSettingsConfig'
+import { useSettingsHandlers } from '@/components/art/layouts/art-settings-panel/composables/useSettingsHandlers'
 import { storeToRefs } from 'pinia'
 
 const settingStore = useSettingStore()

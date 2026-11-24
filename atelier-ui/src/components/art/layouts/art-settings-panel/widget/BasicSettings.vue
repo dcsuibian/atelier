@@ -15,8 +15,8 @@
 import SectionTitle from './SectionTitle.vue'
 import SettingItem from './SettingItem.vue'
 import { useSettingStore } from '@/stores/setting'
-import { useSettingsConfig } from '../composables/useSettingsConfig'
-import { useSettingsHandlers } from '../composables/useSettingsHandlers'
+import { useSettingsConfig } from '@/components/art/layouts/art-settings-panel/composables/useSettingsConfig'
+import { useSettingsHandlers } from '@/components/art/layouts/art-settings-panel/composables/useSettingsHandlers'
 import { storeToRefs } from 'pinia'
 
 const settingStore = useSettingStore()

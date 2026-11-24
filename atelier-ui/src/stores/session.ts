@@ -24,6 +24,42 @@ export const useSessionStore = defineStore('session', () => {
 
   const isLoggedIn = computed(() => null !== user.value)
 
+  /**
+   * 清掉本地与这个用户有关的状态。登出之后已经确认没登录，ready 保持 true，不必再问一遍服务端
+   *
+   * 锁屏跟着会话走，否则重新登录后仍被锁着，还得输入上一个人设的密码。
+   * 工作标签页故意不清，免得误登出丢掉打开中的页面
+   */
+  function clearLocal(): void {
+    user.value = null
+    loginTime.value = null
+    usePermissionStore().clear()
+    useSettingStore().unlock()
+  }
+
+  /**
+   * 落地一次会话查询的结果。已登录就把权限一并取回，让两者始终成套
+   *
+   * 先把要写的数据都取齐再赋值：权限请求失败时整个调用抛出，本地状态保持原样，
+   * 不会留下「有 user 却没有权限」的半截状态
+   */
+  async function apply(nextUser: User | null, nextLoginTime: number | null): Promise<void> {
+    if (null === nextUser) {
+      clearLocal()
+      return
+    }
+    const permissions = await getAvailablePermissionsByUserId(nextUser.id)
+    user.value = nextUser
+    loginTime.value = nextLoginTime
+    usePermissionStore().set(permissions)
+  }
+
+  async function load(): Promise<void> {
+    const session = await getSession()
+    await apply(session.user, session.loginTime)
+    ready.value = true
+  }
+
   // 进行中的加载请求。并发导航共用同一个 Promise，避免重复打后端
   let pending: Promise<void> | null = null
 
@@ -38,12 +74,6 @@ export const useSessionStore = defineStore('session', () => {
       pending = null
     })
     return pending
-  }
-
-  async function load(): Promise<void> {
-    const session = await getSession()
-    await apply(session.user, session.loginTime)
-    ready.value = true
   }
 
   async function login(name: string, password: string): Promise<void> {
@@ -78,36 +108,6 @@ export const useSessionStore = defineStore('session', () => {
       ElMessage.error($t('httpMsg.sessionExpired'))
     }
     await logout()
-  }
-
-  /**
-   * 落地一次会话查询的结果。已登录就把权限一并取回，让两者始终成套
-   *
-   * 先把要写的数据都取齐再赋值：权限请求失败时整个调用抛出，本地状态保持原样，
-   * 不会留下「有 user 却没有权限」的半截状态
-   */
-  async function apply(nextUser: User | null, nextLoginTime: number | null): Promise<void> {
-    if (null === nextUser) {
-      clearLocal()
-      return
-    }
-    const permissions = await getAvailablePermissionsByUserId(nextUser.id)
-    user.value = nextUser
-    loginTime.value = nextLoginTime
-    usePermissionStore().set(permissions)
-  }
-
-  /**
-   * 清掉本地与这个用户有关的状态。登出之后已经确认没登录，ready 保持 true，不必再问一遍服务端
-   *
-   * 锁屏跟着会话走，否则重新登录后仍被锁着，还得输入上一个人设的密码。
-   * 工作标签页故意不清，免得误登出丢掉打开中的页面
-   */
-  function clearLocal(): void {
-    user.value = null
-    loginTime.value = null
-    usePermissionStore().clear()
-    useSettingStore().unlock()
   }
 
   return {

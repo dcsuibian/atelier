@@ -4,3 +4,4 @@ export type { Permission, PermissionStatus, PermissionQuery, PermissionExpressio
 export type { Role, RoleStatus, RoleQuery } from './role'
 export type { Session } from './session'
 export type { User, UserGender, UserStatus, UserQuery } from './user'
+export type { Tensor, Extent } from './math'

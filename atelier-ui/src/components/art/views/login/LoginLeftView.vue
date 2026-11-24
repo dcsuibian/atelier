@@ -53,6 +53,8 @@
 import AppConfig from '@/config'
 import loginIcon from '@/assets/images/svg/login_icon.svg'
 import { themeAnimation } from '@/utils/art/ui/animation'
+import ThemeSvg from '@/components/art/views/theme-svg/index.vue'
+import ArtLogo from '@/components/art/layouts/art-logo/index.vue'
 
 // 定义 props
 defineProps<{

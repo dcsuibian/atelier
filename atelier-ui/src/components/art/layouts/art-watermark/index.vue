@@ -18,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { ElWatermark } from 'element-plus'
 import AppConfig from '@/config'
 import { useSettingStore } from '@/stores/setting'
 

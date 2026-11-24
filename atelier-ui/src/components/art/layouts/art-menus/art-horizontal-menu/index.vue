@@ -19,6 +19,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { ElMenu } from 'element-plus'
 import type { AppRouteRecord } from '@/types/art/router'
 import HorizontalSubmenu from './widget/HorizontalSubmenu.vue'
 import { useSettingStore } from '@/stores/setting'

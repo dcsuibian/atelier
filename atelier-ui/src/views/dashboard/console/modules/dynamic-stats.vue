@@ -24,6 +24,8 @@
 </template>
 
 <script setup lang="ts">
+import { reactive } from 'vue'
+import { ElScrollbar } from 'element-plus'
 interface DynamicItem {
   username: string
   type: string

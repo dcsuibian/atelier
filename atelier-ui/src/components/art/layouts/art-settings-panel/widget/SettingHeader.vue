@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 defineEmits<{
   close: []
 }>()

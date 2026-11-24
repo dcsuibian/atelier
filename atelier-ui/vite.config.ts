@@ -1,10 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath } from 'url'
-import Components from 'unplugin-vue-components/vite'
-import AutoImport from 'unplugin-auto-import/vite'
-import ElementPlus from 'unplugin-element-plus/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import tailwindcss from '@tailwindcss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 
@@ -50,19 +46,6 @@ export default ({ mode }: { mode: string }) => {
     plugins: [
       vue(),
       tailwindcss(),
-      // 自动按需导入 API
-      AutoImport({
-        imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
-        resolvers: [ElementPlusResolver()]
-      }),
-      // 自动按需导入组件
-      Components({
-        resolvers: [ElementPlusResolver()]
-      }),
-      // 按需定制主题配置
-      ElementPlus({
-        useSource: true
-      }),
       // 打包体积分析
       ...('true' === process.env.ANALYZE
         ? [
@@ -74,18 +57,6 @@ export default ({ mode }: { mode: string }) => {
           ]
         : [])
     ],
-    // 依赖预构建：避免运行时重复请求与转换，提升首次加载速度
-    optimizeDeps: {
-      include: [
-        'echarts/core',
-        'echarts/charts',
-        'echarts/components',
-        'echarts/renderers',
-        'element-plus/es',
-        'element-plus/es/components/*/style/css',
-        'element-plus/es/components/*/style/index'
-      ]
-    },
     css: {
       preprocessorOptions: {
         // sass variable and mixin

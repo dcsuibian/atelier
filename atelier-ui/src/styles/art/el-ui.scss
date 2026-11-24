@@ -106,6 +106,12 @@ html.dark .el-card {
 }
 // -------------------------------- 修改 el-size=default 组件默认高度 end --------------------------------
 
+// el-light.scss 把按钮文字色定制成主题色，这两个组件的文字色会拿它兜底，改回常规文字色
+.el-checkbox-button__inner,
+.el-radio-button__inner {
+  color: var(--el-button-text-color, var(--el-text-color-regular));
+}
+
 .el-pagination.is-background .btn-next,
 .el-pagination.is-background .btn-prev,
 .el-pagination.is-background .el-pager li {

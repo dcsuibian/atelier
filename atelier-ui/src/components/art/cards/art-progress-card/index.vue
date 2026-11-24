@@ -27,6 +27,10 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
+import { ElProgress } from 'element-plus'
+import ArtCountTo from '@/components/art/cards/art-count-to/index.vue'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 defineOptions({ name: 'ArtProgressCard' })
 
 interface Props {

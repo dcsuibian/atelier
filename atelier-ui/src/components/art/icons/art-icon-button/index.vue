@@ -10,6 +10,7 @@
 </template>
 
 <script lang="ts" setup>
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 defineOptions({ name: 'ArtIconButton' })
 
 interface Props {

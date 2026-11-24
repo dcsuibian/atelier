@@ -13,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import { vLoading } from 'element-plus'
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'

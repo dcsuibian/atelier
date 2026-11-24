@@ -4,6 +4,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { graphic, use } from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components'

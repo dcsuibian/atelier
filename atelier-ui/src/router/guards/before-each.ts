@@ -16,6 +16,7 @@
  *
  * @module router/guards/before-each
  */
+import { ElMessage } from 'element-plus'
 import type { NavigationGuardReturn, RouteLocationNormalized, Router } from 'vue-router'
 import NProgress from 'nprogress'
 import { $t } from '@/locales'

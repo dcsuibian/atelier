@@ -58,12 +58,15 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox, ElPopover } from 'element-plus'
 import { useSessionStore } from '@/stores/session'
 import { WEB_LINKS } from '@/utils/art/constants'
 import { mittBus } from '@/utils/art/sys'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 
 defineOptions({ name: 'ArtUserMenu' })
 

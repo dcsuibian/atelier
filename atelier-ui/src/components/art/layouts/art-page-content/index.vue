@@ -35,6 +35,8 @@
   </div>
 </template>
 <script setup lang="ts">
+import { computed, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 import type { CSSProperties } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAutoLayoutHeight } from '@/composables/art/useLayoutHeight'

@@ -88,6 +88,8 @@ import { formatMenuTitle } from '@/utils/art/router'
 import { useSettingStore } from '@/stores/setting'
 import type { MenuItemType } from '@/components/art/layouts/art-menu-right/index.vue'
 import type { WorkTab } from '@/stores/work-tab'
+import ArtMenuRight from '@/components/art/layouts/art-menu-right/index.vue'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 
 defineOptions({ name: 'ArtWorkTab' })
 

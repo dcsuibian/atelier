@@ -18,5 +18,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElButton } from 'element-plus'
+import ArtResultPage from '@/components/art/views/result/ArtResultPage.vue'
 defineOptions({ name: 'ResultSuccess' })
 </script>

@@ -65,6 +65,7 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { onMounted, ref, computed } from 'vue'
 import { useSettingStore } from '@/stores/setting'
 const settingStore = useSettingStore()

@@ -91,7 +91,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor`、`IframeRouteManager` 改名
 
 - **husky、lint-staged**：git hook 那一套
 - **commitizen、cz-git、commitlint**：交互式提交与提交信息校验
-- **ESLint、Stylelint**，连同桥接包 `eslint-config-prettier`、`eslint-plugin-prettier`。清理还波及 `vite.config.ts` 中 AutoImport 的 `eslintrc` 块（它专为 ESLint 生成 `.auto-import.json`，已无消费者）
+- **ESLint、Stylelint**，连同桥接包 `eslint-config-prettier`、`eslint-plugin-prettier`
 - **`vite-plugin-vue-devtools`**：插件版会默认注入页面，大型项目从启动起就处于降速状态。需要时用浏览器扩展版，它按需加载
 - **`scripts/clean-dev.ts`**：这一条另有具体理由——它写死的路径已与当前目录结构脱节，且会写回 ADP 的推广链接与演示后端的接口约定。演示内容删哪些、留哪些改为按需手动决定；脚本里那份 21 项的演示内容清单仍有参考价值，可从 git 历史中取回
 
@@ -105,7 +105,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - 删除的组件：wangEditor、excel 导入导出、video、图片裁剪、地图、评论组件——它们各自绑着一个重型 npm 依赖
 - **统计卡片与图表组件全部保留**，哪怕当时只有演示页在引用。下游做后台第一件事就是拼 dashboard，删了每个项目都得重写
 
-连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`optimizeDeps.include`、`env.d.ts` 的 declare module 和 `utils/art/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
+连带清理涉及路由模块、`router/modules/index.ts`、i18n 的 menus 键、`env.d.ts` 的 declare module 和 `utils/art/index.ts` 的 re-export——删页面时这几处都要跟着过一遍。
 
 ### 已移除的机制
 
@@ -117,6 +117,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **`router/core/` 的编排层**（`RouteRegistry`、`MenuProcessor` 的角色过滤、`RoutePermissionValidator`）：守卫重写后，权限在注册这一步就落地了，注册后再校验一遍路径权限是多余的。
 - **后端路由模式与按字符串加载组件**：ADP 可以从接口拉菜单，路由里写 `component: '/system/user'` 由 `ComponentLoader` 按名加载。后端路由模式是凭空设想的需求，没有实际用处；字符串路径写错要到运行时才发现。现在路由配置一律写 `() => import(...)`，`AppRouteRecord.component` 的类型也不再接受字符串。布局外壳从 `views/index/` 挪到 `components/app-layout/`：它包住页面，本身不是页面。
 - **`useTable` 及其配套**（`useTableColumns`、`utils/art/table/`、`Api.Common`）：带缓存、防抖、三种刷新策略，下游不用它，模板页面的写法要与下游一致才有对照价值。表格页改为 `ElTable` + `ElTableColumn` 插槽 + `ElPagination`，数据、loading、分页参数在页面里用 `ref` 自己管，以用户管理页为准。`ArtTableHeader` 的列显示设置依赖它，组件一并删了。
+- **自动导入插件**（`unplugin-auto-import`、`unplugin-vue-components`、`unplugin-element-plus`）：开发时依赖预构建的扫描器看不见插件在编译时注入的 import——Element Plus 各组件的样式、只在自动注册组件里用到的包——首次打开用到它们的页面才被发现，触发重新预构建和整页刷新；生成的 `auto-imports.d.ts` / `components.d.ts` 不进版本库，新克隆的仓库还得先跑一次构建才能 type-check。现在 JS 一律显式具名 import，Element Plus 样式在 `styles/index.scss` 里全量引入（仍按 `el-light.scss` 定制变量），比按需引入只多几 KB（gzip），ECharts 照旧按模块 `use([...])`。
 - **`useChart` 与 `plugins/echarts.ts`**：ADP 自己管图表的初始化、resize、主题切换、销毁与延迟加载，724 行；`plugins/` 一次注册全部图表类型，用一个图表就把全部打进包。换成 vue-echarts：图表组件把配置写成 computed 交给自有的 `ChartView`（`autoresize`、空数据提示、加载态），各自 `use([...])` 注册用到的模块；`composables/use-chart.ts` 只剩按明暗主题生成样式的那组函数。不再等图表滚进可视区才初始化，首屏外的图表在进入页面时就画好。
 
 ### 已替换为自有配置
@@ -127,7 +128,6 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 - **`.vscode/`**：与 helix-ui 保持一致
 - **路径别名只保留 `@`**：ADP 的 `@views`/`@imgs`/`@icons`/`@utils`/`@stores`/`@styles` 全部改写为 `@/` 开头的完整路径。当时 `@stores` 指向的是 `src/store`（别名与目录单复数不一致），`@icons` 指向的目录根本不存在——目录现已改名 `src/stores`，别名则没有恢复的打算
 - **打包配置做减法**：移除等同默认值的 `target`/`outDir`，`minify` 回落到 esbuild（terser 依赖一并删除），gzip 预压缩交给部署层。体积分析改为 `pnpm build:analyze` 按需启用，而非 ADP 那样整段注释掉。`VITE_DROP_CONSOLE` 也已删除：构建时一刀切去掉 console 太粗糙，会误伤有意保留的日志；不该留的日志在代码里删掉
-- **自动生成的 `auto-imports.d.ts` / `components.d.ts` 移到项目根目录**：它们是构建产物，不该混在源码里
 - **类型声明优先用 `@types/*` 包**：`env.d.ts` 里只留 `vite/client` 引用和全局变量声明，不手写 `declare module`
 
 ### 其它
@@ -170,8 +170,6 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 
 开发环境前端跑在 **32732**，后端 `development` 跑在 **32733**。前端请求带 `/api` 前缀，由 vite 代理 rewrite 掉——后端没有 context-path，接口路径就是 `/session`、`/users`，前缀属于部署层的事。端口取值区间是 **10000–49151**：Windows 的动态端口从 49152 起，WSL2 与 Hyper-V 的保留块都从那里面划，避开就不会撞上。
 
-**新克隆的仓库首次跑 `pnpm build` 会失败。** `auto-imports.d.ts` / `components.d.ts` 生成在项目根目录且不进版本库，而 `tsconfig.app.json` include 了它们；`build` 又是并行跑 type-check 与构建，type-check 会先撞上缺失的自动导入类型。先跑一次 `pnpm dev` 或 `pnpm build-only` 生成它们即可。
-
 **部署**：`Dockerfile` 两阶段构建，产物交给 nginx。镜像里只跑 `build-only`，不跑 type-check：开发时本来就会跑，镜像构建求快。路由用 history 模式，nginx 把所有路径回落到 `index.html`；`/api` 的反代不在这个 nginx 里，由外层负责。
 
 ### atelier-engine
@@ -192,6 +190,7 @@ ADP 的演示页面与仅服务于它们的重型组件已整体移除（`src` �
 ### atelier-ui
 
 - **类型导入一律 type-only**（`verbatimModuleSyntax` 已开启）。整条 import 的具名导入都是类型时，整条写成 `import type { X } from '...'`；与值混在一条时用内联形式 `import { type X, y } from '...'`，保持单行不拆分。
+- **一律显式 import**，不依赖插件注入。全局可用的只有 `app.use(router)` 注册的 `RouterView` / `RouterLink` 和 `main.ts` 里注册的 `v-ripple`；Element Plus 的 `v-loading` 也要 import `vLoading`。
 - **路径引用只用 `@`**，不要新增其它别名。跨目录引用一律 `@/` 开头，不写 `../../` 这种相对路径（同目录内的 `./xxx` 不在此列）。
 - **新文件用 kebab-case**，`art/` 下的上游原件保持原名，理由见「代码组织」一节。
 - **递归类型用对象，别用元组。** 自引用的元组（`type X = string | [X, 'AND' | 'OR', X]`）一旦进了 `RouteMeta`，Vue 模板推导路由对象时会撞上 `TS2589: Type instantiation is excessively deep`；对象的自引用是惰性解析的，不会触发。同一份代码在 TS 5.9 + vue-tsc 3.2 下不报错，所以这是工具链版本差异而非写法错误——但对象写法在新旧两边都成立，没有理由赌旧版本。

@@ -111,6 +111,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { ElMenu, ElScrollbar, ElTooltip } from 'element-plus'
 import AppConfig from '@/config'
 import { useSettingStore } from '@/stores/setting'
 import { MenuTypeEnum, MenuWidth } from '@/constants/app'
@@ -119,6 +123,9 @@ import { isIframe } from '@/utils/art/navigation'
 import { handleMenuJump } from '@/utils/art/navigation'
 import SidebarSubmenu from './widget/SidebarSubmenu.vue'
 import { useWindowSize, useTimeoutFn } from '@vueuse/core'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
+import ArtLogo from '@/components/art/layouts/art-logo/index.vue'
+import ArtIconButton from '@/components/art/icons/art-icon-button/index.vue'
 
 defineOptions({ name: 'ArtSidebarMenu' })
 

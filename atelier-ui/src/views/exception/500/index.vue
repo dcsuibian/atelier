@@ -12,5 +12,6 @@
 
 <script setup lang="ts">
 import imgUrl from '@/assets/images/svg/500.svg'
+import ArtException from '@/components/art/views/exception/ArtException.vue'
 defineOptions({ name: 'Exception500' })
 </script>

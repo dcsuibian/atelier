@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElCol, ElRow } from 'element-plus'
 import CardList from './modules/card-list.vue'
 import ActiveUser from './modules/active-user.vue'
 import SalesOverview from './modules/sales-overview.vue'

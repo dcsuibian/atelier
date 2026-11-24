@@ -24,6 +24,7 @@
 <script setup lang="ts">
 import AppConfig from '@/config'
 import { WEB_LINKS } from '@/utils/art/constants'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 
 const systemName = AppConfig.systemInfo.name
 

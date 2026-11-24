@@ -42,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElIcon, ElImage } from 'element-plus'
 import { Picture, View, ChatLineRound } from '@element-plus/icons-vue'
 
 defineOptions({ name: 'ArtImageCard' })

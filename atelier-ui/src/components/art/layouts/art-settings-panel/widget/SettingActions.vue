@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElButton, ElMessage } from 'element-plus'
 import { nextTick } from 'vue'
 import { useSettingStore } from '@/stores/setting'
 import { SETTING_DEFAULT_CONFIG } from '@/config/setting'

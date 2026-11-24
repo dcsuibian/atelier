@@ -1,6 +1,6 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["src/**/*", "src/**/*.vue", "tests/**/*", "auto-imports.d.ts", "components.d.ts"],
+  "include": ["src/**/*", "src/**/*.vue", "tests/**/*"],
   "compilerOptions": {
     "noUncheckedIndexedAccess": false,
     "resolveJsonModule": true,

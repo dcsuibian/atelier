@@ -25,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
 import { useSettingsPanel } from './composables/useSettingsPanel'
 
 import SettingDrawer from './widget/SettingDrawer.vue'

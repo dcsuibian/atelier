@@ -28,6 +28,7 @@
  * @module utils/ui/loading
  * @author Art Design Pro Team
  */
+import { ElLoading } from 'element-plus'
 import { fourDotsSpinnerSvg } from '@/assets/svg/loading'
 
 /**

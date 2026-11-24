@@ -21,6 +21,10 @@
 </template>
 
 <script setup lang="ts">
+import ArtGlobalComponent from '@/components/art/layouts/art-global-component/index.vue'
+import ArtPageContent from '@/components/art/layouts/art-page-content/index.vue'
+import ArtHeaderBar from '@/components/art/layouts/art-header-bar/index.vue'
+import ArtSidebarMenu from '@/components/art/layouts/art-menus/art-sidebar-menu/index.vue'
 defineOptions({ name: 'AppLayout' })
 </script>
 

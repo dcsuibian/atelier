@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import type { EChartsOption } from 'echarts'
 import { storeToRefs } from 'pinia'
 import { useSettingStore } from '@/stores/setting'

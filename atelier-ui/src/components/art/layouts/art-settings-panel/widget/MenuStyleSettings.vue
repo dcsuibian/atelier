@@ -16,6 +16,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import AppConfig from '@/config'
 import SectionTitle from './SectionTitle.vue'
 import { MenuTypeEnum, type MenuThemeEnum } from '@/constants/app'

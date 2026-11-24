@@ -50,12 +50,15 @@
 </template>
 
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
+import { ElIcon, ElScrollbar } from 'element-plus'
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import { useThrottleFn } from '@vueuse/core'
 import { formatMenuTitle } from '@/utils/art/router'
 import { handleMenuJump } from '@/utils/art/navigation'
 import type { AppRouteRecord } from '@/types/art/router'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 
 defineOptions({ name: 'ArtMixedMenu' })
 

@@ -41,6 +41,7 @@
  * @module utils/ui/colors
  * @author Art Design Pro Team
  */
+import { ElMessage } from 'element-plus'
 import { useSettingStore } from '@/stores/setting'
 
 /**

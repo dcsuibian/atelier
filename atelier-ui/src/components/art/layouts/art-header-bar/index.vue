@@ -123,6 +123,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElPopover } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useFullscreen, useWindowSize } from '@vueuse/core'
@@ -135,6 +138,13 @@ import { mittBus } from '@/utils/art/sys'
 import { themeAnimation } from '@/utils/art/ui/animation'
 import { useHeaderBar } from '@/composables/art/useHeaderBar'
 import ArtUserMenu from './widget/ArtUserMenu.vue'
+import ArtWorkTab from '@/components/art/layouts/art-work-tab/index.vue'
+import ArtIconButton from '@/components/art/icons/art-icon-button/index.vue'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
+import ArtMixedMenu from '@/components/art/layouts/art-menus/art-mixed-menu/index.vue'
+import ArtHorizontalMenu from '@/components/art/layouts/art-menus/art-horizontal-menu/index.vue'
+import ArtBreadcrumb from '@/components/art/layouts/art-breadcrumb/index.vue'
+import ArtLogo from '@/components/art/layouts/art-logo/index.vue'
 
 defineOptions({ name: 'ArtHeaderBar' })
 

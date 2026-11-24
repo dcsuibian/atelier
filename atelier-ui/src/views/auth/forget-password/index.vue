@@ -32,6 +32,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElButton, ElInput } from 'element-plus'
+import AuthTopBar from '@/components/art/views/login/AuthTopBar.vue'
+import LoginLeftView from '@/components/art/views/login/LoginLeftView.vue'
 defineOptions({ name: 'ForgetPassword' })
 
 const router = useRouter()

@@ -10,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { EChartsOption } from 'echarts'
 import { graphic, use } from 'echarts/core'
 import { LineChart } from 'echarts/charts'

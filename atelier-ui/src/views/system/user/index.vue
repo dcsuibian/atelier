@@ -84,8 +84,20 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { formatDate } from '@vueuse/core'
-import { ElMessageBox } from 'element-plus'
+import {
+  ElButton,
+  ElCard,
+  ElImage,
+  ElMessage,
+  ElMessageBox,
+  ElPagination,
+  ElTable,
+  ElTableColumn,
+  ElTag,
+  vLoading,
+} from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import ArtButtonTable from '@/components/art/forms/art-button-table/index.vue'
 import { usePermissionStore } from '@/stores/permission'

@@ -1,6 +1,9 @@
 // 重置默认样式
 @use './art/reset.scss';
 
+// Element Plus 全量样式，变量已由 additionalData 注入的 el-light.scss 定制
+@use 'element-plus/theme-chalk/src/index.scss';
+
 // 应用全局样式
 @use './art/app.scss';
 

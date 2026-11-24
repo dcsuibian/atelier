@@ -40,6 +40,8 @@
 </template>
 
 <script setup lang="ts">
+import { nextTick, ref } from 'vue'
+import { ElButton, ElDialog, ElMessage, ElScrollbar, ElTree, vLoading } from 'element-plus'
 import type { TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { getPermissionsByRoleId, setPermissionsByRoleId } from '@/apis/role'

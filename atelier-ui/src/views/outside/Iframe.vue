@@ -11,6 +11,9 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { vLoading } from 'element-plus'
 import { IframeRouteManager } from '@/router/iframe-route-manager'
 
 defineOptions({ name: 'IframeView' })

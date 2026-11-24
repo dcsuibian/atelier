@@ -72,6 +72,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElEmpty, ElPagination, ElTable, ElTableColumn, vLoading } from 'element-plus'
 import { ref, computed, nextTick, watchEffect, getCurrentInstance, useAttrs } from 'vue'
 import type { TableInstance, TableProps } from 'element-plus'
 import { storeToRefs } from 'pinia'

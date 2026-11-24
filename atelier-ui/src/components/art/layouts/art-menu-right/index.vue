@@ -66,7 +66,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onUnmounted, ref } from 'vue'
 import type { CSSProperties } from 'vue'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 
 defineOptions({ name: 'ArtMenuRight' })
 

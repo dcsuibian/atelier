@@ -24,8 +24,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { ElDropdown, ElDropdownItem, ElDropdownMenu } from 'element-plus'
 import type { PermissionExpression } from '@/types'
 import { usePermissionStore } from '@/stores/permission'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
+import ArtIconButton from '@/components/art/icons/art-icon-button/index.vue'
 
 defineOptions({ name: 'ArtButtonMore' })
 

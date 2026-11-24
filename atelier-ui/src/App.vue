@@ -12,6 +12,9 @@
 </template>
 
 <script setup lang="ts">
+import { onBeforeMount, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { ElConfigProvider } from 'element-plus'
 import { useSettingStore } from '@/stores/setting'
 import zh from 'element-plus/es/locale/lang/zh-cn'
 import en from 'element-plus/es/locale/lang/en'

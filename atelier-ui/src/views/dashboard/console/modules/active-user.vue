@@ -23,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import ArtBarChart from '@/components/art/charts/art-bar-chart/index.vue'
 interface UserStatItem {
   name: string
   num: string

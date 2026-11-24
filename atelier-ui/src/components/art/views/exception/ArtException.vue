@@ -12,8 +12,11 @@ useMenuStore().getHomePath() || '/'
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { ElButton } from 'element-plus'
 import { useMenuStore } from '@/stores/menu'
 import { useSessionStore } from '@/stores/session'
+import ThemeSvg from '@/components/art/views/theme-svg/index.vue'
 
 const router = useRouter()
 const sessionStore = useSessionStore()

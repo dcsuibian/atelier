@@ -84,11 +84,26 @@
 </template>
 
 <script setup lang="ts">
+import { computed, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import AppConfig from '@/config'
 import { useSessionStore } from '@/stores/session'
 import { useI18n } from 'vue-i18n'
-import { ElNotification, type FormInstance, type FormRules } from 'element-plus'
+import {
+  ElButton,
+  ElCheckbox,
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElNotification,
+  type FormInstance,
+  type FormRules,
+} from 'element-plus'
 import { useSettingStore } from '@/stores/setting'
+import ArtDragVerify from '@/components/art/forms/art-drag-verify/index.vue'
+import AuthTopBar from '@/components/art/views/login/AuthTopBar.vue'
+import LoginLeftView from '@/components/art/views/login/LoginLeftView.vue'
 
 defineOptions({ name: 'Login' })
 

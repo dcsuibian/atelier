@@ -7,6 +7,7 @@
  * 401 是唯一的例外，在这层统一处理：服务端已经断定没登录，本地登录态必然是错的，
  * 这不是调用方能按场景判断的事，交给几十个调用点各自处理只会漏
  */
+import { ElMessage } from 'element-plus'
 import axios, { type AxiosRequestConfig, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import type { ResponseWrapper } from '@/types'
 // 只在拦截器里调用，与 locales 之间的循环引用不影响模块初始化

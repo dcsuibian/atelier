@@ -45,6 +45,8 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { ElCard, ElPagination, ElTable, ElTableColumn, ElTag, vLoading } from 'element-plus'
 import { formatDate } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import { getPermissions } from '@/apis/permission'

@@ -18,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useWindowSize } from '@vueuse/core'
 import SectionTitle from './SectionTitle.vue'
 import { useSettingStore } from '@/stores/setting'
 import { useSettingsConfig } from '../composables/useSettingsConfig'

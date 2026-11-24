@@ -23,6 +23,7 @@ import { useSettingStore } from '@/stores/setting'
 import { useSettingsConfig } from '../composables/useSettingsConfig'
 import { useSettingsHandlers } from '../composables/useSettingsHandlers'
 import { storeToRefs } from 'pinia'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 
 const settingStore = useSettingStore()
 const { systemThemeColor } = storeToRefs(settingStore)

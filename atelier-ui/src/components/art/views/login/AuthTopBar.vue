@@ -50,6 +50,8 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { ElDropdown, ElDropdownItem, ElDropdownMenu } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useSettingStore } from '@/stores/setting'
 import { useHeaderBar } from '@/composables/art/useHeaderBar'
@@ -57,6 +59,8 @@ import { themeAnimation } from '@/utils/art/ui/animation'
 import { languageOptions } from '@/locales'
 import { LanguageEnum } from '@/constants/app'
 import AppConfig from '@/config'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
+import ArtLogo from '@/components/art/layouts/art-logo/index.vue'
 
 defineOptions({ name: 'AuthTopBar' })
 

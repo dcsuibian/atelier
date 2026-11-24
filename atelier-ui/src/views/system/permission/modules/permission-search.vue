@@ -10,8 +10,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { PermissionQuery } from '@/types'
+import ArtSearchBar from '@/components/art/forms/art-search-bar/index.vue'
 
 interface Emits {
   (e: 'search'): void

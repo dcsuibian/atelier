@@ -24,6 +24,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { ElButton, ElScrollbar } from 'element-plus'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 defineOptions({ name: 'ArtDataListCard' })
 
 interface Props {

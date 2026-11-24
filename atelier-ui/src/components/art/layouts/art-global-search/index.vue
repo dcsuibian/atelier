@@ -86,6 +86,8 @@
 </template>
 
 <script lang="ts" setup>
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useSettingStore } from '@/stores/setting'
 import type { AppRouteRecord } from '@/types/art/router'
 import { Search } from '@element-plus/icons-vue'
@@ -93,7 +95,8 @@ import { mittBus } from '@/utils/art/sys'
 import { useMenuStore } from '@/stores/menu'
 import { formatMenuTitle } from '@/utils/art/router'
 import { handleMenuJump } from '@/utils/art/navigation'
-import { type ScrollbarInstance } from 'element-plus'
+import { ElDialog, ElInput, ElScrollbar, type ScrollbarInstance } from 'element-plus'
+import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 
 defineOptions({ name: 'ArtGlobalSearch' })
 

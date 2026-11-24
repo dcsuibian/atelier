@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import ArtLineChart from '@/components/art/charts/art-line-chart/index.vue'
 /**
  * 全年访问量数据
  * 记录每月的访问量统计

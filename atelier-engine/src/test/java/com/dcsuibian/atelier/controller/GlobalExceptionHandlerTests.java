@@ -89,11 +89,11 @@ public class GlobalExceptionHandlerTests extends IntegrationTests {
 	}
 
 	@Test
-	@DisplayName("数据库约束冲突返回业务码 400 与固定文案，不回显 SQL")
+	@DisplayName("数据库约束冲突返回业务码 409 与固定文案，不回显 SQL")
 	void dataIntegrityViolation() throws Exception {
 		mockMvc.perform(get("/exception-tests/data-integrity"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.code").value(400))
+				.andExpect(jsonPath("$.code").value(409))
 				.andExpect(jsonPath("$.message").value("数据冲突或仍被引用，无法完成操作"));
 	}
 

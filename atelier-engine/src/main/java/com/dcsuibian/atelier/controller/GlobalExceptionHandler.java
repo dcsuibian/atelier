@@ -123,7 +123,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ResponseWrapper<Void> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
 		log.warn("数据完整性冲突：{}", e.getMostSpecificCause().getMessage());
-		return ResponseWrapper.fail("数据冲突或仍被引用，无法完成操作", 400);
+		return ResponseWrapper.fail("数据冲突或仍被引用，无法完成操作", 409);
 	}
 
 	@ExceptionHandler(Exception.class)

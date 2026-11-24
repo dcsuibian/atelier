@@ -1,12 +1,19 @@
 <!-- 折线图，支持多组数据，支持阶梯式动画效果 -->
 <template>
-  <ChartView
+  <!-- 定位交给外层（卡片里是 absolute），relative 放在内层 -->
+  <div
     class="w-[calc(100%+10px)]"
-    :option="option"
-    :height="props.height"
-    :loading="props.loading"
-    :empty="isEmpty"
-  />
+    :style="props.height ? { height: props.height } : undefined"
+    v-loading="props.loading"
+  >
+    <div class="relative size-full">
+      <div v-if="isEmpty" class="absolute inset-0 flex-cc text-xs" :style="{ color: isDark ? '#555555' : '#B3B2B2' }">
+        {{ $t('common.noData') }}
+      </div>
+      <!-- autoresize 用 ResizeObserver 盯着容器，窗口缩放、菜单收起都会跟着重排 -->
+      <VChart v-else :option="option" autoresize />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -15,12 +22,14 @@ import type { EChartsOption } from 'echarts'
 import { graphic, use } from 'echarts/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components'
-import ChartView from '@/components/chart-view/index.vue'
+import VChart from 'vue-echarts'
+import { CanvasRenderer } from 'echarts/renderers'
+import { vLoading } from 'element-plus'
 import { getCssVar, hexToRgba } from '@/utils/art/ui'
-import { useChartOps, useChart } from '@/composables/use-chart'
+import { useChartOps, useChart } from '@/composables/art/use-chart'
 import type { LineChartProps, LineDataItem } from '../types'
 
-use([LineChart, GridComponent, TooltipComponent, LegendComponent])
+use([CanvasRenderer, LineChart, GridComponent, TooltipComponent, LegendComponent])
 
 defineOptions({ name: 'ArtLineChart' })
 
@@ -334,6 +343,7 @@ const {
   getTooltipStyle,
   getLegendStyle,
   getGridWithLegend,
+  isDark,
 } = useChart({
   props,
   checkEmpty: checkIsEmpty,

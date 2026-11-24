@@ -17,10 +17,10 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import SectionTitle from './SectionTitle.vue'
+import SectionTitle from './section-title.vue'
 import { useSettingStore } from '@/stores/setting'
-import { useSettingsConfig } from '../composables/useSettingsConfig'
-import { useTheme } from '@/composables/art/useTheme'
+import { useSettingsConfig } from '../composables/use-settings-config'
+import { useTheme } from '@/composables/art/use-theme'
 
 const settingStore = useSettingStore()
 const { systemThemeMode } = storeToRefs(settingStore)

@@ -20,10 +20,10 @@
 </template>
 
 <script setup lang="ts">
-import SectionTitle from './SectionTitle.vue'
+import SectionTitle from './section-title.vue'
 import { useSettingStore } from '@/stores/setting'
-import { useSettingsConfig } from '../composables/useSettingsConfig'
-import { useSettingsHandlers } from '../composables/useSettingsHandlers'
+import { useSettingsConfig } from '../composables/use-settings-config'
+import { useSettingsHandlers } from '../composables/use-settings-handlers'
 import { storeToRefs } from 'pinia'
 
 const settingStore = useSettingStore()

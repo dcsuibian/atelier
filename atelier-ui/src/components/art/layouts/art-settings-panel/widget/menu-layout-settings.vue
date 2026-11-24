@@ -20,10 +20,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
-import SectionTitle from './SectionTitle.vue'
+import SectionTitle from './section-title.vue'
 import { useSettingStore } from '@/stores/setting'
-import { useSettingsConfig } from '../composables/useSettingsConfig'
-import { useSettingsState } from '../composables/useSettingsState'
+import { useSettingsConfig } from '../composables/use-settings-config'
+import { useSettingsState } from '../composables/use-settings-state'
 
 const { width } = useWindowSize()
 const settingStore = useSettingStore()

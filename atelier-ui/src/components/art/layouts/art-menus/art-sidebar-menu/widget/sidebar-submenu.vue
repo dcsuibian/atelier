@@ -54,7 +54,7 @@ import { formatMenuTitle } from '@/utils/art/router'
 import { handleMenuJump } from '@/utils/art/navigation'
 import { useSettingStore } from '@/stores/setting'
 import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
-import SidebarSubmenu from '@/components/art/layouts/art-menus/art-sidebar-menu/widget/SidebarSubmenu.vue'
+import SidebarSubmenu from '@/components/art/layouts/art-menus/art-sidebar-menu/widget/sidebar-submenu.vue'
 
 interface MenuTheme {
   iconColor?: string

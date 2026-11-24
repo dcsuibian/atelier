@@ -18,13 +18,20 @@
         {{ date }}
       </div>
     </div>
-    <ChartView
+    <!-- 定位交给外层（卡片里是 absolute），relative 放在内层 -->
+    <div
       class="absolute bottom-0 left-0 right-0 box-border w-full"
       :class="isMiniChart ? '!absolute !top-5 !right-5 !bottom-auto !left-auto !h-15 !w-4/10' : ''"
       :style="{ height: isMiniChart ? '60px' : `calc(${height}rem - 5rem)` }"
-      :option="option"
-      :empty="isEmpty"
-    />
+    >
+      <div class="relative size-full">
+        <div v-if="isEmpty" class="absolute inset-0 flex-cc text-xs" :style="{ color: isDark ? '#555555' : '#B3B2B2' }">
+          {{ $t('common.noData') }}
+        </div>
+        <!-- autoresize 用 ResizeObserver 盯着容器，窗口缩放、菜单收起都会跟着重排 -->
+        <VChart v-else :option="option" autoresize />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -33,11 +40,12 @@ import type { EChartsOption } from 'echarts'
 import { graphic, use } from 'echarts/core'
 import { LineChart } from 'echarts/charts'
 import { GridComponent } from 'echarts/components'
-import ChartView from '@/components/chart-view/index.vue'
+import VChart from 'vue-echarts'
+import { CanvasRenderer } from 'echarts/renderers'
 import { getCssVar, hexToRgba } from '@/utils/art/ui'
-import { useChartOps, useChart } from '@/composables/use-chart'
+import { useChartOps, useChart } from '@/composables/art/use-chart'
 
-use([LineChart, GridComponent])
+use([CanvasRenderer, LineChart, GridComponent])
 
 defineOptions({ name: 'ArtLineChartCard' })
 
@@ -67,7 +75,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 使用新的图表组件抽象
-const { option, isEmpty } = useChart({
+const { option, isEmpty, isDark } = useChart({
   checkEmpty: () => !props.chartData?.length || props.chartData.every(val => val === 0),
   generateOptions: (): EChartsOption => {
     const computedColor = props.color || useChartOps().themeColor

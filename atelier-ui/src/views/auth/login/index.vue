@@ -102,8 +102,8 @@ import {
 } from 'element-plus'
 import { useSettingStore } from '@/stores/setting'
 import ArtDragVerify from '@/components/art/forms/art-drag-verify/index.vue'
-import AuthTopBar from '@/components/art/views/login/AuthTopBar.vue'
-import LoginLeftView from '@/components/art/views/login/LoginLeftView.vue'
+import AuthTopBar from '@/components/art/views/login/auth-top-bar.vue'
+import LoginLeftView from '@/components/art/views/login/login-left-view.vue'
 
 defineOptions({ name: 'Login' })
 

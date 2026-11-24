@@ -19,7 +19,7 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import AppConfig from '@/config'
-import SectionTitle from './SectionTitle.vue'
+import SectionTitle from './section-title.vue'
 import { MenuTypeEnum, type MenuThemeEnum } from '@/constants/app'
 import { useSettingStore } from '@/stores/setting'
 

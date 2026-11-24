@@ -13,13 +13,13 @@ atelier 的前端。仓库层面的约束（公开仓库须脱敏、文档分工
 ## 代码组织：ADP 原件与自有代码
 
 - `art/` 下是 ADP 原件或在原件上改的：`components/art/`（按用途分 `layouts`、`forms`、`cards`、`charts`、`icons` 等）、`composables/art/`、`styles/art/`、`utils/art/`、`types/art/`（只剩系统配置的类型）
-- 自有代码平铺：如 `components/layout/`、`components/chart-view/`、`composables/use-chart.ts`、`utils/http.ts`、`types/user.ts`（与后端对接的类型都在 `types/` 根上）
+- 自有代码平铺：如 `components/layout/`、`utils/http.ts`、`types/user.ts`（与后端对接的类型都在 `types/` 根上）
 - 整体接管、不再区分原件的目录：`router/`、`stores/`、`apis/`、`directives/`、`config/`、`constants/`、`locales/`
 
 几条命名规则：
 
 - 子目录统一叫 `art/`，不用 `core`、`common` 这类不表达含义的名字。只装一个文件的目录去掉（组件与页面的 `目录/index.vue` 例外）；单复数按「一组同类个体用复数，被拆成模块的整体用单数」。目录不叫 ADP 的 `hooks`：那是 React 的叫法，Vue 官方叫 composables
-- `art/` 下的原件保留原名（`useTheme.ts`、`SidebarSubmenu.vue` 这类 camelCase / PascalCase），改名会让逐文件对照失效。自有文件一律 kebab-case。组件名与 `art-` 前缀沿用 ADP
+- 文件名一律 kebab-case，`art/` 下的原件也已改过（ADP 的 `useTheme.ts`、`SidebarSubmenu.vue` 在这里是 `use-theme.ts`、`sidebar-submenu.vue`），和 ADP 对照时按目录找。组件名与 `art-` 前缀沿用 ADP
 
 **`art/` 里的小改动标 `atelier：` 注释**，用 `rg -n 'atelier：' src` 能找全。格式化、`import type`、路径别名、`useUserStore()` 按内容改到 `settingStore` / `sessionStore` 这类机械改动不标，标了反而淹没真正的改动。需要多解释的两处：
 
@@ -74,7 +74,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor` 改名 kebab-case 挪到 `rou
 - `.env` 里没人读或只为调试的 `VITE_WITH_CREDENTIALS`、`VITE_OPEN_ROUTE_INFO`
 - 指向 ADP 官网、文档、GitHub 的链接（`utils/art/constants.ts` 的 `WEB_LINKS`），连同用户菜单里的「文档」「GitHub」入口
 - 版本化存储键与存储兼容性检查（`utils/art/storage/`），连同 `__APP_VERSION__`；控制台宣传语（`utils/art/sys/console.ts`）
-- `useChart` 与 `plugins/echarts.ts`，换成 vue-echarts 加自有的 `ChartView`；`composables/use-chart.ts` 只剩按明暗主题生成样式的函数
+- `useChart` 与 `plugins/echarts.ts`，换成 vue-echarts：每个图表组件自己放 `VChart`，加载态与空数据提示也各写一份；`composables/art/use-chart.ts` 只剩按明暗主题生成样式的函数
 - `useAuth`、`useCommon`
 
 **配置**：
@@ -89,7 +89,7 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor` 改名 kebab-case 挪到 `rou
 
 **`LICENSE` 必须保留**：清理上游痕迹时最容易误删。
 
-**尚未清理的上游痕迹**：`src/utils/art/constants.ts` 里的常量全指向 ADP（GitHub、文档站、社区、作者的 B 站），被 `dashboard/console/modules/about-project.vue` 和 `art-header-bar/widget/ArtUserMenu.vue` 引用；`index.html` 的 `<title>` 和 description 也还是上游的。**有意留着**，等决定好要显示什么再一起换。
+**尚未清理的上游痕迹**：`index.html` 的 `<title>` 和 description、系统名称（`config` 里的 `systemInfo.name`）还是上游的，仪表盘「关于项目」卡片的文案也是。**有意留着**，等决定好要显示什么再一起换。
 
 ## 命令
 
@@ -136,5 +136,5 @@ ADP 的 `router/core/` 已拆散：`MenuProcessor` 改名 kebab-case 挪到 `rou
 
 - 注册页与忘记密码页后端没有对应接口，链接指向死路，**有意留着作参考**，不要顺手删。
 - 图标经 `@iconify/vue` 运行时从 Iconify 的在线服务加载，模板不做离线化，由下游按部署环境决定。断网时图标只会变成空白、不报错；要离线就启用 `utils/art/ui/iconify-loader.ts`，把用到的图标集打包注册。
-- `useHeaderBar`、`useLayoutHeight`、`useTableHeight` 只有 1～3 处引用，不单独处理，随对应功能的去留走。
+- `useHeaderBar`、`useLayoutHeight` 只有 1～3 处引用，不单独处理，随对应功能的去留走。
 - ADP 演示页（工作台、个人中心、注册、忘记密码）里仍有写死的中文与演示数据，随这些页面的去留一起处理。

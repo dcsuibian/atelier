@@ -28,7 +28,20 @@
           </div>
         </div>
         <div class="flex-c h-full max-w-40 flex-1">
-          <ChartView class="h-30 w-full" :option="option" :empty="isEmpty" />
+          <!-- 定位交给外层（卡片里是 absolute），relative 放在内层 -->
+          <div class="h-30 w-full">
+            <div class="relative size-full">
+              <div
+                v-if="isEmpty"
+                class="absolute inset-0 flex-cc text-xs"
+                :style="{ color: isDark ? '#555555' : '#B3B2B2' }"
+              >
+                {{ $t('common.noData') }}
+              </div>
+              <!-- autoresize 用 ResizeObserver 盯着容器，窗口缩放、菜单收起都会跟着重排 -->
+              <VChart v-else :option="option" autoresize />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -39,10 +52,11 @@
 import type { EChartsOption } from 'echarts'
 import { use } from 'echarts/core'
 import { PieChart } from 'echarts/charts'
-import ChartView from '@/components/chart-view/index.vue'
-import { useChartOps, useChart } from '@/composables/use-chart'
+import VChart from 'vue-echarts'
+import { CanvasRenderer } from 'echarts/renderers'
+import { useChartOps, useChart } from '@/composables/art/use-chart'
 
-use([PieChart])
+use([CanvasRenderer, PieChart])
 
 defineOptions({ name: 'ArtDonutChartCard' })
 
@@ -80,7 +94,7 @@ const formatNumber = (num: number) => {
 }
 
 // 使用新的图表组件抽象
-const { option, isEmpty } = useChart({
+const { option, isEmpty, isDark } = useChart({
   checkEmpty: () => props.data.every(val => val === 0),
   generateOptions: (): EChartsOption => {
     const computedColor = props.color || useChartOps().themeColor

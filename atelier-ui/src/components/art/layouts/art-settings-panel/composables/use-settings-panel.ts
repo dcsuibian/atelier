@@ -6,9 +6,9 @@ import AppConfig from '@/config'
 import { SystemThemeEnum, MenuTypeEnum } from '@/constants/app'
 import { mittBus } from '@/utils/art/sys'
 import { LOCAL_STORAGE_KEYS } from '@/constants/storage-keys'
-import { useTheme } from '@/composables/art/useTheme'
-import { useSettingsState } from './useSettingsState'
-import { useSettingsHandlers } from './useSettingsHandlers'
+import { useTheme } from '@/composables/art/use-theme'
+import { useSettingsState } from './use-settings-state'
+import { useSettingsHandlers } from './use-settings-handlers'
 
 /**
  * 设置面板核心逻辑管理

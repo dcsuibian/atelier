@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { ElButton } from 'element-plus'
-import ArtResultPage from '@/components/art/views/result/ArtResultPage.vue'
+import ArtResultPage from '@/components/art/views/result/art-result-page.vue'
 import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
 defineOptions({ name: 'ResultFail' })
 </script>

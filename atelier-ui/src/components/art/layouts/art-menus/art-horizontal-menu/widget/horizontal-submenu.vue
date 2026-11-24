@@ -43,7 +43,7 @@ import type { AppRouteRecord } from '@/types'
 import { handleMenuJump } from '@/utils/art/navigation'
 import { formatMenuTitle } from '@/utils/art/router'
 import ArtSvgIcon from '@/components/art/icons/art-svg-icon/index.vue'
-import HorizontalSubmenu from '@/components/art/layouts/art-menus/art-horizontal-menu/widget/HorizontalSubmenu.vue'
+import HorizontalSubmenu from '@/components/art/layouts/art-menus/art-horizontal-menu/widget/horizontal-submenu.vue'
 
 const props = defineProps({
   item: {

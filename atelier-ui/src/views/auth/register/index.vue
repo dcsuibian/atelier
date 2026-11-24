@@ -74,8 +74,8 @@ import { useRouter } from 'vue-router'
 import { ElButton, ElCheckbox, ElForm, ElFormItem, ElInput, ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import type { FormInstance, FormRules } from 'element-plus'
-import AuthTopBar from '@/components/art/views/login/AuthTopBar.vue'
-import LoginLeftView from '@/components/art/views/login/LoginLeftView.vue'
+import AuthTopBar from '@/components/art/views/login/auth-top-bar.vue'
+import LoginLeftView from '@/components/art/views/login/login-left-view.vue'
 
 defineOptions({ name: 'Register' })
 

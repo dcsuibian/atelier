@@ -1,25 +1,30 @@
 <!-- 散点图 -->
 <template>
-  <ChartView
-    class="relative w-full"
-    :option="option"
-    :height="props.height"
-    :loading="props.loading"
-    :empty="isEmpty"
-  />
+  <!-- 定位交给外层（卡片里是 absolute），relative 放在内层 -->
+  <div class="relative w-full" :style="props.height ? { height: props.height } : undefined" v-loading="props.loading">
+    <div class="relative size-full">
+      <div v-if="isEmpty" class="absolute inset-0 flex-cc text-xs" :style="{ color: isDark ? '#555555' : '#B3B2B2' }">
+        {{ $t('common.noData') }}
+      </div>
+      <!-- autoresize 用 ResizeObserver 盯着容器，窗口缩放、菜单收起都会跟着重排 -->
+      <VChart v-else :option="option" autoresize />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { use } from 'echarts/core'
 import { ScatterChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
-import ChartView from '@/components/chart-view/index.vue'
+import VChart from 'vue-echarts'
+import { CanvasRenderer } from 'echarts/renderers'
+import { vLoading } from 'element-plus'
 import type { EChartsOption } from 'echarts'
 import { getCssVar } from '@/utils/art/ui'
-import { useChartOps, useChart } from '@/composables/use-chart'
+import { useChartOps, useChart } from '@/composables/art/use-chart'
 import type { ScatterChartProps } from '../types'
 
-use([ScatterChart, GridComponent, TooltipComponent])
+use([CanvasRenderer, ScatterChart, GridComponent, TooltipComponent])
 
 defineOptions({ name: 'ArtScatterChart' })
 

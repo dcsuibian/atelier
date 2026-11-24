@@ -32,7 +32,7 @@ import { computed, nextTick, onMounted, ref, shallowRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import type { CSSProperties } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAutoLayoutHeight } from '@/composables/art/useLayoutHeight'
+import { useAutoLayoutHeight } from '@/composables/art/use-layout-height'
 import { useSettingStore } from '@/stores/setting'
 import { useWorkTabStore } from '@/stores/work-tab'
 

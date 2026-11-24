@@ -24,7 +24,7 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { ElMenu } from 'element-plus'
 import type { AppRouteRecord } from '@/types'
-import HorizontalSubmenu from './widget/HorizontalSubmenu.vue'
+import HorizontalSubmenu from './widget/horizontal-submenu.vue'
 import { useSettingStore } from '@/stores/setting'
 
 defineOptions({ name: 'ArtHorizontalMenu' })

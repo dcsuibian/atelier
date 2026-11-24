@@ -21,7 +21,7 @@ import zh from 'element-plus/es/locale/lang/zh-cn'
 import en from 'element-plus/es/locale/lang/en'
 import 'dayjs/locale/zh-cn' // 与上面的语言包对应
 import { toggleTransition } from '@/utils/art/ui/animation'
-import { initializeTheme } from '@/composables/art/useTheme'
+import { initializeTheme } from '@/composables/art/use-theme'
 
 const settingStore = useSettingStore()
 const { language } = storeToRefs(settingStore)

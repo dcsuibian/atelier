@@ -26,10 +26,10 @@ interface UseChartOptions {
 }
 
 /**
- * 生成图表配置，交给 ChartView 渲染
+ * 生成图表配置，交给各图表组件里的 VChart 渲染
  *
  * option 是 computed：数据、明暗主题一变就重算，vue-echarts 会自动 setOption；
- * 尺寸变化（窗口、菜单收起）由 ChartView 的 autoresize 处理，这里都不用管
+ * 尺寸变化（窗口、菜单收起）由 VChart 的 autoresize 处理，这里都不用管
  */
 export function useChart({ props, checkEmpty, generateOptions }: UseChartOptions) {
   const { isDark } = storeToRefs(useSettingStore())

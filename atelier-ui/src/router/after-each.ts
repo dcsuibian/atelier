@@ -1,5 +1,7 @@
+import { unref, watch } from 'vue'
 import { useSettingStore } from '@/stores/setting'
 import type { Router } from 'vue-router'
+import i18n from '@/locales'
 import NProgress from 'nprogress'
 import { scrollToTop } from '@/utils/scroll'
 import { loadingService } from '@/utils/art/ui'
@@ -35,6 +37,17 @@ export function setupAfterEachGuard(router: Router) {
       }, 600)
     }
   })
+
+  // 切换语言不经过导航，标题得另外跟上
+  watch(
+    () => unref(i18n.global.locale),
+    () => {
+      const route = router.currentRoute.value
+      if (!isStaticRoute(route)) {
+        setPageTitle(route)
+      }
+    },
+  )
 
   // 懒加载组件下载失败等异常不会触发 afterEach，遮罩得另外关。
   // 注册了 onError 后 vue-router 不再自己打印错误，这里补上
